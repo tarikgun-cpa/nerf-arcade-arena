@@ -517,11 +517,12 @@
             <div class="bg-slate-950/90 border-2 border-cyan-400/70 rounded-2xl p-3 mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div class="text-xs font-extrabold text-cyan-300">
                     🎯 Aktif Skorun: <span id="lb-current-score" class="arcade-font text-base text-yellow-300">0</span>
+                    <div id="lb-user-id-label" class="text-[9px] text-slate-400 font-mono mt-0.5">Oyuncu Kimliği: Hazırlanıyor...</div>
                 </div>
                 <div class="flex gap-2 flex-1 sm:flex-initial">
                     <input id="input-lb-direct-name" type="text" maxlength="16" placeholder="Adını Yaz..." class="bg-slate-900 border border-slate-600 rounded-xl px-3 py-1 text-xs font-black text-white outline-none w-36 sm:w-44" style="user-select: text; -webkit-user-select: text; touch-action: manipulation;" />
                     <button id="btn-lb-direct-save" class="btn-tactile bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-xl border border-yellow-100 text-xs">
-                        Skor Ekle / Güncelle
+                        ☁️ Buluta Kaydet
                     </button>
                 </div>
             </div>
@@ -675,39 +676,31 @@
 
                         <!-- Dynamic Laser Beams & Flying Nerf Foam Darts -->
                         <g stroke-linecap="round">
-                            <!-- Top-Left Blue Laser & Darts -->
                             <line x1="40" y1="65" x2="255" y2="165" stroke="#38bdf8" stroke-width="6" opacity="0.9"/>
                             <line x1="40" y1="65" x2="255" y2="165" stroke="#ffffff" stroke-width="2"/>
-                            <!-- Top-Right Orange Laser & Darts -->
                             <line x1="920" y1="65" x2="705" y2="165" stroke="#f97316" stroke-width="6" opacity="0.9"/>
                             <line x1="920" y1="65" x2="705" y2="165" stroke="#fef08a" stroke-width="2"/>
-                            <!-- Bottom Neon Green & Orange Dart Streaks -->
                             <line x1="160" y1="410" x2="310" y2="335" stroke="#a3e635" stroke-width="5"/>
                             <line x1="800" y1="410" x2="650" y2="335" stroke="#a3e635" stroke-width="5"/>
                         </g>
 
                         <!-- Flying Foam Darts in Corners -->
-                        <!-- Dart 1 (Top Left) -->
                         <g transform="translate(95, 92) rotate(26)">
                             <rect x="0" y="-6" width="42" height="12" rx="4" fill="#2563eb" stroke="#38bdf8" stroke-width="1.5"/>
                             <rect x="34" y="-6" width="14" height="12" rx="5" fill="#f97316"/>
                         </g>
-                        <!-- Dart 2 (Mid Left) -->
                         <g transform="translate(105, 165) rotate(18)">
                             <rect x="0" y="-6" width="40" height="12" rx="4" fill="#f97316" stroke="#fde047" stroke-width="1.5"/>
                             <rect x="32" y="-6" width="14" height="12" rx="5" fill="#3b82f6"/>
                         </g>
-                        <!-- Dart 3 (Bottom Left Green Ultra Dart) -->
                         <g transform="translate(185, 392) rotate(-28)">
                             <rect x="0" y="-6" width="46" height="12" rx="4" fill="#84cc16" stroke="#ecfccb" stroke-width="1.5"/>
                             <rect x="36" y="-6" width="14" height="12" rx="5" fill="#2563eb"/>
                         </g>
-                        <!-- Dart 4 (Top Right) -->
                         <g transform="translate(835, 95) rotate(-25) scale(-1,1)">
                             <rect x="0" y="-6" width="42" height="12" rx="4" fill="#2563eb" stroke="#38bdf8" stroke-width="1.5"/>
                             <rect x="34" y="-6" width="14" height="12" rx="5" fill="#f97316"/>
                         </g>
-                        <!-- Dart 5 (Bottom Right Green Ultra Dart) -->
                         <g transform="translate(765, 392) rotate(28) scale(-1,1)">
                             <rect x="0" y="-6" width="46" height="12" rx="4" fill="#84cc16" stroke="#ecfccb" stroke-width="1.5"/>
                             <rect x="36" y="-6" width="14" height="12" rx="5" fill="#2563eb"/>
@@ -766,48 +759,6 @@
                 </div>
             </div>
 
-            <!-- Player Name, Difficulty & Control Quick Setup Bar before hitting PLAY -->
-            <div class="w-full max-w-2xl bg-slate-900/90 border-2 border-slate-700 rounded-3xl p-3 sm:p-4 mt-1 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <span class="text-xl">🪖</span>
-                    <div class="flex-1">
-                        <label class="text-[10px] font-black text-cyan-300 uppercase block leading-none mb-1">OYUNCU / KAPTAN ADIN</label>
-                        <input id="start-player-name" type="text" maxlength="16" placeholder="Adını Yaz (Örn: Enver Uras)" class="w-full sm:w-48 bg-slate-950 border-2 border-cyan-500/60 focus:border-yellow-400 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-black text-white outline-none" style="user-select: text; -webkit-user-select: text; touch-action: manipulation;" />
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                    <div>
-                        <div class="text-[10px] font-black text-amber-300 uppercase leading-none mb-1">ZORLUK SEVİYESİ</div>
-                        <button id="btn-start-diff" class="btn-tactile bg-gradient-to-b from-purple-600 to-indigo-900 border-2 border-purple-300 rounded-xl px-3 py-1.5 text-xs font-black text-white flex items-center gap-1.5">
-                            <span>⚡</span>
-                            <span id="lbl-start-diff">Atari Ustası (1.35x🪙)</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Direct Name & Current Score Quick Registration Bar -->
-            <div class="bg-slate-950/90 border-2 border-cyan-400/70 rounded-2xl p-3 mb-3 flex flex-wrap items-center justify-between gap-2">
-                <div class="text-xs font-extrabold text-cyan-300">
-                    🎯 Aktif Skorun: <span id="lb-current-score" class="arcade-font text-base text-yellow-300">0</span>
-                    <div id="lb-user-id-label" class="text-[9px] text-slate-400 font-mono mt-0.5">Oyuncu Kimliği: Hazırlanıyor...</div>
-                </div>
-                <div class="flex gap-2 flex-1 sm:flex-initial">
-                    <input id="input-lb-direct-name" type="text" maxlength="16" placeholder="Adını Yaz..." class="bg-slate-900 border border-slate-600 rounded-xl px-3 py-1 text-xs font-black text-white outline-none w-36 sm:w-44" style="user-select: text; -webkit-user-select: text; touch-action: manipulation;" />
-                    <button id="btn-lb-direct-save" class="btn-tactile bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-xl border border-yellow-100 text-xs">
-                        ☁️ Buluta Kaydet
-                    </button>
-                </div>
-            </div>
-
-            <div id="leaderboard-list" class="space-y-2 overflow-y-auto pr-1 flex-1">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 4: PROFILE, IPAD/TABLET SETTINGS & MISSIONS -->
             <!-- Player Name, Difficulty & Control Quick Setup Bar before hitting PLAY -->
             <div class="w-full max-w-2xl bg-slate-900/90 border-2 border-slate-700 rounded-3xl p-3 sm:p-4 mt-1 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -4765,16 +4716,14 @@ import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } from "https
 
 // ---------------------------------------------------------------------------
 // KENDİ FIREBASE PROJENİZ İÇİN YAPILANDIRMA (GitHub / Firebase Hosting İçin)
-// Eğer kendi Firebase projenizde yayınlıyorsanız aşağıdaki YOUR_API_KEY vb.
-// alanlara Firebase Console -> Project Settings altındaki config bilgilerinizi yapıştırabilirsiniz.
 // ---------------------------------------------------------------------------
-const firebaseConfig = {
-  apiKey: "AIzaSyC4qH834aLPEbHRZ70eh82ziNbAnAuNrvU",
-  authDomain: "nerf-arcade-arena.firebaseapp.com",
-  projectId: "nerf-arcade-arena",
-  storageBucket: "nerf-arcade-arena.firebasestorage.app",
-  messagingSenderId: "772794764313",
-  appId: "1:772794764313:web:f7440711d4f0905f83ae88"
+const CUSTOM_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyC4qH834aLPEbHRZ70eh82ziNbAnAuNrvU",
+    authDomain: "nerf-arcade-arena.firebaseapp.com",
+    projectId: "nerf-arcade-arena",
+    storageBucket: "nerf-arcade-arena.firebasestorage.app",
+    messagingSenderId: "772794764313",
+    appId: "1:772794764313:web:f7440711d4f0905f83ae88"
 };
 
 let db = null;
@@ -4795,19 +4744,19 @@ function setCloudBadge(online, text) {
 
 async function initFirebaseCloud() {
     try {
-        let firebaseConfig = null;
-        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-            firebaseConfig = JSON.parse(__firebase_config);
-        } else if (CUSTOM_FIREBASE_CONFIG.apiKey && CUSTOM_FIREBASE_CONFIG.projectId) {
-            firebaseConfig = CUSTOM_FIREBASE_CONFIG;
+        let activeConfig = null;
+        if (CUSTOM_FIREBASE_CONFIG.apiKey && CUSTOM_FIREBASE_CONFIG.projectId) {
+            activeConfig = CUSTOM_FIREBASE_CONFIG;
+        } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            activeConfig = JSON.parse(__firebase_config);
         }
 
-        if (!firebaseConfig) {
+        if (!activeConfig) {
             setCloudBadge(false, 'Yerel Mod (Config Bekleniyor)');
             return;
         }
 
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(activeConfig);
         auth = getAuth(app);
         db = getFirestore(app);
 
