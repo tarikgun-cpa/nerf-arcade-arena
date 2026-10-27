@@ -153,85 +153,76 @@
 <body>
 
 <div class="cabinet-frame">
-    <!-- TOP ARCADE CABINET MARQUEE HEADER -->
-    <header class="marquee-header px-2.5 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
-        <!-- Left: Score, Combo & Stage Timer -->
-        <div class="flex items-center gap-1.5 sm:gap-2.5">
-            <div class="bg-slate-950/90 border-2 border-yellow-400 rounded-xl px-2.5 py-1 flex items-center gap-2 shadow-inner">
-                <span class="text-lg sm:text-xl">⏱️</span>
+    <!-- TOP ARCADE CABINET MARQUEE HEADER (CLEAN & STREAMLINED HUD) -->
+    <header class="marquee-header px-3 py-1 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2">
+            <button id="btn-profile" class="btn-tactile bg-slate-950/95 hover:bg-slate-900 border-2 border-cyan-400 rounded-xl px-2 py-1 flex items-center gap-1.5 shadow" title="Ayarlar, Zorluk, Görevler & iPad Kontrol Merkezi">
+                <span class="text-sm sm:text-base">⚙️</span>
+                <div class="text-left leading-none hidden sm:block">
+                    <div class="flex items-center gap-1">
+                        <span id="hud-player-name" class="arcade-font text-[11px] font-black text-white">Kaptan1</span>
+                        <span id="hud-level-badge" class="bg-amber-400 text-slate-950 text-[8px] font-black px-1 rounded">Sv.1</span>
+                    </div>
+                    <div class="w-16 h-1 bg-slate-800 rounded-full overflow-hidden mt-0.5">
+                        <div id="hud-xp-bar" class="h-full bg-gradient-to-r from-cyan-400 to-lime-400" style="width: 15%;"></div>
+                    </div>
+                </div>
+                <span id="mission-badge" class="w-2 h-2 rounded-full bg-lime-400 animate-ping hidden"></span>
+            </button>
+
+            <div class="bg-slate-950/90 border-2 border-yellow-400 rounded-xl px-2.5 py-0.5 flex items-center gap-1.5">
+                <span class="text-sm sm:text-base">⏱️</span>
                 <div>
-                    <div class="text-[9px] font-black uppercase text-yellow-300 tracking-wider leading-none">SÜRE</div>
-                    <div id="ui-timer" class="arcade-font text-base sm:text-xl font-black text-white leading-tight">60s</div>
+                    <div class="text-[8px] font-black uppercase text-yellow-300 leading-none">SÜRE</div>
+                    <div id="ui-timer" class="arcade-font text-sm sm:text-lg font-black text-white leading-tight">60s</div>
                 </div>
             </div>
 
-            <div class="bg-slate-950/90 border-2 border-cyan-400 rounded-xl px-2.5 py-1 flex items-center gap-2 shadow-inner">
-                <span class="text-lg sm:text-xl">🎯</span>
+            <div class="bg-slate-950/90 border-2 border-cyan-400 rounded-xl px-2.5 py-0.5 flex items-center gap-1.5">
+                <span class="text-sm sm:text-base">🎯</span>
                 <div>
-                    <div class="text-[9px] font-black uppercase text-cyan-300 tracking-wider leading-none">SKOR & KOMBO</div>
-                    <div class="flex items-baseline gap-1.5">
-                        <span id="ui-score" class="arcade-font text-base sm:text-xl font-black text-white leading-tight">0</span>
-                        <span id="ui-combo" class="text-xs font-black text-amber-400 bg-amber-950/90 px-1.5 py-0.2 rounded border border-amber-500">1x</span>
+                    <div class="text-[8px] font-black uppercase text-cyan-300 leading-none">SKOR</div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="ui-score" class="arcade-font text-sm sm:text-lg font-black text-white leading-tight">0</span>
+                        <span id="ui-combo" class="text-[10px] font-black text-amber-400 bg-amber-950/90 px-1 rounded border border-amber-500">1x</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Difficulty Selector Button -->
-            <button id="btn-difficulty" class="btn-tactile bg-gradient-to-b from-purple-600 to-indigo-800 border-2 border-purple-300 rounded-xl px-2.5 py-1.5 text-xs font-black flex items-center gap-1">
-                <span>⚡</span>
-                <span id="ui-diff-label">Atari Ustası</span>
-            </button>
-
-            <!-- Live Stage Mastery % Bar (3-Star Operation Rating) -->
-            <div class="bg-slate-950/90 border-2 border-emerald-400 rounded-xl px-2.5 py-1 flex flex-col justify-center min-w-[125px] sm:min-w-[155px]">
-                <div class="flex justify-between items-center text-[9px] font-black uppercase">
-                    <span class="text-emerald-300">OPERASYON İSABETİ</span>
+            <div class="hidden md:flex bg-slate-950/90 border-2 border-emerald-400 rounded-xl px-2.5 py-1 flex-col justify-center min-w-[115px]">
+                <div class="flex justify-between items-center text-[8px] font-black uppercase">
+                    <span class="text-emerald-300">İSABET</span>
                     <span id="ui-success-pct" class="text-lime-300">%100</span>
                 </div>
-                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-0.5 relative border border-slate-700">
+                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-0.5">
                     <div id="ui-success-bar" class="h-full bg-gradient-to-r from-red-500 via-amber-400 to-emerald-400 transition-all duration-150" style="width: 100%;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Center: Active Stage & Wave Banner -->
-        <div class="hidden xl:flex items-center gap-3 bg-slate-950/95 border-2 border-cyan-400 rounded-2xl px-5 py-1.5 shadow-[0_0_25px_rgba(34,211,238,0.35)]">
-            <span class="text-2xl">🎯</span>
-            <div class="text-left">
-                <div class="text-[10px] font-black text-amber-300 tracking-widest uppercase leading-none">12 OPERASYON + 4 DEV BOSS ARA GEÇİŞ BÖLÜMÜ</div>
-                <div class="text-xs font-extrabold text-cyan-300 leading-tight mt-0.5" id="ui-stage-title">1. BÖLÜM: TAKTİK ASKERİ ÜS (DALGA 1/3)</div>
-            </div>
+        <div class="hidden lg:flex items-center gap-2 bg-slate-950/95 border border-cyan-400/70 rounded-xl px-3.5 py-1">
+            <span class="text-xs font-extrabold text-cyan-300 tracking-wide" id="ui-stage-title">1. BÖLÜM: TAKTİK ASKERİ ÜS (DALGA 1/3)</span>
         </div>
 
-        <!-- Right: Gold, Arsenal, Stages, Leaderboard & Sound -->
-        <div class="flex items-center gap-1.5 sm:gap-2 ml-auto xl:ml-0">
-            <div class="bg-slate-950/90 border-2 border-amber-400 rounded-xl px-3 py-1 flex items-center gap-1.5">
-                <span class="text-sm sm:text-base">🪙</span>
-                <div>
-                    <div class="text-[8px] font-black text-amber-300 uppercase leading-none">ALTIN</div>
-                    <div id="ui-gold" class="arcade-font text-sm sm:text-base font-black text-amber-400 leading-tight">150</div>
-                </div>
+        <div class="flex items-center gap-1.5">
+            <div class="bg-slate-950/90 border-2 border-amber-400 rounded-xl px-2.5 py-0.5 flex items-center gap-1">
+                <span class="text-xs sm:text-sm">🪙</span>
+                <div id="ui-gold" class="arcade-font text-xs sm:text-base font-black text-amber-400 leading-tight">150</div>
             </div>
 
-            <button id="btn-stages" class="btn-tactile bg-gradient-to-b from-cyan-500 to-blue-700 border-2 border-cyan-200 text-white rounded-xl px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-black flex items-center gap-1">
-                <span>🗺️</span>
-                <span class="hidden sm:inline">16 Bölüm</span>
+            <button id="btn-stages" class="btn-tactile bg-gradient-to-b from-cyan-500 to-blue-700 border-2 border-cyan-200 text-white rounded-xl px-2.5 py-1 text-xs font-black flex items-center gap-1">
+                <span>🗺️</span><span class="hidden sm:inline">Bölümler</span>
             </button>
 
-            <button id="btn-leaderboard" class="btn-tactile bg-gradient-to-b from-yellow-400 to-amber-600 border-2 border-yellow-100 text-slate-950 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-black flex items-center gap-1" title="İlk 10 Puan Tablosu">
-                <span>🏅</span>
-                <span class="hidden sm:inline">İlk 10</span>
+            <button id="btn-arsenal" class="btn-tactile bg-gradient-to-b from-orange-500 to-red-600 border-2 border-yellow-200 text-white rounded-xl px-2.5 py-1 text-xs font-black flex items-center gap-1 relative">
+                <span>🔫</span><span class="hidden sm:inline">Cephanelik</span>
+                <span id="arsenal-badge" class="hidden w-2.5 h-2.5 bg-lime-400 rounded-full border border-slate-950 absolute -top-1 -right-1 animate-ping"></span>
             </button>
 
-            <button id="btn-arsenal" class="btn-tactile bg-gradient-to-b from-orange-500 to-red-600 border-2 border-yellow-200 text-white rounded-xl px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-black flex items-center gap-1 relative">
-                <span>🔫</span>
-                <span class="hidden sm:inline">Cephanelik</span>
-                <span id="arsenal-badge" class="hidden w-3 h-3 bg-lime-400 rounded-full border-2 border-slate-950 absolute -top-1 -right-1 animate-ping"></span>
-            </button>
-
-            <button id="btn-sound" class="btn-tactile bg-slate-800 border-2 border-slate-500 rounded-xl p-1.5 text-sm" title="Ses Aç/Kapat">
-                🔊
-            </button>
+            <button id="btn-leaderboard" class="btn-tactile bg-gradient-to-b from-yellow-400 to-amber-600 border-2 border-yellow-100 text-slate-950 rounded-xl px-2 py-1 text-xs font-black" title="İlk 10 Skor">🏅</button>
+            <button id="btn-fullscreen" class="btn-tactile bg-slate-800 border-2 border-cyan-400 rounded-xl px-2 py-1 text-xs font-black text-cyan-300" title="Tam Ekran">⛶</button>
+            <button id="btn-sound" class="btn-tactile bg-slate-800 border-2 border-slate-500 rounded-xl px-2 py-1 text-xs" title="Ses">🔊</button>
+            <button id="btn-main-menu" class="btn-tactile bg-slate-900 border-2 border-yellow-400 rounded-xl px-2 py-1 text-xs font-black text-yellow-300" title="Ana Menü">🏠</button>
         </div>
     </header>
 
@@ -239,73 +230,31 @@
     <div id="stage-wrapper">
         <canvas id="arenaCanvas"></canvas>
 
-        <!-- TOP LEFT COMPACT ACCOUNT / RANK / XP BAR & ANDROID TABLET QUICK TOGGLES -->
-        <div class="absolute top-2.5 left-2.5 z-20 flex flex-wrap items-center gap-2">
-            <button id="btn-profile" class="btn-tactile bg-slate-950/90 hover:bg-slate-900 border-2 border-cyan-400 rounded-2xl px-2.5 py-1 flex items-center gap-2 shadow-lg">
-                <div id="hud-avatar" class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 border border-cyan-300 flex items-center justify-center text-lg">
-                    🪖
-                </div>
-                <div class="text-left leading-tight">
-                    <div class="flex items-center gap-1.5">
-                        <span id="hud-player-name" class="arcade-font text-xs sm:text-sm font-black text-white">Kaptan1</span>
-                        <span id="hud-level-badge" class="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded">Sv.1</span>
-                    </div>
-                    <div id="hud-rank-title" class="text-[9px] font-extrabold text-cyan-300">Çaylak Nişancı</div>
-                    <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-0.5">
-                        <div id="hud-xp-bar" class="h-full bg-gradient-to-r from-cyan-400 to-lime-400" style="width: 15%;"></div>
-                    </div>
-                </div>
-            </button>
-
-            <button id="btn-missions" class="btn-tactile bg-slate-950/90 hover:bg-slate-900 border-2 border-amber-400 rounded-2xl px-2.5 py-1.5 flex items-center gap-1.5 text-xs font-black text-amber-300">
-                <span>🏆</span>
-                <span class="hidden md:inline">Görevler</span>
-                <span id="mission-badge" class="w-2.5 h-2.5 rounded-full bg-lime-400 animate-ping hidden"></span>
-            </button>
-
-            <!-- iPad & Tablet Smart Offset / Apple Pencil Quick Toggle -->
-            <button id="btn-tablet-mode" class="btn-tactile bg-slate-950/90 border-2 border-emerald-400 rounded-2xl px-2.5 py-1.5 flex items-center gap-1 text-[10px] sm:text-xs font-black text-emerald-300" title="iPad & Tablet Dokunma Modu: Mıknatıs + Parmak Ofseti / Çift Başparmak / Apple Pencil">
-                <span>🍎</span>
-                <span id="lbl-tablet-mode">iPad: Mıknatıs+Ofset</span>
-            </button>
-
-            <!-- Dedicated iPad Fullscreen & Control Center Button -->
-            <button id="btn-fullscreen" class="btn-tactile bg-gradient-to-r from-indigo-600 to-blue-700 border-2 border-cyan-300 rounded-2xl px-2.5 py-1.5 text-[10px] sm:text-xs font-black text-white flex items-center gap-1 shadow-lg" title="iPad Tam Ekran & Sinema Modu">
-                <span>⛶</span>
-                <span id="lbl-fullscreen-btn">iPad TAM EKRAN</span>
-            </button>
-
-            <button id="btn-ipad-guide" class="btn-tactile bg-slate-950/90 border-2 border-pink-400 rounded-2xl px-2.5 py-1.5 text-[10px] sm:text-xs font-black text-pink-300 flex items-center gap-1" title="iPad Safari Ana Ekrana Ekle & Jest Ayarları">
-                <span>📲</span>
-                <span class="hidden sm:inline">iPad Rehberi</span>
-            </button>
-
-            <!-- Return to Main Menu / Title Screen Button -->
-            <button id="btn-main-menu" class="btn-tactile bg-slate-950/90 border-2 border-yellow-400 rounded-2xl px-2.5 py-1.5 text-[10px] sm:text-xs font-black text-yellow-300 flex items-center gap-1" title="Giriş Ekranına Dön">
-                <span>🏠</span>
-                <span class="hidden sm:inline">Ana Menü</span>
-            </button>
+        <div class="hidden">
+            <span id="hud-rank-title">Çaylak Nişancı</span>
+            <span id="lbl-fullscreen-btn">TAM EKRAN</span>
+            <button id="btn-missions"></button>
+            <button id="btn-ipad-guide"></button>
+            <button id="btn-difficulty"><span id="ui-diff-label"></span></button>
+            <button id="btn-tablet-mode"><span id="lbl-tablet-mode"></span></button>
         </div>
 
-        <!-- ANDROID / IPAD VIRTUAL DUAL-THUMB JOYSTICK (Visible when Joystick Mode is active) -->
-        <div id="tablet-joystick-zone" class="hidden absolute left-5 bottom-28 w-40 h-40 rounded-full bg-slate-950/65 border-4 border-cyan-400/60 z-30 flex items-center justify-center shadow-[0_0_25px_rgba(34,211,238,0.3)]">
-            <div id="tablet-joystick-knob" class="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-blue-700 border-2 border-white shadow-lg pointer-events-none flex items-center justify-center text-xs font-black">
+        <!-- ANDROID / IPAD VIRTUAL DUAL-THUMB JOYSTICK (Positioned at left-28 so it NEVER overlaps skill buttons!) -->
+        <div id="tablet-joystick-zone" class="hidden absolute left-24 sm:left-28 bottom-24 w-36 h-36 rounded-full bg-slate-950/70 border-4 border-cyan-400/70 z-30 flex items-center justify-center shadow-[0_0_25px_rgba(34,211,238,0.35)]">
+            <div id="tablet-joystick-knob" class="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 to-blue-700 border-2 border-white shadow-lg pointer-events-none flex items-center justify-center text-[10px] font-black">
                 🎯 NİŞAN
             </div>
         </div>
 
-        <button id="tablet-fire-pad" class="hidden btn-tactile absolute right-28 bottom-28 w-32 h-32 rounded-full bg-gradient-to-br from-red-500 via-orange-600 to-red-900 border-4 border-yellow-300 z-30 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.8)]">
-            <span class="text-3xl">🔥</span>
-            <span class="arcade-font text-xs font-black text-white uppercase">ATEŞ ET!</span>
+        <button id="tablet-fire-pad" class="hidden btn-tactile absolute right-28 sm:right-32 bottom-24 w-28 h-28 rounded-full bg-gradient-to-br from-red-500 via-orange-600 to-red-900 border-4 border-yellow-300 z-30 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.8)]">
+            <span class="text-2xl">🔥</span>
+            <span class="arcade-font text-[11px] font-black text-white uppercase">ATEŞ ET!</span>
         </button>
 
-        <!-- ACTIVE WEAPON SVG PREVIEW CARD ON HUD (Bottom-Left above skills on desktop/tablet) -->
-        <div id="hud-weapon-card" class="pointer-events-none hidden md:flex items-center gap-2.5 absolute left-28 bottom-20 z-10 bg-slate-950/90 border-2 border-orange-500 rounded-2xl px-3 py-1.5 shadow-2xl">
-            <div id="hud-weapon-svg" class="w-24 h-12 flex items-center justify-center"></div>
-            <div class="leading-tight">
-                <div id="hud-weapon-name" class="arcade-font text-xs font-black text-orange-300">Elite Striker</div>
-                <div id="hud-weapon-stats" class="text-[10px] font-extrabold text-cyan-300">Hasar: 28 | Sv.1</div>
-            </div>
+        <div id="hud-weapon-card" class="hidden">
+            <div id="hud-weapon-svg"></div>
+            <div id="hud-weapon-name"></div>
+            <div id="hud-weapon-stats"></div>
         </div>
 
         <!-- TOP CENTER STAGE / BOSS HEALTH BAR & WAVE BANNER -->
@@ -1120,96 +1069,109 @@ const WEAPONS = [
 ];
 
 function generateWeaponSVG(w) {
-    const p = w.colorPrimary;
-    const s = w.colorSecondary;
-    const a = w.accent;
-
-    let specificParts = '';
     switch (w.id) {
         case 'striker':
-            specificParts = `
-                <rect x="75" y="10" width="52" height="10" rx="4" fill="${s}" stroke="${a}" stroke-width="1.5"/>
-                <rect x="160" y="26" width="46" height="14" rx="3" fill="${s}"/>
-                <rect x="198" y="24" width="12" height="18" rx="2" fill="${a}"/>
-                <path d="M105,54 L125,54 L132,88 L108,88 Z" fill="#f97316" stroke="#fff" stroke-width="1.5"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M12,42 L56,36 L56,64 L28,82 L12,78 Z" fill="#1d4ed8" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
+                <rect x="10" y="42" width="8" height="36" rx="2" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <path d="M54,30 L176,30 L182,42 L176,60 L54,60 Z" fill="#2563eb" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
+                <rect x="64" y="36" width="98" height="12" rx="3" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <rect x="85" y="10" width="48" height="14" rx="5" fill="#334155" stroke="#020617" stroke-width="3"/>
+                <circle cx="85" cy="17" r="7" fill="#38bdf8" stroke="#020617" stroke-width="2.5"/>
+                <rect x="98" y="24" width="22" height="6" fill="#1e293b" stroke="#020617" stroke-width="2"/>
+                <path d="M68,60 L86,60 L78,90 L60,90 Z" fill="#334155" stroke="#020617" stroke-width="3"/>
+                <rect x="108" y="58" width="24" height="38" rx="3" fill="#f97316" stroke="#020617" stroke-width="3"/>
+                <line x1="114" y1="64" x2="114" y2="90" stroke="#7c2d12" stroke-width="2.5"/>
+                <line x1="124" y1="64" x2="124" y2="90" stroke="#7c2d12" stroke-width="2.5"/>
+                <rect x="180" y="38" width="46" height="11" rx="3" fill="#f97316" stroke="#020617" stroke-width="3"/>
+            </svg>`;
         case 'shotgun':
-            specificParts = `
-                <rect x="120" y="46" width="58" height="12" rx="4" fill="${a}" stroke="#000" stroke-width="1.5"/>
-                <rect x="165" y="22" width="40" height="24" rx="4" fill="${s}" stroke="${p}" stroke-width="2"/>
-                <circle cx="205" cy="27" r="4" fill="${a}"/>
-                <circle cx="205" cy="34" r="4" fill="${a}"/>
-                <circle cx="205" cy="41" r="4" fill="${a}"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M14,68 L68,38 L195,32 L208,42 L204,64 L78,66 L30,90 Z" fill="#dc2626" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M14,68 L58,44 L66,64 L28,90 Z" fill="#1e293b" stroke="#020617" stroke-width="3"/>
+                <rect x="70" y="26" width="115" height="7" rx="2" fill="#0f172a" stroke="#020617" stroke-width="2.5"/>
+                <rect x="122" y="56" width="64" height="20" rx="6" fill="#1e293b" stroke="#020617" stroke-width="3.5"/>
+                <line x1="134" y1="59" x2="134" y2="73" stroke="#475569" stroke-width="3"/>
+                <line x1="146" y1="59" x2="146" y2="73" stroke="#475569" stroke-width="3"/>
+                <line x1="158" y1="59" x2="158" y2="73" stroke="#475569" stroke-width="3"/>
+                <circle cx="208" cy="44" r="7" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <circle cx="206" cy="58" r="6" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         case 'dualuzi':
-            specificParts = `
-                <rect x="160" y="20" width="44" height="9" rx="3" fill="${a}"/>
-                <rect x="160" y="34" width="44" height="9" rx="3" fill="${p}"/>
-                <circle cx="118" cy="68" r="18" fill="${s}" stroke="${a}" stroke-width="2.5"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <rect x="16" y="28" width="62" height="44" rx="10" fill="#475569" stroke="#020617" stroke-width="3.5"/>
+                <rect x="24" y="22" width="44" height="12" rx="5" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <path d="M72,22 L192,22 L202,34 L202,66 L72,66 Z" fill="#2563eb" stroke="#020617" stroke-width="3.5"/>
+                <rect x="165" y="26" width="42" height="42" rx="6" fill="#f97316" stroke="#020617" stroke-width="3"/>
+                <circle cx="132" cy="72" r="26" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
+                <circle cx="132" cy="72" r="15" fill="#334155" stroke="#020617" stroke-width="2.5"/>
+                <circle cx="212" cy="38" r="7" fill="#fb923c" stroke="#020617" stroke-width="2.5"/>
+                <circle cx="210" cy="56" r="6" fill="#fb923c" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         case 'vortex':
-            specificParts = `
-                <circle cx="115" cy="58" r="20" fill="${p}" stroke="${a}" stroke-width="3"/>
-                <circle cx="115" cy="58" r="9" fill="${a}"/>
-                <rect x="158" y="24" width="46" height="18" rx="6" fill="${s}" stroke="${a}" stroke-width="2"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M16,32 L195,28 L206,42 L198,68 L68,68 L24,86 Z" fill="#22c55e" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
+                <rect x="85" y="24" width="95" height="12" rx="4" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <circle cx="122" cy="68" r="28" fill="#16a34a" stroke="#020617" stroke-width="3.5"/>
+                <circle cx="122" cy="68" r="18" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
+                <ellipse cx="208" cy="46" rx="8" ry="12" fill="#f97316" stroke="#020617" stroke-width="3"/>
+            </svg>`;
         case 'gatling':
-            specificParts = `
-                <rect x="150" y="18" width="58" height="30" rx="4" fill="${s}" stroke="${p}" stroke-width="2"/>
-                <line x1="152" y1="24" x2="206" y2="24" stroke="${a}" stroke-width="3"/>
-                <line x1="152" y1="33" x2="206" y2="33" stroke="${p}" stroke-width="3"/>
-                <line x1="152" y1="42" x2="206" y2="42" stroke="${a}" stroke-width="3"/>
-                <rect x="95" y="54" width="38" height="28" rx="4" fill="${p}" stroke="#fff" stroke-width="1.5"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <rect x="28" y="34" width="106" height="44" rx="8" fill="#a16207" stroke="#020617" stroke-width="3.5"/>
+                <path d="M56,14 L112,14 L112,34 L56,34 Z" fill="none" stroke="#334155" stroke-width="6" stroke-linejoin="round"/>
+                <rect x="134" y="28" width="88" height="42" rx="5" fill="#475569" stroke="#020617" stroke-width="3.5"/>
+                <line x1="136" y1="36" x2="218" y2="36" stroke="#020617" stroke-width="4"/>
+                <line x1="136" y1="48" x2="218" y2="48" stroke="#020617" stroke-width="4"/>
+                <line x1="136" y1="60" x2="218" y2="60" stroke="#020617" stroke-width="4"/>
+                <rect x="92" y="54" width="26" height="44" rx="3" fill="#eab308" stroke="#020617" stroke-width="3"/>
+                <line x1="94" y1="64" x2="116" y2="64" stroke="#713f12" stroke-width="3"/>
+                <line x1="94" y1="74" x2="116" y2="74" stroke="#713f12" stroke-width="3"/>
+                <line x1="94" y1="84" x2="116" y2="84" stroke="#713f12" stroke-width="3"/>
+            </svg>`;
         case 'sniper':
-            specificParts = `
-                <rect x="65" y="6" width="76" height="11" rx="5" fill="${s}" stroke="${a}" stroke-width="2"/>
-                <line x1="80" y1="17" x2="80" y2="24" stroke="${p}" stroke-width="3"/>
-                <line x1="125" y1="17" x2="125" y2="24" stroke="${p}" stroke-width="3"/>
-                <rect x="155" y="27" width="62" height="10" rx="2" fill="${p}" stroke="${a}" stroke-width="1.5"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M10,44 L64,40 L158,40 L166,58 L62,62 L18,84 Z" fill="#f8fafc" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
+                <rect x="68" y="42" width="86" height="10" rx="2" fill="#eab308" stroke="#020617" stroke-width="2"/>
+                <rect x="68" y="14" width="68" height="13" rx="5" fill="#1e293b" stroke="#eab308" stroke-width="2.5"/>
+                <rect x="160" y="44" width="72" height="8" rx="2" fill="#334155" stroke="#020617" stroke-width="2.5"/>
+                <rect x="220" y="42" width="14" height="12" rx="2" fill="#eab308" stroke="#020617" stroke-width="2"/>
+                <rect x="96" y="60" width="22" height="28" rx="2" fill="#475569" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         case 'titan':
-            specificParts = `
-                <rect x="148" y="16" width="45" height="34" rx="6" fill="${s}" stroke="${a}" stroke-width="2"/>
-                <path d="M190,18 L218,33 L190,48 Z" fill="${p}" stroke="#fff" stroke-width="2"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <rect x="22" y="30" width="114" height="46" rx="8" fill="#dc2626" stroke="#020617" stroke-width="3.5"/>
+                <path d="M68,12 L106,12 L100,30 L62,30 Z" fill="none" stroke="#475569" stroke-width="5"/>
+                <rect x="136" y="30" width="76" height="40" rx="6" fill="#475569" stroke="#020617" stroke-width="3.5"/>
+                <ellipse cx="212" cy="50" rx="10" ry="20" fill="#f97316" stroke="#020617" stroke-width="3"/>
+                <circle cx="96" cy="76" r="24" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
+                <circle cx="96" cy="76" r="13" fill="#94a3b8" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         case 'tesla':
-            specificParts = `
-                <ellipse cx="165" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
-                <ellipse cx="182" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
-                <ellipse cx="199" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M14,34 L196,28 L208,42 L202,68 L64,68 L22,88 Z" fill="#0284c7" stroke="#020617" stroke-width="3.5"/>
+                <rect x="128" y="38" width="54" height="16" rx="6" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+                <path d="M132,46 L146,40 L158,52 L176,42" fill="none" stroke="#f43f5e" stroke-width="3"/>
+                <circle cx="112" cy="72" r="26" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
+                <circle cx="112" cy="72" r="14" fill="#0284c7" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         case 'cryo':
-            specificParts = `
-                <rect x="96" y="54" width="34" height="26" rx="8" fill="${a}" stroke="${p}" stroke-width="2"/>
-                <rect x="160" y="22" width="46" height="22" rx="6" fill="${p}" stroke="#fff" stroke-width="2"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M16,34 L192,30 L204,68 L64,68 L24,88 Z" fill="#0284c7" stroke="#020617" stroke-width="3.5"/>
+                <rect x="94" y="24" width="18" height="38" rx="6" fill="#bae6fd" stroke="#020617" stroke-width="2.5"/>
+                <rect x="118" y="24" width="18" height="38" rx="6" fill="#bae6fd" stroke="#020617" stroke-width="2.5"/>
+                <rect x="184" y="32" width="38" height="32" rx="6" fill="#7dd3fc" stroke="#ffffff" stroke-width="3"/>
+                <rect x="86" y="66" width="22" height="30" rx="3" fill="#38bdf8" stroke="#020617" stroke-width="2.5"/>
+            </svg>`;
         default:
-            specificParts = `
-                <circle cx="118" cy="36" r="14" fill="${a}" stroke="#fff" stroke-width="2"/>
-                <rect x="158" y="18" width="52" height="30" rx="8" fill="${p}" stroke="${a}" stroke-width="2.5"/>
-            `;
-            break;
+            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
+                <path d="M14,34 L196,26 L208,68 L64,68 L24,88 Z" fill="#7e22ce" stroke="#020617" stroke-width="3.5"/>
+                <rect x="74" y="26" width="122" height="14" rx="4" fill="#eab308" stroke="#020617" stroke-width="2.5"/>
+                <rect x="122" y="42" width="68" height="14" rx="5" fill="#f0abfc" stroke="#ffffff" stroke-width="2"/>
+                <polygon points="206,38 236,49 206,60" fill="#e879f9" stroke="#ffffff" stroke-width="2"/>
+                <rect x="82" y="10" width="52" height="13" rx="5" fill="#d946ef" stroke="#eab308" stroke-width="2.5"/>
+            </svg>`;
     }
-
-    return `
-    <svg viewBox="0 0 225 95" class="w-full h-full drop-shadow">
-        <path d="M12,26 L52,26 L52,54 L18,64 L12,48 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
-        <rect x="50" y="22" width="114" height="32" rx="8" fill="${p}" stroke="#ffffff" stroke-width="1.8"/>
-        <rect x="62" y="32" width="84" height="8" rx="3" fill="${a}"/>
-        <path d="M68,52 L90,52 L82,86 L60,86 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
-        <path d="M88,52 L102,52 L100,66 L84,66 Z" fill="none" stroke="${a}" stroke-width="2"/>
-        ${specificParts}
-    </svg>`;
 }
 
 // --- 3. SMART SPRITE PRELOADER & AUTO WHITE-BACKGROUND REMOVER (73 CUSTOM ASSETS) ---
@@ -1259,15 +1221,18 @@ function processWhiteBackgroundToTransparent(img) {
         const imgData = octx.getImageData(0, 0, w, h);
         const d = imgData.data;
 
-        // Check top-left & top-right corner pixels to see if image has an opaque white background
         const c1Alpha = d[3];
         const c1Bright = (d[0] + d[1] + d[2]) / 3;
-        if (c1Alpha < 200 || c1Bright < 235) {
-            // Already transparent PNG or dark background
-            return img;
-        }
+        if (c1Alpha < 180 || c1Bright < 205) return img;
 
-        // Flood-fill from borders to remove connected white/light-gray background without erasing white inside characters (like ambulance body)
+        const isLightNeutral = (p) => {
+            const r = d[p], g = d[p + 1], b = d[p + 2];
+            const maxC = Math.max(r, g, b);
+            const minC = Math.min(r, g, b);
+            const avg = (r + g + b) / 3;
+            return avg > 212 && (maxC - minC) < 36;
+        };
+
         const visited = new Uint8Array(w * h);
         const queue = [];
 
@@ -1275,46 +1240,46 @@ function processWhiteBackgroundToTransparent(img) {
             if (x < 0 || x >= w || y < 0 || y >= h) return;
             const idx = y * w + x;
             if (visited[idx]) return;
-            const p = idx * 4;
-            const r = d[p], g = d[p + 1], b = d[p + 2];
-            if (r > 232 && g > 232 && b > 232) {
+            if (isLightNeutral(idx * 4)) {
                 visited[idx] = 1;
                 queue.push(idx);
             }
         };
 
-        for (let x = 0; x < w; x++) {
-            pushIfBg(x, 0);
-            pushIfBg(x, h - 1);
-        }
-        for (let y = 0; y < h; y++) {
-            pushIfBg(0, y);
-            pushIfBg(w - 1, y);
-        }
+        for (let x = 0; x < w; x++) { pushIfBg(x, 0); pushIfBg(x, h - 1); pushIfBg(x, 1); pushIfBg(x, h - 2); }
+        for (let y = 0; y < h; y++) { pushIfBg(0, y); pushIfBg(w - 1, y); pushIfBg(1, y); pushIfBg(w - 2, y); }
 
         while (queue.length > 0) {
             const curr = queue.pop();
-            const p = curr * 4;
-            d[p + 3] = 0; // Make background transparent
-
+            d[curr * 4 + 3] = 0;
             const cx = curr % w;
             const cy = (curr / w) | 0;
-            pushIfBg(cx + 1, cy);
-            pushIfBg(cx - 1, cy);
-            pushIfBg(cx, cy + 1);
-            pushIfBg(cx, cy - 1);
+            pushIfBg(cx + 1, cy); pushIfBg(cx - 1, cy);
+            pushIfBg(cx, cy + 1); pushIfBg(cx, cy - 1);
+            pushIfBg(cx + 1, cy + 1); pushIfBg(cx - 1, cy - 1);
+            pushIfBg(cx + 1, cy - 1); pushIfBg(cx - 1, cy + 1);
         }
 
-        // Soften 1px edge halo
+        // Kanat ve pervane aralarında sıkışmış saf beyaz cepleri de temizle
+        for (let i = 0; i < w * h; i++) {
+            if (!visited[i]) {
+                const p = i * 4;
+                if (d[p] > 246 && d[p + 1] > 246 && d[p + 2] > 246) {
+                    d[p + 3] = 0;
+                    visited[i] = 1;
+                }
+            }
+        }
+
+        // Kenar yumuşatma (Anti-alias)
         for (let y = 1; y < h - 1; y++) {
             for (let x = 1; x < w - 1; x++) {
                 const idx = y * w + x;
                 if (!visited[idx]) {
                     const p = idx * 4;
-                    if (d[p] > 220 && d[p + 1] > 220 && d[p + 2] > 220) {
-                        if (visited[idx - 1] || visited[idx + 1] || visited[idx - w] || visited[idx + w]) {
-                            d[p + 3] = 110;
-                        }
+                    const avg = (d[p] + d[p + 1] + d[p + 2]) / 3;
+                    if (avg > 195 && (visited[idx - 1] || visited[idx + 1] || visited[idx - w] || visited[idx + w])) {
+                        d[p + 3] = avg > 225 ? 0 : Math.max(0, Math.round((235 - avg) * 4));
                     }
                 }
             }
@@ -3171,20 +3136,40 @@ function drawActiveMegaNuke(nk) {
  * Draws player projectiles (uses `Bizim rocet` when firing the Mega Titan Rocket Launcher!)
  */
 function drawProjectile3D(p) {
-    const scale = Math.max(0.28, 1 - p.progress * 0.68);
+    const w = p.weapon;
+    const scale = Math.max(0.32, 1.15 - p.progress * 0.72);
+    const dx = p.targetX - p.startX;
+    const dy = p.targetY - p.startY;
+    const angle = Math.atan2(dy, dx);
+
     ctx.save();
+
+    // Arkasında bıraktığı parlayan mermi izi (Tracer Tail)
+    const tailProg = Math.max(0, p.progress - 0.14);
+    const tailX = p.startX + dx * tailProg;
+    const tailY = p.startY + dy * tailProg - Math.sin(tailProg * Math.PI) * ((w.style === 'SNIPER' || w.style === 'TESLA') ? 6 : 26);
+
+    ctx.strokeStyle = w.accent;
+    ctx.lineWidth = (w.style === 'SNIPER' ? 5 : 3.5) * scale;
+    ctx.shadowColor = w.colorPrimary;
+    ctx.shadowBlur = 14;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
 
-    if (p.weapon.style === 'ROCKET') {
+    // 1. Mega Titan Füzeatar: "Bizim rocet" görseliyle uçar
+    if (w.style === 'ROCKET') {
         const ourRocket = getSpriteDrawable('Bizim rocet');
         if (ourRocket) {
-            const dx = p.targetX - p.startX;
-            const dy = p.targetY - p.startY;
-            ctx.rotate(Math.atan2(dx, -dy) * 0.45);
+            ctx.rotate(Math.atan2(dx, -dy) * 0.55);
             const sw = ourRocket.width || ourRocket.naturalWidth || 50;
             const sh = ourRocket.height || ourRocket.naturalHeight || 140;
-            const dh = 76;
+            const dh = 82;
             const dw = dh * (sw / sh);
             ctx.drawImage(ourRocket, -dw / 2, -dh / 2, dw, dh);
             ctx.restore();
@@ -3192,17 +3177,85 @@ function drawProjectile3D(p) {
         }
     }
 
-    ctx.fillStyle = p.weapon.accent;
-    ctx.shadowColor = p.weapon.colorPrimary;
-    ctx.shadowBlur = 12;
-    ctx.beginPath();
-    ctx.arc(0, 0, p.weapon.style === 'ROCKET' ? 16 : 9, 0, Math.PI * 2);
-    ctx.fill();
+    // 2. Silaha Özel 3D Mermi Çizimleri
+    if (w.style === 'DISC') {
+        // Vortex Pyragon Yeşil-Turuncu Döner Disk
+        ctx.rotate(p.spin || 0);
+        ctx.fillStyle = '#22c55e';
+        ctx.strokeStyle = '#020617';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, 15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.arc(0, 0, 7, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (w.style === 'SHOTGUN') {
+        // Rival Pompalı Sarı Top Saçması
+        ctx.fillStyle = '#facc15';
+        ctx.strokeStyle = '#020617';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    } else if (w.style === 'TESLA') {
+        // Shockwave Tesla Elektrik Küresi
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.arc(0, 0, 11, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-14, -6); ctx.lineTo(0, 8); ctx.lineTo(14, -6);
+        ctx.stroke();
+    } else if (w.style === 'CRYO') {
+        // Sub-Zero Cryo Buz Kristali
+        ctx.rotate(angle + Math.PI / 2);
+        ctx.fillStyle = '#bae6fd';
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -18);
+        ctx.lineTo(10, 0);
+        ctx.lineTo(0, 16);
+        ctx.lineTo(-10, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    } else if (w.style === 'PLASMA') {
+        // Omega Plazma Küresi
+        ctx.rotate(p.spin || 0);
+        ctx.fillStyle = '#f0abfc';
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    } else {
+        // 3D Mavi-Turuncu / Altın Nerf Köpük Dart
+        ctx.rotate(angle + Math.PI / 2);
+        ctx.fillStyle = w.id === 'sniper' ? '#eab308' : '#2563eb';
+        ctx.strokeStyle = '#020617';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(-6, -6, 12, 26, 4);
+        ctx.fill();
+        ctx.stroke();
 
-    ctx.fillStyle = p.weapon.colorPrimary;
-    ctx.beginPath();
-    ctx.arc(0, 0, 5, 0, Math.PI * 2);
-    ctx.fill();
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.roundRect(-6, -18, 12, 13, 6);
+        ctx.fill();
+        ctx.stroke();
+    }
+
     ctx.restore();
 }
 
@@ -3210,115 +3263,378 @@ function drawMorphing3DTurret() {
     const w = getActiveWeapon();
     const aim = computeAimCoordinates();
     const baseX = W * 0.5;
-    const baseY = H + 10;
+    const baseY = H + 12;
 
     const dx = aim.x - baseX;
     const dy = aim.y - (H - 55);
-    const angle = Math.max(-0.85, Math.min(0.85, Math.atan2(dx, -dy) * 0.65));
+    const angle = Math.max(-0.78, Math.min(0.78, Math.atan2(dx, -dy) * 0.62));
 
     ctx.save();
     ctx.translate(baseX, baseY);
     ctx.rotate(angle);
-    ctx.translate(0, state.recoil);
+    ctx.translate(0, state.recoil * 1.35);
 
-    if (w.style === 'GATLING') {
-        ctx.fillStyle = w.colorSecondary;
-        ctx.strokeStyle = w.colorPrimary;
-        ctx.lineWidth = 3;
-        ctx.fillRect(-30, -150, 60, 65);
-        ctx.strokeRect(-30, -150, 60, 65);
-        for (let i = -2; i <= 2; i++) {
-            const bx = i * 10 + Math.sin(state.gatlingSpin + i) * 3;
-            ctx.fillStyle = w.accent;
-            ctx.fillRect(bx - 3, -158, 6, 68);
-        }
-    } else if (w.style === 'DUAL' || w.style === 'CRYO') {
-        [-22, 22].forEach(ox => {
-            ctx.fillStyle = w.colorSecondary;
-            ctx.strokeStyle = w.accent;
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.roundRect(ox - 12, -148, 24, 62, 6);
-            ctx.fill();
-            ctx.stroke();
-        });
-    } else if (w.style === 'SNIPER') {
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([8, 6]);
+    // Namlu Alevi (Muzzle Flash)
+    if (state.recoil > 8) {
+        ctx.save();
+        const flashGrad = ctx.createRadialGradient(0, -168, 4, 0, -168, 46);
+        flashGrad.addColorStop(0, '#ffffff');
+        flashGrad.addColorStop(0.45, w.accent);
+        flashGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+        ctx.fillStyle = flashGrad;
         ctx.beginPath();
-        ctx.moveTo(0, -165);
-        ctx.lineTo(0, -420);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.fillStyle = w.colorSecondary;
-        ctx.strokeStyle = w.colorPrimary;
-        ctx.lineWidth = 3;
-        ctx.fillRect(-12, -172, 24, 85);
-        ctx.strokeRect(-12, -172, 24, 85);
-    } else if (w.style === 'TESLA') {
-        ctx.fillStyle = w.colorSecondary;
-        ctx.fillRect(-20, -148, 40, 60);
-        for (let ry = -140; ry <= -100; ry += 16) {
-            ctx.strokeStyle = w.accent;
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.ellipse(0, ry, 28, 7, 0, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-    } else {
-        ctx.fillStyle = w.colorSecondary;
-        ctx.strokeStyle = w.accent;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(-26, -146, 52, 60, 10);
+        ctx.arc(0, -168, 46, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
+        ctx.restore();
     }
 
-    const bodyGrad = ctx.createLinearGradient(-48, -100, 48, 0);
-    bodyGrad.addColorStop(0, w.colorPrimary);
-    bodyGrad.addColorStop(0.5, w.colorPrimary);
-    bodyGrad.addColorStop(1, '#0f172a');
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 
-    ctx.fillStyle = bodyGrad;
-    ctx.strokeStyle = w.accent;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(-36, -98);
-    ctx.lineTo(36, -98);
-    ctx.lineTo(52, -20);
-    ctx.lineTo(-52, -20);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    switch (w.id) {
+        case 'striker': {
+            ctx.fillStyle = '#f97316';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.roundRect(-9, -182, 18, 52, 6);
+            ctx.fill(); ctx.stroke();
 
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.moveTo(-30, -135);
+            ctx.lineTo(30, -135);
+            ctx.lineTo(44, -20);
+            ctx.lineTo(-44, -20);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.roundRect(-14, -132, 28, 86, 5);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.roundRect(-16, -98, 32, 46, 10);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.ellipse(0, -54, 12, 7, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+        case 'shotgun': {
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.roundRect(-24, -158, 48, 55, 10);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.moveTo(-28, -135);
+            ctx.lineTo(28, -135);
+            ctx.lineTo(40, -18);
+            ctx.lineTo(-40, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.roundRect(-10, -142, 20, 95, 4);
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+        case 'dualuzi': {
+            ctx.fillStyle = '#f97316';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.ellipse(36, -86, 24, 32, 0.2, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath();
+            ctx.ellipse(36, -86, 14, 20, 0.2, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f97316';
+            [-14, 14].forEach(ox => {
+                ctx.beginPath();
+                ctx.roundRect(ox - 9, -162, 18, 36, 5);
+                ctx.fill(); ctx.stroke();
+            });
+
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.moveTo(-32, -132);
+            ctx.lineTo(32, -132);
+            ctx.lineTo(44, -18);
+            ctx.lineTo(-44, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.roundRect(-22, -74, 44, 34, 8);
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+        case 'vortex': {
+            ctx.fillStyle = '#16a34a';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.ellipse(34, -84, 26, 30, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.roundRect(-20, -158, 40, 32, 8);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.moveTo(-30, -132);
+            ctx.lineTo(30, -132);
+            ctx.lineTo(42, -18);
+            ctx.lineTo(-42, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.roundRect(-12, -130, 24, 84, 5);
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+        case 'gatling': {
+            ctx.fillStyle = '#475569';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.roundRect(-28, -178, 56, 68, 8);
+            ctx.fill(); ctx.stroke();
+
+            for (let i = -2; i <= 2; i++) {
+                const bx = i * 9 + Math.sin(state.gatlingSpin + i) * 3.5;
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillRect(bx - 3, -184, 6, 70);
+                ctx.strokeRect(bx - 3, -184, 6, 70);
+            }
+            ctx.fillStyle = '#334155';
+            ctx.beginPath();
+            ctx.roundRect(-30, -166, 60, 12, 4);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#eab308';
+            for (let by = -108; by <= -52; by += 12) {
+                ctx.beginPath();
+                ctx.roundRect(26, by, 22, 8, 2);
+                ctx.fill(); ctx.stroke();
+            }
+
+            ctx.fillStyle = '#a16207';
+            ctx.beginPath();
+            ctx.moveTo(-36, -118);
+            ctx.lineTo(36, -118);
+            ctx.lineTo(48, -18);
+            ctx.lineTo(-48, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(-26, -108); ctx.lineTo(-26, -124); ctx.lineTo(26, -124); ctx.lineTo(26, -108);
+            ctx.stroke();
+            break;
+        }
+        case 'sniper': {
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.65)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([8, 6]);
+            ctx.beginPath();
+            ctx.moveTo(0, -195);
+            ctx.lineTo(0, -450);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.roundRect(-7, -205, 14, 85, 3);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.roundRect(-9, -208, 18, 14, 3);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.moveTo(-26, -126);
+            ctx.lineTo(26, -126);
+            ctx.lineTo(38, -18);
+            ctx.lineTo(-38, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.roundRect(-14, -124, 28, 86, 5);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.roundRect(-15, -106, 30, 56, 10);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#eab308';
+            ctx.fillRect(-15, -96, 30, 6);
+            break;
+        }
+        case 'titan': {
+            ctx.fillStyle = '#f97316';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.ellipse(38, -84, 26, 32, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.roundRect(-28, -168, 56, 52, 10);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.roundRect(-30, -172, 60, 14, 5);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.moveTo(-36, -122);
+            ctx.lineTo(36, -122);
+            ctx.lineTo(48, -18);
+            ctx.lineTo(-48, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+        case 'tesla': {
+            ctx.fillStyle = '#f97316';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.ellipse(34, -88, 25, 30, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.moveTo(-30, -148);
+            ctx.lineTo(30, -148);
+            ctx.lineTo(44, -18);
+            ctx.lineTo(-44, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 16;
+            ctx.beginPath();
+            ctx.roundRect(-12, -138, 24, 68, 6);
+            ctx.fill(); ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = '#67e8f9';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-26, -135);
+            ctx.lineTo(-34 + Math.random() * 8, -110);
+            ctx.lineTo(-22, -85);
+            ctx.moveTo(26, -135);
+            ctx.lineTo(34 - Math.random() * 8, -110);
+            ctx.lineTo(22, -85);
+            ctx.stroke();
+            break;
+        }
+        case 'cryo': {
+            ctx.fillStyle = '#e0f2fe';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.roundRect(-22, -166, 44, 38, 8);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#0284c7';
+            ctx.beginPath();
+            ctx.moveTo(-32, -134);
+            ctx.lineTo(32, -134);
+            ctx.lineTo(44, -18);
+            ctx.lineTo(-44, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 6;
+            [-24, 24].forEach(tx => {
+                ctx.beginPath();
+                ctx.moveTo(tx, -120);
+                ctx.quadraticCurveTo(tx * 1.4, -95, tx, -70);
+                ctx.stroke();
+            });
+            break;
+        }
+        default: {
+            ctx.fillStyle = '#e879f9';
+            ctx.strokeStyle = '#020617';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#d946ef';
+            ctx.shadowBlur = 18;
+            ctx.beginPath();
+            ctx.roundRect(-18, -172, 36, 42, 8);
+            ctx.fill(); ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#7e22ce';
+            ctx.beginPath();
+            ctx.moveTo(-32, -136);
+            ctx.lineTo(32, -136);
+            ctx.lineTo(46, -18);
+            ctx.lineTo(-46, -18);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.roundRect(-16, -132, 32, 86, 6);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#a855f7';
+            ctx.beginPath();
+            ctx.roundRect(-14, -96, 28, 44, 10);
+            ctx.fill(); ctx.stroke();
+            break;
+        }
+    }
+
+    // Dijital Mermi Sayacı Ekranı
     ctx.fillStyle = '#020617';
     ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.roundRect(-24, -68, 48, 26, 6);
+    ctx.roundRect(-24, -46, 48, 24, 6);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = state.reloading > 0 ? '#facc15' : '#a3e635';
-    ctx.font = '900 14px "Fredoka"';
+    ctx.font = '900 13px "Fredoka"';
     ctx.textAlign = 'center';
-    ctx.fillText(state.reloading > 0 ? 'DOLUM' : state.ammo, 0, -50);
-
-    [-46, 46].forEach(hx => {
-        ctx.fillStyle = '#0f172a';
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(hx - 10, -58, 20, 44, 6);
-        ctx.fill();
-        ctx.stroke();
-    });
+    ctx.fillText(state.reloading > 0 ? 'DOLUM' : state.ammo, 0, -30);
 
     ctx.restore();
 }
+
 
 function drawSmartCrosshair() {
     const aim = computeAimCoordinates();
