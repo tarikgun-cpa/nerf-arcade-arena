@@ -6,7 +6,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Nerf Arcade">
-    <title>NERF ARCADE: Ultra Blaster Arena (iPad Edition)</title>
+    <title>NERF ARCADE: Ultra Blaster Arena (GUN Brothers Edition)</title>
+    <!-- Oyun Sekme İkonu (Favicon) ve iPad Ana Ekran İkonu -->
+    <link rel="icon" type="image/x-icon" href="Logo-Nerf.ico?v=2">
+    <link rel="shortcut icon" type="image/x-icon" href="Logo-Nerf.ico?v=2">
+    <link rel="apple-touch-icon" href="Logo-Nerf.ico?v=2">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -714,187 +718,9 @@
                 };
                 tester.src = testUrl;
             }
-            tryLoadLogo();
+           tryLoadLogo();
         })();
         </script>
-    </div>
-
-        <!-- Centerpiece Logo Artwork ("ENVER URAS EDITIONS - NERF ARCADE: ULTRA BLASTER ARENA") -->
-        <div class="my-auto flex flex-col items-center justify-center w-full max-w-4xl py-2">
-            <div class="logo-float relative w-full max-w-3xl flex items-center justify-center">
-                <!-- Optional local image if placed in same folder, falls back seamlessly to the custom high-detail SVG replica below -->
-                <img id="custom-logo-img" src="Logo Nerf.jpg" alt="Nerf Arcade Logo" class="hidden w-full max-h-[44vh] object-contain rounded-3xl border-2 border-cyan-400/50 shadow-[0_0_70px_rgba(249,115,22,0.65)]" onload="this.classList.remove('hidden'); document.getElementById('svg-logo-replica').classList.add('hidden');" onerror="this.classList.add('hidden');" />
-
-                <!-- High-Definition Custom SVG Replica of the User's "ENVER URAS EDITIONS - NERF ARCADE: ULTRA BLASTER ARENA" Logo -->
-                <div id="svg-logo-replica" class="w-full max-w-3xl">
-                    <svg viewBox="0 0 960 470" class="w-full h-auto max-h-[43vh] drop-shadow-[0_0_40px_rgba(56,189,248,0.45)]">
-                        <defs>
-                            <radialGradient id="bgGlow" cx="50%" cy="50%" r="52%">
-                                <stop offset="0%" stop-color="#0284c7" stop-opacity="0.45"/>
-                                <stop offset="55%" stop-color="#1e1b4b" stop-opacity="0.25"/>
-                                <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
-                            </radialGradient>
-                            <linearGradient id="arcadeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#fef08a"/>
-                                <stop offset="45%" stop-color="#facc15"/>
-                                <stop offset="85%" stop-color="#ea580c"/>
-                                <stop offset="100%" stop-color="#9a3412"/>
-                            </linearGradient>
-                            <linearGradient id="nerfGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#fb923c"/>
-                                <stop offset="50%" stop-color="#f97316"/>
-                                <stop offset="100%" stop-color="#dc2626"/>
-                            </linearGradient>
-                            <linearGradient id="enverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#facc15"/>
-                                <stop offset="55%" stop-color="#fb923c"/>
-                                <stop offset="100%" stop-color="#e2e8f0"/>
-                            </linearGradient>
-                            <linearGradient id="ultraGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#22d3ee"/>
-                                <stop offset="50%" stop-color="#a3e635"/>
-                                <stop offset="100%" stop-color="#f8fafc"/>
-                            </linearGradient>
-                            <linearGradient id="plateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#1e293b"/>
-                                <stop offset="50%" stop-color="#090d16"/>
-                                <stop offset="100%" stop-color="#020617"/>
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Background Cyber Grid & Radial Glow -->
-                        <circle cx="480" cy="245" r="230" fill="url(#bgGlow)"/>
-
-                        <!-- Outer Neon Target Reticle Rings -->
-                        <circle cx="480" cy="245" r="192" fill="#040b1a" stroke="#38bdf8" stroke-width="6"/>
-                        <circle cx="480" cy="245" r="174" fill="none" stroke="#f97316" stroke-width="5" stroke-dasharray="68 24"/>
-                        <circle cx="480" cy="245" r="154" fill="none" stroke="#22d3ee" stroke-width="3" opacity="0.7"/>
-                        <!-- Target Crosshair Lines -->
-                        <line x1="480" y1="40" x2="480" y2="95" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
-                        <line x1="480" y1="395" x2="480" y2="448" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
-
-                        <!-- Dynamic Laser Beams & Flying Nerf Foam Darts -->
-                        <g stroke-linecap="round">
-                            <line x1="40" y1="65" x2="255" y2="165" stroke="#38bdf8" stroke-width="6" opacity="0.9"/>
-                            <line x1="40" y1="65" x2="255" y2="165" stroke="#ffffff" stroke-width="2"/>
-                            <line x1="920" y1="65" x2="705" y2="165" stroke="#f97316" stroke-width="6" opacity="0.9"/>
-                            <line x1="920" y1="65" x2="705" y2="165" stroke="#fef08a" stroke-width="2"/>
-                            <line x1="160" y1="410" x2="310" y2="335" stroke="#a3e635" stroke-width="5"/>
-                            <line x1="800" y1="410" x2="650" y2="335" stroke="#a3e635" stroke-width="5"/>
-                        </g>
-
-                        <!-- Flying Foam Darts in Corners -->
-                        <g transform="translate(95, 92) rotate(26)">
-                            <rect x="0" y="-6" width="42" height="12" rx="4" fill="#2563eb" stroke="#38bdf8" stroke-width="1.5"/>
-                            <rect x="34" y="-6" width="14" height="12" rx="5" fill="#f97316"/>
-                        </g>
-                        <g transform="translate(105, 165) rotate(18)">
-                            <rect x="0" y="-6" width="40" height="12" rx="4" fill="#f97316" stroke="#fde047" stroke-width="1.5"/>
-                            <rect x="32" y="-6" width="14" height="12" rx="5" fill="#3b82f6"/>
-                        </g>
-                        <g transform="translate(185, 392) rotate(-28)">
-                            <rect x="0" y="-6" width="46" height="12" rx="4" fill="#84cc16" stroke="#ecfccb" stroke-width="1.5"/>
-                            <rect x="36" y="-6" width="14" height="12" rx="5" fill="#2563eb"/>
-                        </g>
-                        <g transform="translate(835, 95) rotate(-25) scale(-1,1)">
-                            <rect x="0" y="-6" width="42" height="12" rx="4" fill="#2563eb" stroke="#38bdf8" stroke-width="1.5"/>
-                            <rect x="34" y="-6" width="14" height="12" rx="5" fill="#f97316"/>
-                        </g>
-                        <g transform="translate(765, 392) rotate(28) scale(-1,1)">
-                            <rect x="0" y="-6" width="46" height="12" rx="4" fill="#84cc16" stroke="#ecfccb" stroke-width="1.5"/>
-                            <rect x="36" y="-6" width="14" height="12" rx="5" fill="#2563eb"/>
-                        </g>
-
-                        <!-- Left Crossed Nerf Elite Blaster (Orange & Blue) -->
-                        <g transform="translate(275, 155) rotate(24)">
-                            <rect x="-85" y="-22" width="135" height="44" rx="8" fill="#f97316" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="-55" y="-12" width="95" height="16" rx="4" fill="#2563eb"/>
-                            <rect x="-105" y="-14" width="26" height="28" rx="5" fill="#ea580c" stroke="#fde047" stroke-width="2"/>
-                            <circle cx="-105" cy="0" r="8" fill="#38bdf8"/>
-                        </g>
-
-                        <!-- Right Crossed Nerf Elite Blaster (Blue & Orange) -->
-                        <g transform="translate(685, 155) rotate(-24) scale(-1, 1)">
-                            <rect x="-85" y="-22" width="135" height="44" rx="8" fill="#2563eb" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="-55" y="-12" width="95" height="16" rx="4" fill="#f97316"/>
-                            <rect x="-105" y="-14" width="26" height="28" rx="5" fill="#ea580c" stroke="#fde047" stroke-width="2"/>
-                            <circle cx="-105" cy="0" r="8" fill="#fde047"/>
-                        </g>
-
-                        <!-- Top Header: "GUN Brothers" -->
-                        <g>
-                            <text x="480" y="34" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="900" font-size="27" letter-spacing="3" fill="url(#enverGrad)" stroke="#020617" stroke-width="5" paint-order="stroke">
-                                GUN Brothers
-                            </text>
-                        </g>
-
-                        <!-- Center Top: Iconic "NERF" Swoosh Emblem -->
-                        <g transform="translate(480, 136) rotate(-8)">
-                            <ellipse cx="0" cy="0" rx="142" ry="54" fill="#020617" stroke="#f97316" stroke-width="5"/>
-                            <path d="M-130,10 Q-20,-48 128,-12 Q40,46 -130,10 Z" fill="url(#nerfGrad)"/>
-                            <text x="0" y="18" text-anchor="middle" font-family="'Fredoka', sans-serif" font-style="italic" font-weight="900" font-size="74" letter-spacing="2" fill="#f97316" stroke="#020617" stroke-width="10" paint-order="stroke">
-                                NERF
-                            </text>
-                        </g>
-
-                        <!-- Main Metallic Hexagonal Arcade Shield Plate -->
-                        <polygon points="175,195 785,195 815,270 785,355 175,355 145,270" fill="url(#plateGrad)" stroke="#cbd5e1" stroke-width="8" stroke-linejoin="round"/>
-                        <polygon points="183,203 777,203 804,270 777,347 183,347 156,270" fill="none" stroke="#38bdf8" stroke-width="2.5" opacity="0.8"/>
-
-                        <!-- Giant 3D Extruded "ARCADE" Typography -->
-                        <text x="480" y="294" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="900" font-size="112" letter-spacing="4" fill="#1e3a8a" stroke="#020617" stroke-width="18" paint-order="stroke">
-                            ARCADE
-                        </text>
-                        <text x="480" y="284" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="900" font-size="112" letter-spacing="4" fill="url(#arcadeGrad)" stroke="#0f172a" stroke-width="10" paint-order="stroke">
-                            ARCADE
-                        </text>
-
-                        <!-- Sub-Banner: "ULTRA BLASTER ARENA" -->
-                        <rect x="195" y="305" width="570" height="40" rx="12" fill="#020617" stroke="#38bdf8" stroke-width="2.5"/>
-                        <text x="480" y="333" text-anchor="middle" font-family="'Nunito', sans-serif" font-style="italic" font-weight="900" font-size="29" letter-spacing="3.5" fill="url(#ultraGrad)">
-                            ULTRA BLASTER ARENA
-                        </text>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Player Name, Difficulty & Control Quick Setup Bar before hitting PLAY -->
-            <div class="w-full max-w-2xl bg-slate-900/90 border-2 border-slate-700 rounded-3xl p-3 sm:p-4 mt-1 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <span class="text-xl">🪖</span>
-                    <div class="flex-1">
-                        <label class="text-[10px] font-black text-cyan-300 uppercase block leading-none mb-1">OYUNCU / KAPTAN ADIN</label>
-                        <input id="start-player-name" type="text" maxlength="16" placeholder="Adını Yaz (Örn: Enver Uras)" class="w-full sm:w-48 bg-slate-950 border-2 border-cyan-500/60 focus:border-yellow-400 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-black text-white outline-none" style="user-select: text; -webkit-user-select: text; touch-action: manipulation;" />
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                    <div>
-                        <div class="text-[10px] font-black text-amber-300 uppercase leading-none mb-1">ZORLUK SEVİYESİ</div>
-                        <button id="btn-start-diff" class="btn-tactile bg-gradient-to-b from-purple-600 to-indigo-900 border-2 border-purple-300 rounded-xl px-3 py-1.5 text-xs font-black text-white flex items-center gap-1.5">
-                            <span>⚡</span>
-                            <span id="lbl-start-diff">Atari Ustası (1.35x🪙)</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GIANT GLOWING PLAY / START GAME BUTTON -->
-            <button id="btn-play-game" class="play-btn-glow mt-4 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 hover:from-yellow-300 hover:to-orange-500 text-slate-950 border-4 border-yellow-200 rounded-full px-10 sm:px-16 py-3.5 sm:py-4 flex items-center gap-3 cursor-pointer active:translate-y-1 transition-all">
-                <span class="text-2xl sm:text-4xl">▶️</span>
-                <div class="text-left leading-none">
-                    <div class="arcade-font text-xl sm:text-3xl font-black tracking-wider text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">PLAY / OYUNA BAŞLA</div>
-                    <div class="text-[10px] sm:text-xs font-black text-yellow-100 tracking-widest uppercase mt-0.5">16 BÖLÜM • 73 ÖZEL HEDEF GÖRSELİ • 10 ULTRA SİLAH</div>
-                </div>
-            </button>
-        </div>
-
-        <!-- Bottom Feature Highlights Bar -->
-        <div class="w-full max-w-4xl grid grid-cols-3 gap-2 text-center text-[10px] sm:text-xs font-extrabold text-slate-300 bg-slate-900/80 border border-slate-800 rounded-2xl p-2">
-            <div>🍎 <span class="text-cyan-300">iPad & Apple Pencil</span> Tam Uyumlu</div>
-            <div>🦖 <span class="text-amber-300">73 Özel Tasarım</span> Hedef, Boss & Füze Görseli</div>
-            <div>🏅 <span class="text-lime-300">İlk 10 Şeref Kürsüsü</span> Canlı Bulut Kayıt</div>
-        </div>
     </div>
 </div>
 
