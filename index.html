@@ -1068,110 +1068,184 @@ const WEAPONS = [
     }
 ];
 
+// --- OTOMATİK SİLAH GÖRSELİ KESİCİ VE ARKA PLAN TEMİZLEYİCİ (SPRITE SHEET SLICER) ---
+const WEAPON_IMAGE_CACHE = {
+    armoryDataUrls: {},   // Cephanelik ve Alt Bar için kesilmiş PNG DataURL'leri
+    turretCanvases: {},   // Oyun ekranı 3D Taret için kesilmiş Canvas'lar
+    ready: false
+};
+
+// 1. "Oyun ekranı silah.jpg" (5 Sütun x 2 Satır = 10 Silahın Tamamı) koordinatları
+const TURRET_SHEET_COORDS = {
+    striker: { col: 0, row: 0 },
+    shotgun: { col: 1, row: 0 },
+    dualuzi: { col: 2, row: 0 },
+    vortex:  { col: 3, row: 0 },
+    gatling: { col: 4, row: 0 },
+    titan:   { col: 0, row: 1 },
+    sniper:  { col: 1, row: 1 },
+    tesla:   { col: 2, row: 1 },
+    cryo:    { col: 3, row: 1 },
+    omega:   { col: 4, row: 1 }
+};
+
+// 2. "Silah gorsel.jpg" (3 Sütun x 3 Satır = 9 Silah) koordinatları
+const ARMORY_SHEET_COORDS = {
+    striker: { col: 0, row: 0 },
+    shotgun: { col: 1, row: 0 },
+    dualuzi: { col: 2, row: 0 },
+    vortex:  { col: 0, row: 1 },
+    sniper:  { col: 1, row: 1 },
+    tesla:   { col: 2, row: 1 },
+    titan:   { col: 0, row: 2 },
+    cryo:    { col: 1, row: 2 },
+    omega:   { col: 2, row: 2 }
+    // Not: 'gatling' (Vulcan Minigun) bu tabloda yer almadığı için otomatik olarak üstteki 3D görselden alınır
+};
+
+function sliceAndCleanWeaponCell(sourceImg, sx, sy, sw, sh) {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(sw));
+    c.height = Math.max(1, Math.round(sh));
+    const cctx = c.getContext('2d');
+    cctx.drawImage(sourceImg, sx, sy, sw, sh, 0, 0, c.width, c.height);
+
+    try {
+        const w = c.width, h = c.height;
+        const imgData = cctx.getImageData(0, 0, w, h);
+        const d = imgData.data;
+        const visited = new Uint8Array(w * h);
+        const queue = [];
+
+        // Koyu lacivert/antrasit arka planı algılar ama silahların siyah dış konturuna (parlaklık < 15) dokunmaz
+        const isDarkSheetBg = (p) => {
+            const r = d[p], g = d[p + 1], b = d[p + 2];
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const sat = max - min;
+            const lum = (r + g + b) / 3;
+            return lum >= 15 && lum <= 62 && sat <= 34 && b >= r - 10;
+        };
+
+        const pushIfBg = (x, y) => {
+            if (x < 0 || x >= w || y < 0 || y >= h) return;
+            const idx = y * w + x;
+            if (visited[idx]) return;
+            if (isDarkSheetBg(idx * 4)) {
+                visited[idx] = 1;
+                queue.push(idx);
+            }
+        };
+
+        for (let x = 0; x < w; x++) { pushIfBg(x, 0); pushIfBg(x, h - 1); pushIfBg(x, 2); pushIfBg(x, h - 3); }
+        for (let y = 0; y < h; y++) { pushIfBg(0, y); pushIfBg(w - 1, y); pushIfBg(2, y); pushIfBg(w - 3, y); }
+
+        while (queue.length > 0) {
+            const curr = queue.pop();
+            d[curr * 4 + 3] = 0;
+            const cx = curr % w;
+            const cy = (curr / w) | 0;
+            pushIfBg(cx + 1, cy); pushIfBg(cx - 1, cy);
+            pushIfBg(cx, cy + 1); pushIfBg(cx, cy - 1);
+            pushIfBg(cx + 1, cy + 1); pushIfBg(cx - 1, cy - 1);
+            pushIfBg(cx + 1, cy - 1); pushIfBg(cx - 1, cy + 1);
+        }
+
+        // Silah kabzası ve tetik korkuluğu içindeki kapalı koyu arka plan boşluklarını da temizle
+        for (let i = 0; i < w * h; i++) {
+            if (!visited[i]) {
+                const p = i * 4;
+                const r = d[p], g = d[p + 1], b = d[p + 2];
+                if (r >= 20 && r <= 44 && g >= 24 && g <= 48 && b >= 28 && b <= 56 && Math.abs(r - g) < 10) {
+                    d[p + 3] = 0;
+                }
+            }
+        }
+
+        cctx.putImageData(imgData, 0, 0);
+    } catch (e) {}
+
+    return c;
+}
+
+function loadImageWithCandidates(candidates, onSuccess) {
+    let idx = 0;
+    const tryLoad = () => {
+        if (idx >= candidates.length) return;
+        const img = new Image();
+        img.onload = () => onSuccess(img);
+        img.onerror = () => { idx++; tryLoad(); };
+        img.src = candidates[idx];
+    };
+    tryLoad();
+}
+
+function initWeaponSheets() {
+    // A) "Oyun ekranı silah.jpg" yükle ve 10 adet 3D Taret silahını kes
+    loadImageWithCandidates(
+        ['Oyun ekranı silah.jpg', 'Oyun ekranı silah_2.jpg', 'Oyun ekrani silah.jpg', 'Oyun ekranı silah.png'],
+        (img) => {
+            const cellW = img.naturalWidth / 5;
+            const cellH = img.naturalHeight / 2;
+            Object.keys(TURRET_SHEET_COORDS).forEach(id => {
+                const { col, row } = TURRET_SHEET_COORDS[id];
+                // Üstteki başlık yazısını (%19) ve en alttaki bar izini (%14) kırparak sadece 3D silahı al
+                const sx = col * cellW + cellW * 0.02;
+                const sy = row * cellH + cellH * 0.19;
+                const sw = cellW * 0.96;
+                const sh = cellH * 0.67;
+                const canvasSlice = sliceAndCleanWeaponCell(img, sx, sy, sw, sh);
+                WEAPON_IMAGE_CACHE.turretCanvases[id] = canvasSlice;
+                // Vulcan Minigun veya yedek olarak Cephanelik görselini de ata
+                if (!WEAPON_IMAGE_CACHE.armoryDataUrls[id]) {
+                    try { WEAPON_IMAGE_CACHE.armoryDataUrls[id] = canvasSlice.toDataURL(); } catch (e) {}
+                }
+            });
+            WEAPON_IMAGE_CACHE.ready = true;
+            if (typeof renderWeaponHotbar === 'function') renderWeaponHotbar();
+            if (typeof updateHUD === 'function') updateHUD();
+        }
+    );
+
+    // B) "Silah gorsel.jpg" yükle ve Cephanelik / Alt Bar silahlarını kes
+    loadImageWithCandidates(
+        ['Silah gorsel.jpg', 'Silah gorsel_2.jpg', 'Silah görsel.jpg', 'Silah gorsel.png'],
+        (img) => {
+            const cellW = img.naturalWidth / 3;
+            const cellH = img.naturalHeight / 3;
+            Object.keys(ARMORY_SHEET_COORDS).forEach(id => {
+                const { col, row } = ARMORY_SHEET_COORDS[id];
+                // Çerçeve içindeki üst ve alt sarı yazıları dışarıda bırakıp sadece yan profil silahı al
+                const sx = col * cellW + cellW * 0.04;
+                const sy = row * cellH + cellH * 0.18;
+                const sw = cellW * 0.92;
+                const sh = cellH * 0.64;
+                const canvasSlice = sliceAndCleanWeaponCell(img, sx, sy, sw, sh);
+                try { WEAPON_IMAGE_CACHE.armoryDataUrls[id] = canvasSlice.toDataURL(); } catch (e) {}
+            });
+            if (typeof renderWeaponHotbar === 'function') renderWeaponHotbar();
+            if (typeof updateHUD === 'function') updateHUD();
+        }
+    );
+}
+initWeaponSheets();
+
 function generateWeaponSVG(w) {
-    switch (w.id) {
-        case 'striker':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M12,42 L56,36 L56,64 L28,82 L12,78 Z" fill="#1d4ed8" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
-                <rect x="10" y="42" width="8" height="36" rx="2" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <path d="M54,30 L176,30 L182,42 L176,60 L54,60 Z" fill="#2563eb" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
-                <rect x="64" y="36" width="98" height="12" rx="3" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <rect x="85" y="10" width="48" height="14" rx="5" fill="#334155" stroke="#020617" stroke-width="3"/>
-                <circle cx="85" cy="17" r="7" fill="#38bdf8" stroke="#020617" stroke-width="2.5"/>
-                <rect x="98" y="24" width="22" height="6" fill="#1e293b" stroke="#020617" stroke-width="2"/>
-                <path d="M68,60 L86,60 L78,90 L60,90 Z" fill="#334155" stroke="#020617" stroke-width="3"/>
-                <rect x="108" y="58" width="24" height="38" rx="3" fill="#f97316" stroke="#020617" stroke-width="3"/>
-                <line x1="114" y1="64" x2="114" y2="90" stroke="#7c2d12" stroke-width="2.5"/>
-                <line x1="124" y1="64" x2="124" y2="90" stroke="#7c2d12" stroke-width="2.5"/>
-                <rect x="180" y="38" width="46" height="11" rx="3" fill="#f97316" stroke="#020617" stroke-width="3"/>
-            </svg>`;
-        case 'shotgun':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M14,68 L68,38 L195,32 L208,42 L204,64 L78,66 L30,90 Z" fill="#dc2626" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
-                <path d="M14,68 L58,44 L66,64 L28,90 Z" fill="#1e293b" stroke="#020617" stroke-width="3"/>
-                <rect x="70" y="26" width="115" height="7" rx="2" fill="#0f172a" stroke="#020617" stroke-width="2.5"/>
-                <rect x="122" y="56" width="64" height="20" rx="6" fill="#1e293b" stroke="#020617" stroke-width="3.5"/>
-                <line x1="134" y1="59" x2="134" y2="73" stroke="#475569" stroke-width="3"/>
-                <line x1="146" y1="59" x2="146" y2="73" stroke="#475569" stroke-width="3"/>
-                <line x1="158" y1="59" x2="158" y2="73" stroke="#475569" stroke-width="3"/>
-                <circle cx="208" cy="44" r="7" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <circle cx="206" cy="58" r="6" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        case 'dualuzi':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <rect x="16" y="28" width="62" height="44" rx="10" fill="#475569" stroke="#020617" stroke-width="3.5"/>
-                <rect x="24" y="22" width="44" height="12" rx="5" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <path d="M72,22 L192,22 L202,34 L202,66 L72,66 Z" fill="#2563eb" stroke="#020617" stroke-width="3.5"/>
-                <rect x="165" y="26" width="42" height="42" rx="6" fill="#f97316" stroke="#020617" stroke-width="3"/>
-                <circle cx="132" cy="72" r="26" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
-                <circle cx="132" cy="72" r="15" fill="#334155" stroke="#020617" stroke-width="2.5"/>
-                <circle cx="212" cy="38" r="7" fill="#fb923c" stroke="#020617" stroke-width="2.5"/>
-                <circle cx="210" cy="56" r="6" fill="#fb923c" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        case 'vortex':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M16,32 L195,28 L206,42 L198,68 L68,68 L24,86 Z" fill="#22c55e" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
-                <rect x="85" y="24" width="95" height="12" rx="4" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <circle cx="122" cy="68" r="28" fill="#16a34a" stroke="#020617" stroke-width="3.5"/>
-                <circle cx="122" cy="68" r="18" fill="#f97316" stroke="#020617" stroke-width="2.5"/>
-                <ellipse cx="208" cy="46" rx="8" ry="12" fill="#f97316" stroke="#020617" stroke-width="3"/>
-            </svg>`;
-        case 'gatling':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <rect x="28" y="34" width="106" height="44" rx="8" fill="#a16207" stroke="#020617" stroke-width="3.5"/>
-                <path d="M56,14 L112,14 L112,34 L56,34 Z" fill="none" stroke="#334155" stroke-width="6" stroke-linejoin="round"/>
-                <rect x="134" y="28" width="88" height="42" rx="5" fill="#475569" stroke="#020617" stroke-width="3.5"/>
-                <line x1="136" y1="36" x2="218" y2="36" stroke="#020617" stroke-width="4"/>
-                <line x1="136" y1="48" x2="218" y2="48" stroke="#020617" stroke-width="4"/>
-                <line x1="136" y1="60" x2="218" y2="60" stroke="#020617" stroke-width="4"/>
-                <rect x="92" y="54" width="26" height="44" rx="3" fill="#eab308" stroke="#020617" stroke-width="3"/>
-                <line x1="94" y1="64" x2="116" y2="64" stroke="#713f12" stroke-width="3"/>
-                <line x1="94" y1="74" x2="116" y2="74" stroke="#713f12" stroke-width="3"/>
-                <line x1="94" y1="84" x2="116" y2="84" stroke="#713f12" stroke-width="3"/>
-            </svg>`;
-        case 'sniper':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M10,44 L64,40 L158,40 L166,58 L62,62 L18,84 Z" fill="#f8fafc" stroke="#020617" stroke-width="3.5" stroke-linejoin="round"/>
-                <rect x="68" y="42" width="86" height="10" rx="2" fill="#eab308" stroke="#020617" stroke-width="2"/>
-                <rect x="68" y="14" width="68" height="13" rx="5" fill="#1e293b" stroke="#eab308" stroke-width="2.5"/>
-                <rect x="160" y="44" width="72" height="8" rx="2" fill="#334155" stroke="#020617" stroke-width="2.5"/>
-                <rect x="220" y="42" width="14" height="12" rx="2" fill="#eab308" stroke="#020617" stroke-width="2"/>
-                <rect x="96" y="60" width="22" height="28" rx="2" fill="#475569" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        case 'titan':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <rect x="22" y="30" width="114" height="46" rx="8" fill="#dc2626" stroke="#020617" stroke-width="3.5"/>
-                <path d="M68,12 L106,12 L100,30 L62,30 Z" fill="none" stroke="#475569" stroke-width="5"/>
-                <rect x="136" y="30" width="76" height="40" rx="6" fill="#475569" stroke="#020617" stroke-width="3.5"/>
-                <ellipse cx="212" cy="50" rx="10" ry="20" fill="#f97316" stroke="#020617" stroke-width="3"/>
-                <circle cx="96" cy="76" r="24" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
-                <circle cx="96" cy="76" r="13" fill="#94a3b8" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        case 'tesla':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M14,34 L196,28 L208,42 L202,68 L64,68 L22,88 Z" fill="#0284c7" stroke="#020617" stroke-width="3.5"/>
-                <rect x="128" y="38" width="54" height="16" rx="6" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
-                <path d="M132,46 L146,40 L158,52 L176,42" fill="none" stroke="#f43f5e" stroke-width="3"/>
-                <circle cx="112" cy="72" r="26" fill="#f97316" stroke="#020617" stroke-width="3.5"/>
-                <circle cx="112" cy="72" r="14" fill="#0284c7" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        case 'cryo':
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M16,34 L192,30 L204,68 L64,68 L24,88 Z" fill="#0284c7" stroke="#020617" stroke-width="3.5"/>
-                <rect x="94" y="24" width="18" height="38" rx="6" fill="#bae6fd" stroke="#020617" stroke-width="2.5"/>
-                <rect x="118" y="24" width="18" height="38" rx="6" fill="#bae6fd" stroke="#020617" stroke-width="2.5"/>
-                <rect x="184" y="32" width="38" height="32" rx="6" fill="#7dd3fc" stroke="#ffffff" stroke-width="3"/>
-                <rect x="86" y="66" width="22" height="30" rx="3" fill="#38bdf8" stroke="#020617" stroke-width="2.5"/>
-            </svg>`;
-        default:
-            return `<svg viewBox="0 0 240 105" class="w-full h-full drop-shadow">
-                <path d="M14,34 L196,26 L208,68 L64,68 L24,88 Z" fill="#7e22ce" stroke="#020617" stroke-width="3.5"/>
-                <rect x="74" y="26" width="122" height="14" rx="4" fill="#eab308" stroke="#020617" stroke-width="2.5"/>
-                <rect x="122" y="42" width="68" height="14" rx="5" fill="#f0abfc" stroke="#ffffff" stroke-width="2"/>
-                <polygon points="206,38 236,49 206,60" fill="#e879f9" stroke="#ffffff" stroke-width="2"/>
-                <rect x="82" y="10" width="52" height="13" rx="5" fill="#d946ef" stroke="#eab308" stroke-width="2.5"/>
-            </svg>`;
+    // Kesilmiş gerçek silah görseli hazırsa doğrudan onu göster!
+    const dataUrl = WEAPON_IMAGE_CACHE.armoryDataUrls[w.id];
+    if (dataUrl) {
+        return `<img src="${dataUrl}" alt="${w.name}" class="w-full h-full object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.85)] pointer-events-none" />`;
     }
+
+    // Görsel yüklenene kadar geçen ilk salisede yedek vektör gösterimi
+    const p = w.colorPrimary, s = w.colorSecondary, a = w.accent;
+    return `
+    <svg viewBox="0 0 225 95" class="w-full h-full drop-shadow">
+        <path d="M12,26 L52,26 L52,54 L18,64 L12,48 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
+        <rect x="50" y="22" width="114" height="32" rx="8" fill="${p}" stroke="#ffffff" stroke-width="1.8"/>
+        <rect x="62" y="32" width="84" height="8" rx="3" fill="${a}"/>
+        <path d="M68,52 L90,52 L82,86 L60,86 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
+    </svg>`;
 }
 
 // --- 3. SMART SPRITE PRELOADER & AUTO WHITE-BACKGROUND REMOVER (73 CUSTOM ASSETS) ---
@@ -3135,24 +3209,25 @@ function drawActiveMegaNuke(nk) {
 /**
  * Draws player projectiles (uses `Bizim rocet` when firing the Mega Titan Rocket Launcher!)
  */
+
+
 function drawProjectile3D(p) {
-    const w = p.weapon;
     const scale = Math.max(0.32, 1.15 - p.progress * 0.72);
     const dx = p.targetX - p.startX;
     const dy = p.targetY - p.startY;
-    const angle = Math.atan2(dy, dx);
+    const flightAngle = Math.atan2(dx, -dy);
 
     ctx.save();
-
-    // Arkasında bıraktığı parlayan mermi izi (Tracer Tail)
+    // 1. Parlayan Mermi İzi (Tracer Tail)
     const tailProg = Math.max(0, p.progress - 0.14);
-    const tailX = p.startX + dx * tailProg;
-    const tailY = p.startY + dy * tailProg - Math.sin(tailProg * Math.PI) * ((w.style === 'SNIPER' || w.style === 'TESLA') ? 6 : 26);
+    const tailX = p.startX + (p.targetX - p.startX) * tailProg;
+    const tailY = p.startY + (p.targetY - p.startY) * tailProg - Math.sin(tailProg * Math.PI) * 32;
 
-    ctx.strokeStyle = w.accent;
-    ctx.lineWidth = (w.style === 'SNIPER' ? 5 : 3.5) * scale;
-    ctx.shadowColor = w.colorPrimary;
-    ctx.shadowBlur = 14;
+    const tailGrad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
+    tailGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    tailGrad.addColorStop(1, p.weapon.accent);
+    ctx.strokeStyle = tailGrad;
+    ctx.lineWidth = Math.max(2, 7 * scale);
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(tailX, tailY);
@@ -3162,14 +3237,14 @@ function drawProjectile3D(p) {
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
 
-    // 1. Mega Titan Füzeatar: "Bizim rocet" görseliyle uçar
-    if (w.style === 'ROCKET') {
+    // 2. Mega Titan Füzeatar için "Bizim rocet" görseli
+    if (p.weapon.style === 'ROCKET') {
         const ourRocket = getSpriteDrawable('Bizim rocet');
         if (ourRocket) {
-            ctx.rotate(Math.atan2(dx, -dy) * 0.55);
+            ctx.rotate(flightAngle * 0.45);
             const sw = ourRocket.width || ourRocket.naturalWidth || 50;
             const sh = ourRocket.height || ourRocket.naturalHeight || 140;
-            const dh = 82;
+            const dh = 78;
             const dw = dh * (sw / sh);
             ctx.drawImage(ourRocket, -dw / 2, -dh / 2, dw, dh);
             ctx.restore();
@@ -3177,83 +3252,44 @@ function drawProjectile3D(p) {
         }
     }
 
-    // 2. Silaha Özel 3D Mermi Çizimleri
-    if (w.style === 'DISC') {
-        // Vortex Pyragon Yeşil-Turuncu Döner Disk
-        ctx.rotate(p.spin || 0);
-        ctx.fillStyle = '#22c55e';
-        ctx.strokeStyle = '#020617';
-        ctx.lineWidth = 2.5;
+    // 3. Silah Türüne Özel 3D Mermi (Köpük Dart, Vortex Disk, Rival Topu, Plazma)
+    ctx.rotate(flightAngle * 0.5);
+    if (p.weapon.style === 'DISC') {
+        ctx.fillStyle = '#10b981';
+        ctx.strokeStyle = '#a3e635';
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(0, 0, 15, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, 16, 8, p.progress * 18, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = '#f97316';
-        ctx.beginPath();
-        ctx.arc(0, 0, 7, 0, Math.PI * 2);
-        ctx.fill();
-    } else if (w.style === 'SHOTGUN') {
-        // Rival Pompalı Sarı Top Saçması
+    } else if (p.weapon.style === 'SHOTGUN') {
         ctx.fillStyle = '#facc15';
-        ctx.strokeStyle = '#020617';
+        ctx.strokeStyle = '#ca8a04';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(0, 0, 10, 0, Math.PI * 2);
+        ctx.arc(0, 0, 9, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-    } else if (w.style === 'TESLA') {
-        // Shockwave Tesla Elektrik Küresi
+    } else if (p.weapon.style === 'TESLA' || p.weapon.style === 'PLASMA' || p.weapon.style === 'CRYO') {
         ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 20;
+        ctx.shadowColor = p.weapon.colorPrimary;
+        ctx.shadowBlur = 16;
         ctx.beginPath();
         ctx.arc(0, 0, 11, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#f43f5e';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(-14, -6); ctx.lineTo(0, 8); ctx.lineTo(14, -6);
-        ctx.stroke();
-    } else if (w.style === 'CRYO') {
-        // Sub-Zero Cryo Buz Kristali
-        ctx.rotate(angle + Math.PI / 2);
-        ctx.fillStyle = '#bae6fd';
-        ctx.strokeStyle = '#0284c7';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(0, -18);
-        ctx.lineTo(10, 0);
-        ctx.lineTo(0, 16);
-        ctx.lineTo(-10, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-    } else if (w.style === 'PLASMA') {
-        // Omega Plazma Küresi
-        ctx.rotate(p.spin || 0);
-        ctx.fillStyle = '#f0abfc';
-        ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(0, 0, 14, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
     } else {
-        // 3D Mavi-Turuncu / Altın Nerf Köpük Dart
-        ctx.rotate(angle + Math.PI / 2);
-        ctx.fillStyle = w.id === 'sniper' ? '#eab308' : '#2563eb';
-        ctx.strokeStyle = '#020617';
-        ctx.lineWidth = 2.5;
+        // 3D Mavi-Turuncu Nerf Köpük Dartı
+        ctx.fillStyle = p.weapon.colorSecondary;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.roundRect(-6, -6, 12, 26, 4);
+        ctx.roundRect(-5, -14, 10, 26, 4);
         ctx.fill();
         ctx.stroke();
-
-        ctx.fillStyle = '#f97316';
+        ctx.fillStyle = p.weapon.colorPrimary;
         ctx.beginPath();
-        ctx.roundRect(-6, -18, 12, 13, 6);
+        ctx.roundRect(-5, -18, 10, 9, 4);
         ctx.fill();
-        ctx.stroke();
     }
 
     ctx.restore();
@@ -3263,378 +3299,95 @@ function drawMorphing3DTurret() {
     const w = getActiveWeapon();
     const aim = computeAimCoordinates();
     const baseX = W * 0.5;
-    const baseY = H + 12;
+    const baseY = H - 8;
 
     const dx = aim.x - baseX;
-    const dy = aim.y - (H - 55);
-    const angle = Math.max(-0.78, Math.min(0.78, Math.atan2(dx, -dy) * 0.62));
+    const dy = aim.y - (H - 70);
+    // "Oyun ekranı silah.jpg" içindeki silahlar sağ-üst (yaklaşık +32 derece) açıyla çizildiği için
+    // nişan açısını buna göre dengeliyoruz, sol tarafa nişan alındığında ise aynalayarak (flip) döndürüyoruz!
+    const rawAngle = Math.max(-0.85, Math.min(0.85, Math.atan2(dx, -dy) * 0.65));
 
     ctx.save();
-    ctx.translate(baseX, baseY);
-    ctx.rotate(angle);
-    ctx.translate(0, state.recoil * 1.35);
+    ctx.translate(baseX, baseY + state.recoil * 1.15);
 
-    // Namlu Alevi (Muzzle Flash)
-    if (state.recoil > 8) {
-        ctx.save();
-        const flashGrad = ctx.createRadialGradient(0, -168, 4, 0, -168, 46);
-        flashGrad.addColorStop(0, '#ffffff');
-        flashGrad.addColorStop(0.45, w.accent);
-        flashGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
-        ctx.fillStyle = flashGrad;
-        ctx.beginPath();
-        ctx.arc(0, -168, 46, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-    }
-
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-
-    switch (w.id) {
-        case 'striker': {
-            ctx.fillStyle = '#f97316';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
+    const turretSlice = WEAPON_IMAGE_CACHE.turretCanvases[w.id];
+    if (turretSlice) {
+        // Ateş anında namlu alevi (Muzzle Flash)
+        if (state.recoil > 6) {
+            ctx.save();
+            ctx.rotate(rawAngle);
+            const flashR = 26 + Math.random() * 16;
+            const fg = ctx.createRadialGradient(0, -155, 4, 0, -155, flashR);
+            fg.addColorStop(0, '#ffffff');
+            fg.addColorStop(0.45, w.accent);
+            fg.addColorStop(1, 'rgba(249, 115, 22, 0)');
+            ctx.fillStyle = fg;
             ctx.beginPath();
-            ctx.roundRect(-9, -182, 18, 52, 6);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#2563eb';
-            ctx.beginPath();
-            ctx.moveTo(-30, -135);
-            ctx.lineTo(30, -135);
-            ctx.lineTo(44, -20);
-            ctx.lineTo(-44, -20);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.roundRect(-14, -132, 28, 86, 5);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#475569';
-            ctx.beginPath();
-            ctx.roundRect(-16, -98, 32, 46, 10);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#38bdf8';
-            ctx.beginPath();
-            ctx.ellipse(0, -54, 12, 7, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-            break;
+            ctx.arc(0, -155, flashR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
-        case 'shotgun': {
-            ctx.fillStyle = '#1e293b';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.roundRect(-24, -158, 48, 55, 10);
-            ctx.fill(); ctx.stroke();
 
-            ctx.fillStyle = '#dc2626';
-            ctx.beginPath();
-            ctx.moveTo(-28, -135);
-            ctx.lineTo(28, -135);
-            ctx.lineTo(40, -18);
-            ctx.lineTo(-40, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
+        // 3D Kesilmiş Silah Görselini Çiz (Çifte Taret Overdrive aktifse 2 adet yan yana çizer!)
+        const drawSingleTurretSprite = (offsetX) => {
+            ctx.save();
+            ctx.translate(offsetX, 0);
 
-            ctx.fillStyle = '#0f172a';
-            ctx.beginPath();
-            ctx.roundRect(-10, -142, 20, 95, 4);
-            ctx.fill(); ctx.stroke();
-            break;
-        }
-        case 'dualuzi': {
-            ctx.fillStyle = '#f97316';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.ellipse(36, -86, 24, 32, 0.2, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#64748b';
-            ctx.beginPath();
-            ctx.ellipse(36, -86, 14, 20, 0.2, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f97316';
-            [-14, 14].forEach(ox => {
-                ctx.beginPath();
-                ctx.roundRect(ox - 9, -162, 18, 36, 5);
-                ctx.fill(); ctx.stroke();
-            });
-
-            ctx.fillStyle = '#2563eb';
-            ctx.beginPath();
-            ctx.moveTo(-32, -132);
-            ctx.lineTo(32, -132);
-            ctx.lineTo(44, -18);
-            ctx.lineTo(-44, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.roundRect(-22, -74, 44, 34, 8);
-            ctx.fill(); ctx.stroke();
-            break;
-        }
-        case 'vortex': {
-            ctx.fillStyle = '#16a34a';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.ellipse(34, -84, 26, 30, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.roundRect(-20, -158, 40, 32, 8);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#22c55e';
-            ctx.beginPath();
-            ctx.moveTo(-30, -132);
-            ctx.lineTo(30, -132);
-            ctx.lineTo(42, -18);
-            ctx.lineTo(-42, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.roundRect(-12, -130, 24, 84, 5);
-            ctx.fill(); ctx.stroke();
-            break;
-        }
-        case 'gatling': {
-            ctx.fillStyle = '#475569';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 3.5;
-            ctx.beginPath();
-            ctx.roundRect(-28, -178, 56, 68, 8);
-            ctx.fill(); ctx.stroke();
-
-            for (let i = -2; i <= 2; i++) {
-                const bx = i * 9 + Math.sin(state.gatlingSpin + i) * 3.5;
-                ctx.fillStyle = '#94a3b8';
-                ctx.fillRect(bx - 3, -184, 6, 70);
-                ctx.strokeRect(bx - 3, -184, 6, 70);
-            }
-            ctx.fillStyle = '#334155';
-            ctx.beginPath();
-            ctx.roundRect(-30, -166, 60, 12, 4);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#eab308';
-            for (let by = -108; by <= -52; by += 12) {
-                ctx.beginPath();
-                ctx.roundRect(26, by, 22, 8, 2);
-                ctx.fill(); ctx.stroke();
+            const isAimingLeft = dx < -45;
+            if (isAimingLeft) {
+                ctx.scale(-1, 1);
+                ctx.rotate(-rawAngle - 0.32);
+            } else {
+                ctx.rotate(rawAngle - 0.32);
             }
 
-            ctx.fillStyle = '#a16207';
-            ctx.beginPath();
-            ctx.moveTo(-36, -118);
-            ctx.lineTo(36, -118);
-            ctx.lineTo(48, -18);
-            ctx.lineTo(-48, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
+            const sw = turretSlice.width;
+            const sh = turretSlice.height;
+            const targetH = Math.min(205, Math.max(150, H * 0.25));
+            const targetW = targetH * (sw / sh);
 
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 6;
-            ctx.beginPath();
-            ctx.moveTo(-26, -108); ctx.lineTo(-26, -124); ctx.lineTo(26, -124); ctx.lineTo(26, -108);
-            ctx.stroke();
-            break;
-        }
-        case 'sniper': {
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.65)';
-            ctx.lineWidth = 2.5;
-            ctx.setLineDash([8, 6]);
-            ctx.beginPath();
-            ctx.moveTo(0, -195);
-            ctx.lineTo(0, -450);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 3.5;
-            ctx.beginPath();
-            ctx.roundRect(-7, -205, 14, 85, 3);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#eab308';
-            ctx.beginPath();
-            ctx.roundRect(-9, -208, 18, 14, 3);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#f8fafc';
-            ctx.beginPath();
-            ctx.moveTo(-26, -126);
-            ctx.lineTo(26, -126);
-            ctx.lineTo(38, -18);
-            ctx.lineTo(-38, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#eab308';
-            ctx.beginPath();
-            ctx.roundRect(-14, -124, 28, 86, 5);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#1e293b';
-            ctx.beginPath();
-            ctx.roundRect(-15, -106, 30, 56, 10);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#eab308';
-            ctx.fillRect(-15, -96, 30, 6);
-            break;
-        }
-        case 'titan': {
-            ctx.fillStyle = '#f97316';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.ellipse(38, -84, 26, 32, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#475569';
-            ctx.beginPath();
-            ctx.roundRect(-28, -168, 56, 52, 10);
-            ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.roundRect(-30, -172, 60, 14, 5);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#dc2626';
-            ctx.beginPath();
-            ctx.moveTo(-36, -122);
-            ctx.lineTo(36, -122);
-            ctx.lineTo(48, -18);
-            ctx.lineTo(-48, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-            break;
-        }
-        case 'tesla': {
-            ctx.fillStyle = '#f97316';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.ellipse(34, -88, 25, 30, 0, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#2563eb';
-            ctx.beginPath();
-            ctx.moveTo(-30, -148);
-            ctx.lineTo(30, -148);
-            ctx.lineTo(44, -18);
-            ctx.lineTo(-44, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#38bdf8';
-            ctx.shadowColor = '#38bdf8';
-            ctx.shadowBlur = 16;
-            ctx.beginPath();
-            ctx.roundRect(-12, -138, 24, 68, 6);
-            ctx.fill(); ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            ctx.strokeStyle = '#67e8f9';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(-26, -135);
-            ctx.lineTo(-34 + Math.random() * 8, -110);
-            ctx.lineTo(-22, -85);
-            ctx.moveTo(26, -135);
-            ctx.lineTo(34 - Math.random() * 8, -110);
-            ctx.lineTo(22, -85);
-            ctx.stroke();
-            break;
-        }
-        case 'cryo': {
-            ctx.fillStyle = '#e0f2fe';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.roundRect(-22, -166, 44, 38, 8);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#0284c7';
-            ctx.beginPath();
-            ctx.moveTo(-32, -134);
-            ctx.lineTo(32, -134);
-            ctx.lineTo(44, -18);
-            ctx.lineTo(-44, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.strokeStyle = '#f8fafc';
-            ctx.lineWidth = 6;
-            [-24, 24].forEach(tx => {
-                ctx.beginPath();
-                ctx.moveTo(tx, -120);
-                ctx.quadraticCurveTo(tx * 1.4, -95, tx, -70);
-                ctx.stroke();
-            });
-            break;
-        }
-        default: {
-            ctx.fillStyle = '#e879f9';
-            ctx.strokeStyle = '#020617';
-            ctx.lineWidth = 4;
-            ctx.shadowColor = '#d946ef';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
             ctx.shadowBlur = 18;
-            ctx.beginPath();
-            ctx.roundRect(-18, -172, 36, 42, 8);
-            ctx.fill(); ctx.stroke();
-            ctx.shadowBlur = 0;
+            ctx.drawImage(turretSlice, -targetW * 0.48, -targetH * 0.86, targetW, targetH);
+            ctx.restore();
+        };
 
-            ctx.fillStyle = '#7e22ce';
-            ctx.beginPath();
-            ctx.moveTo(-32, -136);
-            ctx.lineTo(32, -136);
-            ctx.lineTo(46, -18);
-            ctx.lineTo(-46, -18);
-            ctx.closePath();
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#eab308';
-            ctx.beginPath();
-            ctx.roundRect(-16, -132, 32, 86, 6);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = '#a855f7';
-            ctx.beginPath();
-            ctx.roundRect(-14, -96, 28, 44, 10);
-            ctx.fill(); ctx.stroke();
-            break;
+        if (state.skills.overdriveActive > 0) {
+            drawSingleTurretSprite(-52);
+            drawSingleTurretSprite(52);
+        } else {
+            drawSingleTurretSprite(0);
         }
+
+        // Silahın alt kısmında şık dijital mermi göstergesi
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
+        ctx.strokeStyle = state.reloading > 0 ? '#facc15' : '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(-34, -36, 68, 26, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = state.reloading > 0 ? '#facc15' : '#a3e635';
+        ctx.font = '900 13px "Fredoka"';
+        ctx.textAlign = 'center';
+        ctx.fillText(state.reloading > 0 ? 'DOLUM' : `${state.ammo}`, 0, -18);
+
+        ctx.restore();
+        return;
     }
 
-    // Dijital Mermi Sayacı Ekranı
-    ctx.fillStyle = '#020617';
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2.5;
+    // Görsel yüklenene kadar yedek taret çizimi
+    ctx.rotate(rawAngle);
+    ctx.fillStyle = w.colorPrimary;
+    ctx.strokeStyle = w.accent;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.roundRect(-24, -46, 48, 24, 6);
+    ctx.roundRect(-28, -135, 56, 110, 12);
     ctx.fill();
     ctx.stroke();
-
-    ctx.fillStyle = state.reloading > 0 ? '#facc15' : '#a3e635';
-    ctx.font = '900 13px "Fredoka"';
-    ctx.textAlign = 'center';
-    ctx.fillText(state.reloading > 0 ? 'DOLUM' : state.ammo, 0, -30);
-
     ctx.restore();
 }
-
 
 function drawSmartCrosshair() {
     const aim = computeAimCoordinates();
