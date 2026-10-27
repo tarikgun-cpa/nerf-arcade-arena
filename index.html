@@ -1117,14 +1117,14 @@ function sliceAndCleanWeaponCell(sourceImg, sx, sy, sw, sh) {
         const visited = new Uint8Array(w * h);
         const queue = [];
 
-        // Koyu lacivert/antrasit arka planı algılar ama silahların siyah dış konturuna (parlaklık < 15) dokunmaz
+        // 1. Koyu arka planı ve düşük doygunluklu gri/kahverengi leke piksellerini tanı
         const isDarkSheetBg = (p) => {
             const r = d[p], g = d[p + 1], b = d[p + 2];
             const max = Math.max(r, g, b);
             const min = Math.min(r, g, b);
             const sat = max - min;
             const lum = (r + g + b) / 3;
-            return lum >= 15 && lum <= 62 && sat <= 34 && b >= r - 10;
+            return (lum >= 12 && lum <= 78 && sat <= 46) || (lum < 95 && sat < 22);
         };
 
         const pushIfBg = (x, y) => {
@@ -1137,8 +1137,12 @@ function sliceAndCleanWeaponCell(sourceImg, sx, sy, sw, sh) {
             }
         };
 
-        for (let x = 0; x < w; x++) { pushIfBg(x, 0); pushIfBg(x, h - 1); pushIfBg(x, 2); pushIfBg(x, h - 3); }
-        for (let y = 0; y < h; y++) { pushIfBg(0, y); pushIfBg(w - 1, y); pushIfBg(2, y); pushIfBg(w - 3, y); }
+        for (let x = 0; x < w; x++) {
+            for (let by = 0; by < 5; by++) { pushIfBg(x, by); pushIfBg(x, h - 1 - by); }
+        }
+        for (let y = 0; y < h; y++) {
+            for (let bx = 0; bx < 5; bx++) { pushIfBg(bx, y); pushIfBg(w - 1 - bx, y); }
+        }
 
         while (queue.length > 0) {
             const curr = queue.pop();
@@ -1151,16 +1155,59 @@ function sliceAndCleanWeaponCell(sourceImg, sx, sy, sw, sh) {
             pushIfBg(cx + 1, cy - 1); pushIfBg(cx - 1, cy + 1);
         }
 
-        // Silah kabzası ve tetik korkuluğu içindeki kapalı koyu arka plan boşluklarını da temizle
+        // 2. Silah kabzası ve tetik korkuluğu içindeki kapalı koyu boşlukları temizle
         for (let i = 0; i < w * h; i++) {
             if (!visited[i]) {
                 const p = i * 4;
                 const r = d[p], g = d[p + 1], b = d[p + 2];
-                if (r >= 20 && r <= 44 && g >= 24 && g <= 48 && b >= 28 && b <= 56 && Math.abs(r - g) < 10) {
+                const sat = Math.max(r, g, b) - Math.min(r, g, b);
+                const lum = (r + g + b) / 3;
+                if (lum >= 16 && lum <= 60 && sat <= 32) {
                     d[p + 3] = 0;
                 }
             }
         }
+
+        // 3. EN BÜYÜK GÖVDE FİLTRESİ: Ana silahtan kopuk duran tüm küçük leke/yazı adacıklarını tamamen sil!
+        const compVisited = new Uint8Array(w * h);
+        const components = [];
+        let maxCompSize = 0;
+
+        for (let i = 0; i < w * h; i++) {
+            if (d[i * 4 + 3] > 20 && !compVisited[i]) {
+                const pixels = [];
+                const q = [i];
+                compVisited[i] = 1;
+                while (q.length > 0) {
+                    const cur = q.pop();
+                    pixels.push(cur);
+                    const cx = cur % w;
+                    const cy = (cur / w) | 0;
+                    const neighbors = [cur - 1, cur + 1, cur - w, cur + w];
+                    for (let n = 0; n < 4; n++) {
+                        const nb = neighbors[n];
+                        if (nb >= 0 && nb < w * h && !compVisited[nb] && d[nb * 4 + 3] > 20) {
+                            const nx = nb % w;
+                            if (Math.abs(nx - cx) <= 1) {
+                                compVisited[nb] = 1;
+                                q.push(nb);
+                            }
+                        }
+                    }
+                }
+                components.push(pixels);
+                if (pixels.length > maxCompSize) maxCompSize = pixels.length;
+            }
+        }
+
+        // Ana silah gövdesinin %8'inden küçük olan tüm yüzen lekeleri şeffaf yap
+        components.forEach(pixels => {
+            if (pixels.length < maxCompSize * 0.08) {
+                for (let k = 0; k < pixels.length; k++) {
+                    d[pixels[k] * 4 + 3] = 0;
+                }
+            }
+        });
 
         cctx.putImageData(imgData, 0, 0);
     } catch (e) {}
@@ -1189,14 +1236,13 @@ function initWeaponSheets() {
             const cellH = img.naturalHeight / 2;
             Object.keys(TURRET_SHEET_COORDS).forEach(id => {
                 const { col, row } = TURRET_SHEET_COORDS[id];
-                // Üstteki başlık yazısını (%19) ve en alttaki bar izini (%14) kırparak sadece 3D silahı al
-                const sx = col * cellW + cellW * 0.02;
-                const sy = row * cellH + cellH * 0.19;
-                const sw = cellW * 0.96;
-                const sh = cellH * 0.67;
+                // Alt satırdaki bulanık HUD lekelerini dışarıda bırakmak için dikey kesimi daraltıyoruz
+                const sx = col * cellW + cellW * 0.04;
+                const sy = row * cellH + cellH * (row === 0 ? 0.19 : 0.19);
+                const sw = cellW * 0.92;
+                const sh = cellH * (row === 0 ? 0.68 : 0.57);
                 const canvasSlice = sliceAndCleanWeaponCell(img, sx, sy, sw, sh);
                 WEAPON_IMAGE_CACHE.turretCanvases[id] = canvasSlice;
-                // Vulcan Minigun veya yedek olarak Cephanelik görselini de ata
                 if (!WEAPON_IMAGE_CACHE.armoryDataUrls[id]) {
                     try { WEAPON_IMAGE_CACHE.armoryDataUrls[id] = canvasSlice.toDataURL(); } catch (e) {}
                 }
@@ -1215,11 +1261,10 @@ function initWeaponSheets() {
             const cellH = img.naturalHeight / 3;
             Object.keys(ARMORY_SHEET_COORDS).forEach(id => {
                 const { col, row } = ARMORY_SHEET_COORDS[id];
-                // Çerçeve içindeki üst ve alt sarı yazıları dışarıda bırakıp sadece yan profil silahı al
-                const sx = col * cellW + cellW * 0.04;
-                const sy = row * cellH + cellH * 0.18;
-                const sw = cellW * 0.92;
-                const sh = cellH * 0.64;
+                const sx = col * cellW + cellW * 0.06;
+                const sy = row * cellH + cellH * 0.21;
+                const sw = cellW * 0.88;
+                const sh = cellH * 0.56;
                 const canvasSlice = sliceAndCleanWeaponCell(img, sx, sy, sw, sh);
                 try { WEAPON_IMAGE_CACHE.armoryDataUrls[id] = canvasSlice.toDataURL(); } catch (e) {}
             });
@@ -2143,6 +2188,81 @@ function computeAimCoordinates() {
     return { x: aimX, y: aimY };
 }
 
+// Her silahın 3D görselindeki namlu ucunun (muzzle tip) tam konum oranı
+const WEAPON_MUZZLE_ANCHORS = {
+    striker: { rx: 0.40, ry: -0.78 },
+    shotgun: { rx: 0.36, ry: -0.80 },
+    dualuzi: { rx: 0.28, ry: -0.80 },
+    vortex:  { rx: 0.32, ry: -0.78 },
+    gatling: { rx: 0.38, ry: -0.75 },
+    titan:   { rx: 0.34, ry: -0.72 },
+    sniper:  { rx: 0.44, ry: -0.82 },
+    tesla:   { rx: 0.30, ry: -0.78 },
+    cryo:    { rx: 0.32, ry: -0.76 },
+    omega:   { rx: 0.40, ry: -0.78 }
+};
+
+function getTurretMuzzleWorldPositions(aim) {
+    const w = getActiveWeapon();
+    const baseX = W * 0.5;
+    const baseY = H - 8 + state.recoil * 1.15;
+    const dx = aim.x - baseX;
+    const dy = aim.y - (H - 70);
+
+    // Silahın ekrandaki hedefe olan gerçek açısı
+    const aimAngle = Math.max(-0.95, Math.min(0.95, Math.atan2(dx, -dy)));
+    const isAimingLeft = dx < -25;
+
+    const turretSlice = WEAPON_IMAGE_CACHE.turretCanvases[w.id];
+    const sw = turretSlice ? turretSlice.width : 220;
+    const sh = turretSlice ? turretSlice.height : 170;
+    const targetH = Math.min(205, Math.max(150, H * 0.25));
+    const targetW = targetH * (sw / sh);
+
+    // 3D görselde silahlar sağ-üste (~0.52 radyan) baktığı için namluyu hedefe hizalarız
+    const spriteNaturalAngle = 0.52;
+    const anchor = WEAPON_MUZZLE_ANCHORS[w.id] || { rx: 0.34, ry: -0.78 };
+    const localMuzzleX = targetW * anchor.rx;
+    const localMuzzleY = targetH * anchor.ry;
+
+    const computeForOffset = (offsetX) => {
+        if (isAimingLeft) {
+            const rot = -aimAngle - spriteNaturalAngle;
+            const rx = localMuzzleX * Math.cos(rot) - localMuzzleY * Math.sin(rot);
+            const ry = localMuzzleX * Math.sin(rot) + localMuzzleY * Math.cos(rot);
+            return {
+                x: baseX + offsetX - rx,
+                y: baseY + ry,
+                aimAngle,
+                isAimingLeft,
+                rot,
+                targetW,
+                targetH,
+                offsetX
+            };
+        } else {
+            const rot = aimAngle - spriteNaturalAngle;
+            const rx = localMuzzleX * Math.cos(rot) - localMuzzleY * Math.sin(rot);
+            const ry = localMuzzleX * Math.sin(rot) + localMuzzleY * Math.cos(rot);
+            return {
+                x: baseX + offsetX + rx,
+                y: baseY + ry,
+                aimAngle,
+                isAimingLeft,
+                rot,
+                targetW,
+                targetH,
+                offsetX
+            };
+        }
+    };
+
+    if (state.skills.overdriveActive > 0) {
+        return [computeForOffset(-56), computeForOffset(56)];
+    }
+    return [computeForOffset(0)];
+}
+
 function fireBlaster() {
     if (state.reloading > 0 || state.fireCooldown > 0) return;
 
@@ -2159,34 +2279,37 @@ function fireBlaster() {
 
     const rate = getWeaponFireRate(w) * (isOverdrive ? 1.65 : 1.0);
     state.fireCooldown = 1 / rate;
-    state.recoil = 14;
+    state.recoil = 12;
     state.gatlingSpin += 0.9;
     state.shotsFired++;
 
     sfx.shoot(w.style);
 
     const aim = computeAimCoordinates();
-    const burstCount = w.burst * (isOverdrive ? 2 : 1);
+    const muzzles = getTurretMuzzleWorldPositions(aim);
     const dmg = getWeaponDamage(w);
 
-    for (let b = 0; b < burstCount; b++) {
-        const offsetX = burstCount > 1 ? (b - (burstCount - 1) / 2) * 16 : 0;
-        const spreadX = (Math.random() - 0.5) * w.spread * W;
-        const spreadY = (Math.random() - 0.5) * w.spread * H;
+    // Mermileri her aktif taretin TAM NAMLU UCUNDAN (mz.x, mz.y) çıkar!
+    muzzles.forEach(mz => {
+        for (let b = 0; b < w.burst; b++) {
+            const burstSpread = w.burst > 1 ? (b - (w.burst - 1) / 2) * 10 : 0;
+            const spreadX = (Math.random() - 0.5) * w.spread * W + burstSpread;
+            const spreadY = (Math.random() - 0.5) * w.spread * H;
 
-        state.projectiles.push({
-            x: W * 0.5 + offsetX * 1.4,
-            y: H - 72,
-            startX: W * 0.5 + offsetX * 1.4,
-            startY: H - 72,
-            targetX: aim.x + spreadX,
-            targetY: aim.y + spreadY,
-            progress: 0,
-            speed: w.projSpeed * 0.24,
-            damage: dmg,
-            weapon: w
-        });
-    }
+            state.projectiles.push({
+                x: mz.x,
+                y: mz.y,
+                startX: mz.x,
+                startY: mz.y,
+                targetX: aim.x + spreadX,
+                targetY: aim.y + spreadY,
+                progress: 0,
+                speed: w.projSpeed * 0.24,
+                damage: dmg,
+                weapon: w
+            });
+        }
+    });
 
     updateHUD();
 }
@@ -3298,87 +3421,68 @@ function drawProjectile3D(p) {
 function drawMorphing3DTurret() {
     const w = getActiveWeapon();
     const aim = computeAimCoordinates();
+    const muzzles = getTurretMuzzleWorldPositions(aim);
     const baseX = W * 0.5;
-    const baseY = H - 8;
-
-    const dx = aim.x - baseX;
-    const dy = aim.y - (H - 70);
-    // "Oyun ekranı silah.jpg" içindeki silahlar sağ-üst (yaklaşık +32 derece) açıyla çizildiği için
-    // nişan açısını buna göre dengeliyoruz, sol tarafa nişan alındığında ise aynalayarak (flip) döndürüyoruz!
-    const rawAngle = Math.max(-0.85, Math.min(0.85, Math.atan2(dx, -dy) * 0.65));
-
-    ctx.save();
-    ctx.translate(baseX, baseY + state.recoil * 1.15);
+    const baseY = H - 8 + state.recoil * 1.15;
 
     const turretSlice = WEAPON_IMAGE_CACHE.turretCanvases[w.id];
+    ctx.save();
+
     if (turretSlice) {
-        // Ateş anında namlu alevi (Muzzle Flash)
-        if (state.recoil > 6) {
+        // 1. Önce Silah Görselini (veya Çifte Taret ise 2 silahı) Çiz
+        muzzles.forEach(mz => {
             ctx.save();
-            ctx.rotate(rawAngle);
-            const flashR = 26 + Math.random() * 16;
-            const fg = ctx.createRadialGradient(0, -155, 4, 0, -155, flashR);
-            fg.addColorStop(0, '#ffffff');
-            fg.addColorStop(0.45, w.accent);
-            fg.addColorStop(1, 'rgba(249, 115, 22, 0)');
-            ctx.fillStyle = fg;
-            ctx.beginPath();
-            ctx.arc(0, -155, flashR, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-
-        // 3D Kesilmiş Silah Görselini Çiz (Çifte Taret Overdrive aktifse 2 adet yan yana çizer!)
-        const drawSingleTurretSprite = (offsetX) => {
-            ctx.save();
-            ctx.translate(offsetX, 0);
-
-            const isAimingLeft = dx < -45;
-            if (isAimingLeft) {
+            ctx.translate(baseX + mz.offsetX, baseY);
+            if (mz.isAimingLeft) {
                 ctx.scale(-1, 1);
-                ctx.rotate(-rawAngle - 0.32);
-            } else {
-                ctx.rotate(rawAngle - 0.32);
             }
-
-            const sw = turretSlice.width;
-            const sh = turretSlice.height;
-            const targetH = Math.min(205, Math.max(150, H * 0.25));
-            const targetW = targetH * (sw / sh);
+            ctx.rotate(mz.rot);
 
             ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
             ctx.shadowBlur = 18;
-            ctx.drawImage(turretSlice, -targetW * 0.48, -targetH * 0.86, targetW, targetH);
+            ctx.drawImage(turretSlice, -mz.targetW * 0.48, -mz.targetH * 0.86, mz.targetW, mz.targetH);
             ctx.restore();
-        };
+        });
 
-        if (state.skills.overdriveActive > 0) {
-            drawSingleTurretSprite(-52);
-            drawSingleTurretSprite(52);
-        } else {
-            drawSingleTurretSprite(0);
+        // 2. Ateş Anında Namlu Alevini (Muzzle Flash) Tam Namlu Ucunda (mz.x, mz.y) Çiz!
+        if (state.recoil > 5) {
+            muzzles.forEach(mz => {
+                ctx.save();
+                ctx.translate(mz.x, mz.y);
+                const flashR = 22 + Math.random() * 14;
+                const fg = ctx.createRadialGradient(0, 0, 3, 0, 0, flashR);
+                fg.addColorStop(0, '#ffffff');
+                fg.addColorStop(0.45, w.accent);
+                fg.addColorStop(1, 'rgba(249, 115, 22, 0)');
+                ctx.fillStyle = fg;
+                ctx.beginPath();
+                ctx.arc(0, 0, flashR, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
         }
 
-        // Silahın alt kısmında şık dijital mermi göstergesi
+        // 3. Dijital Mermi Göstergesi
         ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
         ctx.strokeStyle = state.reloading > 0 ? '#facc15' : '#38bdf8';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.roundRect(-34, -36, 68, 26, 8);
+        ctx.roundRect(baseX - 34, baseY - 36, 68, 26, 8);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = state.reloading > 0 ? '#facc15' : '#a3e635';
         ctx.font = '900 13px "Fredoka"';
         ctx.textAlign = 'center';
-        ctx.fillText(state.reloading > 0 ? 'DOLUM' : `${state.ammo}`, 0, -18);
+        ctx.fillText(state.reloading > 0 ? 'DOLUM' : `${state.ammo}`, baseX, baseY - 18);
 
         ctx.restore();
         return;
     }
 
-    // Görsel yüklenene kadar yedek taret çizimi
-    ctx.rotate(rawAngle);
+    // Yedek taret çizimi
+    ctx.translate(baseX, baseY);
+    ctx.rotate(muzzles[0].aimAngle);
     ctx.fillStyle = w.colorPrimary;
     ctx.strokeStyle = w.accent;
     ctx.lineWidth = 3;
