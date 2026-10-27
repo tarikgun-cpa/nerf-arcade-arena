@@ -810,115 +810,51 @@ class SoundSystem {
             o.stop(now + dur);
         } catch (e) {}
     }
-    // Askeri Telsiz Mandal Açılış Sesi (PTT Squelch + Çift Taktik Bip)
+    // Kısa ve Net Askeri Telsiz Mandal Sesi (Mobil hoparlörü asla boğmaz)
     playRadioSquelchIn() {
         if (this.muted || !this.ctx) return;
-        this.playNoise(0.065, 'bandpass', 2400, 1800, 0.34);
-        this.tone(1950, 'square', 0.035, 0.14, 2100, 0.03);
-        this.tone(2450, 'square', 0.045, 0.16, 2450, 0.075);
+        this.playNoise(0.04, 'bandpass', 2200, 1600, 0.18);
+        this.tone(1850, 'sine', 0.03, 0.10, 2100, 0.02);
     }
-    // Askeri Telsiz Mandal Kapanış Sesi (Roger Beep + Statik Kuyruk)
     playRadioSquelchOut() {
         if (this.muted || !this.ctx) return;
-        this.tone(2350, 'sine', 0.05, 0.15, 1750, 0.0);
-        this.playNoise(0.09, 'bandpass', 1900, 950, 0.32, 0.045);
+        this.tone(2100, 'sine', 0.035, 0.10, 1600, 0.0);
+        this.playNoise(0.045, 'bandpass', 1800, 1100, 0.16, 0.03);
     }
-    // Konuşma Boyunca Arkada Çalan Canlı Telsiz Paraziti & Savaş Hattı Hışırtısı
-    startRadioStaticBed() {
-        if (this.muted || !this.ctx || !this.noiseBuffer) return;
-        this.stopRadioStaticBed();
-        try {
-            const now = this.ctx.currentTime;
-            const src = this.ctx.createBufferSource();
-            src.buffer = this.noiseBuffer;
-            src.loop = true;
 
-            // Telsiz frekans aralığı (800Hz - 2400Hz arası dar bant)
-            const bp = this.ctx.createBiquadFilter();
-            bp.type = 'bandpass';
-            bp.frequency.setValueAtTime(1650, now);
-            bp.Q.setValueAtTime(3.2, now);
-
-            // Hafif telsiz taşıyıcı dalga vınlaması
-            const hum = this.ctx.createOscillator();
-            hum.type = 'sawtooth';
-            hum.frequency.setValueAtTime(115, now);
-            const humGain = this.ctx.createGain();
-            humGain.gain.setValueAtTime(0.025, now);
-
-            const gain = this.ctx.createGain();
-            gain.gain.setValueAtTime(0.09, now);
-
-            src.connect(bp);
-            bp.connect(gain);
-            hum.connect(humGain);
-            humGain.connect(gain);
-            gain.connect(this.ctx.destination);
-
-            src.start(now);
-            hum.start(now);
-            this._radioBed = { src, hum, gain };
-        } catch (e) {}
-    }
-    stopRadioStaticBed() {
-        if (this._radioBed) {
-            try {
-                this._radioBed.src.stop();
-                this._radioBed.hum.stop();
-                this._radioBed.gain.disconnect();
-            } catch (e) {}
-            this._radioBed = null;
-        }
-    }
-    // COŞKULU SAVAŞ TELSİZİ KOMUTAN SESLENDİRMESİ (Parçalı Dinamik Vurgu + Gerçek Telsiz Efekti)
-    speak(phrases, basePitch = 1.14, baseRate = 1.32) {
+    // TOK VE GÜR BARİTON KOMUTAN SESİ (iPad, Mobil ve PC Tam Uyumlu)
+    speak(text, customPitch = 0.72, customRate = 1.02) {
         if (this.muted || !('speechSynthesis' in window)) return;
         try {
             this.init();
+            // Çok sık üst üste konuşmayı engelle (en az 1.2 sn ara)
+            const nowMs = performance.now();
+            if (this._lastSpeakMs && nowMs - this._lastSpeakMs < 1200) return;
+            this._lastSpeakMs = nowMs;
+
             window.speechSynthesis.cancel();
-            clearTimeout(this._radioStopTimer);
-
-            // 1. Önce Telsiz Mandal Açılış Sesi ("Çıkrık - Bip Bip!")
             this.playRadioSquelchIn();
-            this.startRadioStaticBed();
 
-            // Metni ünlemlerden parçalara bölerek her parçayı artan heyecan ve hızla okut!
-            const parts = Array.isArray(phrases)
-                ? phrases
-                : String(phrases).split(/(?<=[!?.])\s+/).filter(Boolean);
+            const fullText = Array.isArray(text) ? text.join(' ') : String(text);
+            const u = new SpeechSynthesisUtterance(fullText);
+            u.lang = 'tr-TR';
 
+            // Cihazdaki Türkçe Erkek (Tolga, Cem, Male) sesini öncelikli seç
             const voices = window.speechSynthesis.getVoices();
-            const trVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('tr')) || null;
+            const trVoices = voices.filter(v => v.lang && v.lang.toLowerCase().includes('tr'));
+            const maleTrVoice = trVoices.find(v => /tolga|cem|male|erkek|onur|murat/i.test(v.name)) || trVoices[0] || null;
+            if (maleTrVoice) u.voice = maleTrVoice;
 
-            parts.forEach((partText, idx) => {
-                const u = new SpeechSynthesisUtterance(partText);
-                u.lang = 'tr-TR';
-                if (trVoice) u.voice = trVoice;
+            // iPad / iPhone / Android cihazlarda hızlı konuşma bozulmasını ön하기 için hızı 1.0 (doğal hız) tutuyoruz
+            const isMobile = /iPad|iPhone|iPod|Android/i.test(navigator.userAgent);
+            u.pitch = isMobile ? 0.78 : customPitch; // Kalın, tok ve otoriter komutan tonu
+            u.rate = isMobile ? 0.98 : customRate;   // Mobilde tane tane ve net, PC'de tok hız
+            u.volume = 1.0;
 
-                // İlk ünlem vurucu, ikinci ünlem daha coşkulu ve hızlı!
-                u.pitch = Math.min(1.45, basePitch + (idx % 2 === 0 ? 0.08 : -0.04));
-                u.rate = Math.min(1.55, baseRate + idx * 0.04);
-                u.volume = 1.0;
-
-                if (idx === parts.length - 1) {
-                    u.onend = () => {
-                        this.stopRadioStaticBed();
-                        this.playRadioSquelchOut();
-                    };
-                    u.onerror = () => {
-                        this.stopRadioStaticBed();
-                    };
-                }
-                window.speechSynthesis.speak(u);
-            });
-
-            // Güvenlik zamanlayıcısı: Tarayıcı onend tetiklemezse telsiz parazitini kapat
-            this._radioStopTimer = setTimeout(() => {
-                if (this._radioBed) {
-                    this.stopRadioStaticBed();
-                    this.playRadioSquelchOut();
-                }
-            }, 3400);
+            u.onend = () => {
+                this.playRadioSquelchOut();
+            };
+            window.speechSynthesis.speak(u);
         } catch (e) {}
     }
 
@@ -974,7 +910,6 @@ class SoundSystem {
         }
     }
 
-    // Hedef Vurulma Sesi
     hit(isCrit = false) {
         this.init();
         if (isCrit) {
@@ -987,7 +922,6 @@ class SoundSystem {
         }
     }
 
-    // Gerçekçi Çok Katmanlı Hedef / Füze Patlama Sesi
     explosion(isMassive = false) {
         this.init();
         const dur = isMassive ? 0.95 : 0.48;
@@ -998,7 +932,6 @@ class SoundSystem {
         this.playNoise(dur * 0.55, 'bandpass', 2600, 500, vol * 0.55, 0.04);
     }
 
-    // Şarjör Değiştirme Sesi
     reload() {
         this.init();
         this.playNoise(0.05, 'bandpass', 2200, 1200, 0.15);
@@ -1007,22 +940,21 @@ class SoundSystem {
         this.tone(480, 'triangle', 0.09, 0.18, 780, 0.12);
     }
 
-    // Dost Hedef Ceza Uyarısı + Coşkulu Telsiz Anonsu
+    // Uyarı Bipi (Sürekli konuşup oyuncuyu bölmez, sadece tok elektronik ikaz verir)
     penalty() {
         this.init();
         this.tone(300, 'sawtooth', 0.18, 0.22, 160);
         this.tone(180, 'sawtooth', 0.28, 0.24, 85, 0.14);
-        this.speak(['Ateş kes! Ateş kes!', 'Dost birliği vurduk!'], 1.22, 1.38);
     }
 
-    // --- ÖZEL YETENEKLER İÇİN KARAKTERİSTİK SAVAŞ EFEKTİ + COŞKULU TELSİZ ANONSU ---
+    // --- CESUR VE OTORİTER KOMUTAN SAVAŞ EMİRLERİ (Q, W, E) ---
     skillMegaNukeLaunch() {
         this.init();
         this.tone(620, 'sawtooth', 0.18, 0.22, 960);
         this.tone(620, 'sawtooth', 0.18, 0.22, 960, 0.20);
         this.playNoise(0.75, 'lowpass', 1800, 180, 0.44, 0.08);
         this.tone(1400, 'sine', 0.65, 0.16, 240, 0.10);
-        this.speak(['Kırmızı alarm!', 'Mega füze ateşlendi!', 'Siper alın!'], 1.18, 1.36);
+        this.speak('Mega füze yolda! Cehennemi yaşatın!', 0.68, 1.02);
     }
 
     skillSlowMoMatrix() {
@@ -1030,7 +962,7 @@ class SoundSystem {
         this.tone(880, 'sine', 0.65, 0.26, 65);
         this.tone(440, 'triangle', 0.65, 0.20, 42);
         this.playNoise(0.50, 'bandpass', 2400, 140, 0.22);
-        this.speak(['Zaman büküldü!', 'Ağır çekim aktif!', 'Hepsini indirin!'], 1.12, 1.32);
+        this.speak('Ağır çekim devrede! Tek bir düşman bile kaçmasın!', 0.70, 1.02);
     }
 
     skillDualOverdrive() {
@@ -1039,7 +971,7 @@ class SoundSystem {
             this.tone(freq, 'sawtooth', 0.12, 0.18, freq * 1.25, idx * 0.055);
         });
         this.playNoise(0.35, 'highpass', 1500, 4500, 0.20);
-        this.speak(['Çifte taret devrede!', 'Tam güç ateş serbest!'], 1.20, 1.38);
+        this.speak('Çifte taret hazır! Acımak yok, tam güç ateş!', 0.70, 1.04);
     }
 
     fanfare() {
@@ -2870,8 +2802,7 @@ function updateArena(dt) {
             state.damageVignette = 1.0;
             state.targetsEscaped++;
             state.combo = 1;
-            sfx.penalty();
-            sfx.explosion();
+            sfx.explosion(false);
             spawnParticles(hz.x, hz.y, '#ef4444', 28);
             state.shockwaves.push({
                 x: hz.x, y: hz.y, r: 10, maxR: 190, color: '#ef4444', width: 12, alpha: 1.0, speed: 650
