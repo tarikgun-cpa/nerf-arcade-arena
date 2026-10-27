@@ -810,80 +810,171 @@ class SoundSystem {
             o.stop(now + dur);
         } catch (e) {}
     }
-    // Türkçe Karakteristik Komutan Seslendirmesi (Web Speech API)
-    speak(text, pitch = 0.9, rate = 1.1) {
-        if (this.muted || !('speechSynthesis' in window)) return;
+    // Askeri Telsiz Mandal Açılış Sesi (PTT Squelch + Çift Taktik Bip)
+    playRadioSquelchIn() {
+        if (this.muted || !this.ctx) return;
+        this.playNoise(0.065, 'bandpass', 2400, 1800, 0.34);
+        this.tone(1950, 'square', 0.035, 0.14, 2100, 0.03);
+        this.tone(2450, 'square', 0.045, 0.16, 2450, 0.075);
+    }
+    // Askeri Telsiz Mandal Kapanış Sesi (Roger Beep + Statik Kuyruk)
+    playRadioSquelchOut() {
+        if (this.muted || !this.ctx) return;
+        this.tone(2350, 'sine', 0.05, 0.15, 1750, 0.0);
+        this.playNoise(0.09, 'bandpass', 1900, 950, 0.32, 0.045);
+    }
+    // Konuşma Boyunca Arkada Çalan Canlı Telsiz Paraziti & Savaş Hattı Hışırtısı
+    startRadioStaticBed() {
+        if (this.muted || !this.ctx || !this.noiseBuffer) return;
+        this.stopRadioStaticBed();
         try {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'tr-TR';
-            u.pitch = pitch;
-            u.rate = rate;
-            u.volume = 0.95;
-            window.speechSynthesis.speak(u);
+            const now = this.ctx.currentTime;
+            const src = this.ctx.createBufferSource();
+            src.buffer = this.noiseBuffer;
+            src.loop = true;
+
+            // Telsiz frekans aralığı (800Hz - 2400Hz arası dar bant)
+            const bp = this.ctx.createBiquadFilter();
+            bp.type = 'bandpass';
+            bp.frequency.setValueAtTime(1650, now);
+            bp.Q.setValueAtTime(3.2, now);
+
+            // Hafif telsiz taşıyıcı dalga vınlaması
+            const hum = this.ctx.createOscillator();
+            hum.type = 'sawtooth';
+            hum.frequency.setValueAtTime(115, now);
+            const humGain = this.ctx.createGain();
+            humGain.gain.setValueAtTime(0.025, now);
+
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0.09, now);
+
+            src.connect(bp);
+            bp.connect(gain);
+            hum.connect(humGain);
+            humGain.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            src.start(now);
+            hum.start(now);
+            this._radioBed = { src, hum, gain };
         } catch (e) {}
     }
+    stopRadioStaticBed() {
+        if (this._radioBed) {
+            try {
+                this._radioBed.src.stop();
+                this._radioBed.hum.stop();
+                this._radioBed.gain.disconnect();
+            } catch (e) {}
+            this._radioBed = null;
+        }
+    }
+    // COŞKULU SAVAŞ TELSİZİ KOMUTAN SESLENDİRMESİ (Parçalı Dinamik Vurgu + Gerçek Telsiz Efekti)
+    speak(phrases, basePitch = 1.14, baseRate = 1.32) {
+        if (this.muted || !('speechSynthesis' in window)) return;
+        try {
+            this.init();
+            window.speechSynthesis.cancel();
+            clearTimeout(this._radioStopTimer);
+
+            // 1. Önce Telsiz Mandal Açılış Sesi ("Çıkrık - Bip Bip!")
+            this.playRadioSquelchIn();
+            this.startRadioStaticBed();
+
+            // Metni ünlemlerden parçalara bölerek her parçayı artan heyecan ve hızla okut!
+            const parts = Array.isArray(phrases)
+                ? phrases
+                : String(phrases).split(/(?<=[!?.])\s+/).filter(Boolean);
+
+            const voices = window.speechSynthesis.getVoices();
+            const trVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('tr')) || null;
+
+            parts.forEach((partText, idx) => {
+                const u = new SpeechSynthesisUtterance(partText);
+                u.lang = 'tr-TR';
+                if (trVoice) u.voice = trVoice;
+
+                // İlk ünlem vurucu, ikinci ünlem daha coşkulu ve hızlı!
+                u.pitch = Math.min(1.45, basePitch + (idx % 2 === 0 ? 0.08 : -0.04));
+                u.rate = Math.min(1.55, baseRate + idx * 0.04);
+                u.volume = 1.0;
+
+                if (idx === parts.length - 1) {
+                    u.onend = () => {
+                        this.stopRadioStaticBed();
+                        this.playRadioSquelchOut();
+                    };
+                    u.onerror = () => {
+                        this.stopRadioStaticBed();
+                    };
+                }
+                window.speechSynthesis.speak(u);
+            });
+
+            // Güvenlik zamanlayıcısı: Tarayıcı onend tetiklemezse telsiz parazitini kapat
+            this._radioStopTimer = setTimeout(() => {
+                if (this._radioBed) {
+                    this.stopRadioStaticBed();
+                    this.playRadioSquelchOut();
+                }
+            }, 3400);
+        } catch (e) {}
+    }
+
     // 10 Silah Türü İçin Çok Katmanlı Karakteristik Atış Sesleri
     shoot(style) {
         this.init();
         switch (style) {
             case 'SHOTGUN':
-                // Güçlü pompalı patlaması + alt bas + mekanik kurma sesi
                 this.playNoise(0.22, 'lowpass', 2400, 180, 0.38);
                 this.tone(150, 'sawtooth', 0.18, 0.25, 38);
                 this.tone(90, 'sine', 0.22, 0.30, 28);
                 break;
             case 'SNIPER':
-                // Supersonic kırbaç çatlaması (Whip-Crack) + metalik yankı
                 this.playNoise(0.26, 'bandpass', 3200, 380, 0.36);
                 this.tone(1350, 'sawtooth', 0.16, 0.22, 95);
                 this.tone(240, 'triangle', 0.25, 0.24, 42);
                 break;
             case 'GATLING':
-                // Minigun motorlu ağır mekanik darbe
                 this.playNoise(0.07, 'bandpass', 1800, 600, 0.22);
                 this.tone(210, 'sawtooth', 0.06, 0.18, 75);
                 this.tone(95, 'square', 0.06, 0.15, 50);
                 break;
             case 'ROCKET':
-                // Roket ateşleme gürültüsü + karakteristik Nerf Mega ıslık sesi
                 this.playNoise(0.45, 'lowpass', 1100, 140, 0.38);
                 this.tone(180, 'sawtooth', 0.35, 0.24, 48);
-                this.tone(1150, 'sine', 0.32, 0.12, 480, 0.04); // Mega ıslık efekti
+                this.tone(1150, 'sine', 0.32, 0.12, 480, 0.04);
                 break;
             case 'DISC':
-                // Vortex disk fırlatma mekanik vınlaması (Sci-Fi Whir)
                 this.playNoise(0.10, 'highpass', 1800, 4200, 0.15);
                 this.tone(360, 'sine', 0.14, 0.18, 980);
                 this.tone(680, 'triangle', 0.12, 0.12, 260);
                 break;
             case 'TESLA':
-                // Yüksek voltajlı elektrik arkı çatırtısı
                 this.playNoise(0.14, 'highpass', 2800, 5000, 0.22);
                 this.tone(620, 'sawtooth', 0.11, 0.18, 1850);
                 this.tone(1420, 'square', 0.08, 0.12, 340, 0.03);
                 break;
             case 'CRYO':
-                // Sıvı nitrojen basınçlı buz püskürtme ve kristal çınlaması
                 this.playNoise(0.18, 'bandpass', 3600, 1400, 0.26);
                 this.tone(1650, 'sine', 0.12, 0.14, 2400);
                 this.tone(880, 'triangle', 0.14, 0.12, 420);
                 break;
             case 'PLASMA':
-                // Omega ağır plazma topu (Bas darbesi + Fütüristik Lazer)
                 this.playNoise(0.18, 'lowpass', 1900, 220, 0.26);
                 this.tone(780, 'sawtooth', 0.18, 0.20, 110);
                 this.tone(140, 'sine', 0.20, 0.25, 38);
                 break;
             default:
-                // Tok Pnömatik Nerf Yay + Hava Basıncı Sesi (Elite Striker & Çifte Kasırga)
                 this.playNoise(0.075, 'bandpass', 1600, 420, 0.22);
                 this.tone(360, 'triangle', 0.08, 0.20, 105);
                 this.tone(130, 'sine', 0.07, 0.18, 52);
                 break;
         }
     }
-    // Hedef Vurulma Sesi (Normal Zırh Darbesi vs. Kritik Kafa Vuruşu Çınlaması)
+
+    // Hedef Vurulma Sesi
     hit(isCrit = false) {
         this.init();
         if (isCrit) {
@@ -895,60 +986,62 @@ class SoundSystem {
             this.tone(240, 'triangle', 0.07, 0.16, 90);
         }
     }
-    // Gerçekçi Çok Katmanlı Hedef / Füze Patlama Sesi (Sub-Bass + Gövde + Enkaz Çatırtısı)
+
+    // Gerçekçi Çok Katmanlı Hedef / Füze Patlama Sesi
     explosion(isMassive = false) {
         this.init();
         const dur = isMassive ? 0.95 : 0.48;
         const vol = isMassive ? 0.48 : 0.32;
-        // 1. Derin Sub-Bass Şok Dalgası
         this.tone(95, 'sine', dur, vol, 18);
         this.tone(135, 'sawtooth', dur * 0.75, vol * 0.7, 25);
-        // 2. Ana Patlama Gürültüsü
         this.playNoise(dur, 'lowpass', 1400, 65, vol);
-        // 3. Metal/Enkaz Parçalanma Çatırtısı
         this.playNoise(dur * 0.55, 'bandpass', 2600, 500, vol * 0.55, 0.04);
     }
+
+    // Şarjör Değiştirme Sesi
     reload() {
         this.init();
-        // Şarjör çıkarma-takma mekanik sesleri
         this.playNoise(0.05, 'bandpass', 2200, 1200, 0.15);
         this.tone(280, 'triangle', 0.07, 0.16, 460);
         this.playNoise(0.06, 'bandpass', 2800, 1600, 0.18, 0.12);
         this.tone(480, 'triangle', 0.09, 0.18, 780, 0.12);
     }
+
+    // Dost Hedef Ceza Uyarısı + Coşkulu Telsiz Anonsu
     penalty() {
         this.init();
         this.tone(300, 'sawtooth', 0.18, 0.22, 160);
         this.tone(180, 'sawtooth', 0.28, 0.24, 85, 0.14);
-        this.speak('Dikkat! Dost hedef vuruldu!', 1.0, 1.18);
+        this.speak(['Ateş kes! Ateş kes!', 'Dost birliği vurduk!'], 1.22, 1.38);
     }
-    // --- ÖZEL YETENEKLER İÇİN KARAKTERİSTİK SES + TÜRKÇE ANONS ---
+
+    // --- ÖZEL YETENEKLER İÇİN KARAKTERİSTİK SAVAŞ EFEKTİ + COŞKULU TELSİZ ANONSU ---
     skillMegaNukeLaunch() {
         this.init();
-        // İki tonlu nükleer alarm sireni + dev roket ateşleme + Komutan anonsu
-        this.tone(580, 'sawtooth', 0.22, 0.20, 880);
-        this.tone(580, 'sawtooth', 0.22, 0.20, 880, 0.24);
-        this.playNoise(0.75, 'lowpass', 1600, 180, 0.42, 0.10);
-        this.tone(1350, 'sine', 0.68, 0.16, 260, 0.12); // Alçalan dev füze ıslığı
-        this.speak('Mega Füze Ateşlendi!', 0.85, 1.08);
+        this.tone(620, 'sawtooth', 0.18, 0.22, 960);
+        this.tone(620, 'sawtooth', 0.18, 0.22, 960, 0.20);
+        this.playNoise(0.75, 'lowpass', 1800, 180, 0.44, 0.08);
+        this.tone(1400, 'sine', 0.65, 0.16, 240, 0.10);
+        this.speak(['Kırmızı alarm!', 'Mega füze ateşlendi!', 'Siper alın!'], 1.18, 1.36);
     }
+
     skillSlowMoMatrix() {
         this.init();
-        // Zaman bükülmesi (Bass-Drop Warp) + kristal yankı + Komutan anonsu
         this.tone(880, 'sine', 0.65, 0.26, 65);
         this.tone(440, 'triangle', 0.65, 0.20, 42);
         this.playNoise(0.50, 'bandpass', 2400, 140, 0.22);
-        this.speak('Ağır Çekim Aktif!', 0.78, 0.96);
+        this.speak(['Zaman büküldü!', 'Ağır çekim aktif!', 'Hepsini indirin!'], 1.12, 1.32);
     }
+
     skillDualOverdrive() {
         this.init();
-        // Türbin hızlanma (Power-Up Riser) + elektro-şarj + Komutan anonsu
         [260, 390, 520, 780, 1040].forEach((freq, idx) => {
             this.tone(freq, 'sawtooth', 0.12, 0.18, freq * 1.25, idx * 0.055);
         });
         this.playNoise(0.35, 'highpass', 1500, 4500, 0.20);
-        this.speak('Çifte Taret Maksimum Güç!', 0.95, 1.12);
+        this.speak(['Çifte taret devrede!', 'Tam güç ateş serbest!'], 1.20, 1.38);
     }
+
     fanfare() {
         this.init();
         [523, 659, 784, 1046, 1318].forEach((n, i) => {
