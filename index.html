@@ -725,17 +725,22 @@
 </div>
 
 <script>
-// --- 1. WEB AUDIO SYNTHESIZER (WITH iOS / iPadOS SAFARI AUTO-UNLOCKER) ---
+
+// --- 1. PRO STUDIO WEB AUDIO ENGINE + TURKISH VOICE ANNOUNCER ---
 class SoundSystem {
     constructor() {
         this.ctx = null;
+        this.noiseBuffer = null;
         this.muted = false;
         this.unlocked = false;
     }
     init() {
         if (!this.ctx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) this.ctx = new AudioCtx();
+            if (AudioCtx) {
+                this.ctx = new AudioCtx();
+                this.createNoiseBuffer();
+            }
         }
         if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume().catch(() => {});
@@ -751,63 +756,203 @@ class SoundSystem {
             } catch (e) {}
         }
     }
-    tone(freq, type, dur, vol = 0.12, slide = null) {
+    // Patlama, pompalı ve roket ateşi için gerçekçi beyaz/pembe gürültü (Noise) üretir
+    createNoiseBuffer() {
+        if (!this.ctx) return;
+        const sr = this.ctx.sampleRate;
+        const buffer = this.ctx.createBuffer(1, sr * 1.5, sr);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        this.noiseBuffer = buffer;
+    }
+    // Filtreli Gürültü Katmanı (Barut, Hava Basıncı, Roket İtişi ve Patlama için)
+    playNoise(dur, filterType = 'lowpass', startFreq = 1200, endFreq = 120, vol = 0.25, delay = 0) {
+        if (this.muted || !this.ctx || !this.noiseBuffer) return;
+        try {
+            const now = this.ctx.currentTime + delay;
+            const src = this.ctx.createBufferSource();
+            src.buffer = this.noiseBuffer;
+
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = filterType;
+            filter.frequency.setValueAtTime(startFreq, now);
+            if (endFreq) filter.frequency.exponentialRampToValueAtTime(Math.max(30, endFreq), now + dur);
+
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+            src.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            src.start(now);
+            src.stop(now + dur);
+        } catch (e) {}
+    }
+    // Sentezlenmiş Ton Katmanı (Lazer, Bas Vuruşu, Islık ve Mekanik Tıkırtı için)
+    tone(freq, type, dur, vol = 0.15, slide = null, delay = 0) {
         if (this.muted || !this.ctx) return;
         try {
+            const now = this.ctx.currentTime + delay;
             const o = this.ctx.createOscillator();
             const g = this.ctx.createGain();
             o.type = type;
-            o.frequency.setValueAtTime(freq, this.ctx.currentTime);
-            if (slide) o.frequency.exponentialRampToValueAtTime(slide, this.ctx.currentTime + dur);
-            g.gain.setValueAtTime(vol, this.ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
+            o.frequency.setValueAtTime(freq, now);
+            if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, slide), now + dur);
+            g.gain.setValueAtTime(vol, now);
+            g.gain.exponentialRampToValueAtTime(0.001, now + dur);
             o.connect(g);
             g.connect(this.ctx.destination);
-            o.start();
-            o.stop(this.ctx.currentTime + dur);
+            o.start(now);
+            o.stop(now + dur);
         } catch (e) {}
     }
+    // Türkçe Karakteristik Komutan Seslendirmesi (Web Speech API)
+    speak(text, pitch = 0.9, rate = 1.1) {
+        if (this.muted || !('speechSynthesis' in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'tr-TR';
+            u.pitch = pitch;
+            u.rate = rate;
+            u.volume = 0.95;
+            window.speechSynthesis.speak(u);
+        } catch (e) {}
+    }
+    // 10 Silah Türü İçin Çok Katmanlı Karakteristik Atış Sesleri
     shoot(style) {
         this.init();
-        if (style === 'SHOTGUN') {
-            this.tone(180, 'sawtooth', 0.14, 0.16, 55);
-        } else if (style === 'SNIPER') {
-            this.tone(920, 'square', 0.18, 0.16, 140);
-        } else if (style === 'ROCKET') {
-            this.tone(140, 'sawtooth', 0.32, 0.2, 45);
-        } else if (style === 'TESLA') {
-            this.tone(780, 'sawtooth', 0.12, 0.14, 1450);
-        } else if (style === 'PLASMA') {
-            this.tone(640, 'triangle', 0.15, 0.16, 180);
-        } else {
-            this.tone(420, 'triangle', 0.08, 0.12, 160);
+        switch (style) {
+            case 'SHOTGUN':
+                // Güçlü pompalı patlaması + alt bas + mekanik kurma sesi
+                this.playNoise(0.22, 'lowpass', 2400, 180, 0.38);
+                this.tone(150, 'sawtooth', 0.18, 0.25, 38);
+                this.tone(90, 'sine', 0.22, 0.30, 28);
+                break;
+            case 'SNIPER':
+                // Supersonic kırbaç çatlaması (Whip-Crack) + metalik yankı
+                this.playNoise(0.26, 'bandpass', 3200, 380, 0.36);
+                this.tone(1350, 'sawtooth', 0.16, 0.22, 95);
+                this.tone(240, 'triangle', 0.25, 0.24, 42);
+                break;
+            case 'GATLING':
+                // Minigun motorlu ağır mekanik darbe
+                this.playNoise(0.07, 'bandpass', 1800, 600, 0.22);
+                this.tone(210, 'sawtooth', 0.06, 0.18, 75);
+                this.tone(95, 'square', 0.06, 0.15, 50);
+                break;
+            case 'ROCKET':
+                // Roket ateşleme gürültüsü + karakteristik Nerf Mega ıslık sesi
+                this.playNoise(0.45, 'lowpass', 1100, 140, 0.38);
+                this.tone(180, 'sawtooth', 0.35, 0.24, 48);
+                this.tone(1150, 'sine', 0.32, 0.12, 480, 0.04); // Mega ıslık efekti
+                break;
+            case 'DISC':
+                // Vortex disk fırlatma mekanik vınlaması (Sci-Fi Whir)
+                this.playNoise(0.10, 'highpass', 1800, 4200, 0.15);
+                this.tone(360, 'sine', 0.14, 0.18, 980);
+                this.tone(680, 'triangle', 0.12, 0.12, 260);
+                break;
+            case 'TESLA':
+                // Yüksek voltajlı elektrik arkı çatırtısı
+                this.playNoise(0.14, 'highpass', 2800, 5000, 0.22);
+                this.tone(620, 'sawtooth', 0.11, 0.18, 1850);
+                this.tone(1420, 'square', 0.08, 0.12, 340, 0.03);
+                break;
+            case 'CRYO':
+                // Sıvı nitrojen basınçlı buz püskürtme ve kristal çınlaması
+                this.playNoise(0.18, 'bandpass', 3600, 1400, 0.26);
+                this.tone(1650, 'sine', 0.12, 0.14, 2400);
+                this.tone(880, 'triangle', 0.14, 0.12, 420);
+                break;
+            case 'PLASMA':
+                // Omega ağır plazma topu (Bas darbesi + Fütüristik Lazer)
+                this.playNoise(0.18, 'lowpass', 1900, 220, 0.26);
+                this.tone(780, 'sawtooth', 0.18, 0.20, 110);
+                this.tone(140, 'sine', 0.20, 0.25, 38);
+                break;
+            default:
+                // Tok Pnömatik Nerf Yay + Hava Basıncı Sesi (Elite Striker & Çifte Kasırga)
+                this.playNoise(0.075, 'bandpass', 1600, 420, 0.22);
+                this.tone(360, 'triangle', 0.08, 0.20, 105);
+                this.tone(130, 'sine', 0.07, 0.18, 52);
+                break;
         }
     }
+    // Hedef Vurulma Sesi (Normal Zırh Darbesi vs. Kritik Kafa Vuruşu Çınlaması)
     hit(isCrit = false) {
         this.init();
         if (isCrit) {
-            this.tone(580, 'square', 0.09, 0.14, 1180);
+            this.playNoise(0.08, 'highpass', 2500, 900, 0.18);
+            this.tone(740, 'triangle', 0.08, 0.20, 1480);
+            this.tone(1480, 'sine', 0.12, 0.18, 2100, 0.04);
         } else {
-            this.tone(320, 'sine', 0.06, 0.1, 520);
+            this.playNoise(0.06, 'bandpass', 1200, 350, 0.16);
+            this.tone(240, 'triangle', 0.07, 0.16, 90);
         }
     }
-    explosion() {
+    // Gerçekçi Çok Katmanlı Hedef / Füze Patlama Sesi (Sub-Bass + Gövde + Enkaz Çatırtısı)
+    explosion(isMassive = false) {
         this.init();
-        this.tone(110, 'sawtooth', 0.38, 0.22, 28);
+        const dur = isMassive ? 0.95 : 0.48;
+        const vol = isMassive ? 0.48 : 0.32;
+        // 1. Derin Sub-Bass Şok Dalgası
+        this.tone(95, 'sine', dur, vol, 18);
+        this.tone(135, 'sawtooth', dur * 0.75, vol * 0.7, 25);
+        // 2. Ana Patlama Gürültüsü
+        this.playNoise(dur, 'lowpass', 1400, 65, vol);
+        // 3. Metal/Enkaz Parçalanma Çatırtısı
+        this.playNoise(dur * 0.55, 'bandpass', 2600, 500, vol * 0.55, 0.04);
     }
     reload() {
         this.init();
-        this.tone(260, 'triangle', 0.08, 0.12, 420);
-        setTimeout(() => this.tone(440, 'triangle', 0.1, 0.14, 660), 110);
+        // Şarjör çıkarma-takma mekanik sesleri
+        this.playNoise(0.05, 'bandpass', 2200, 1200, 0.15);
+        this.tone(280, 'triangle', 0.07, 0.16, 460);
+        this.playNoise(0.06, 'bandpass', 2800, 1600, 0.18, 0.12);
+        this.tone(480, 'triangle', 0.09, 0.18, 780, 0.12);
     }
     penalty() {
         this.init();
-        this.tone(240, 'sawtooth', 0.3, 0.18, 90);
+        this.tone(300, 'sawtooth', 0.18, 0.22, 160);
+        this.tone(180, 'sawtooth', 0.28, 0.24, 85, 0.14);
+        this.speak('Dikkat! Dost hedef vuruldu!', 1.0, 1.18);
+    }
+    // --- ÖZEL YETENEKLER İÇİN KARAKTERİSTİK SES + TÜRKÇE ANONS ---
+    skillMegaNukeLaunch() {
+        this.init();
+        // İki tonlu nükleer alarm sireni + dev roket ateşleme + Komutan anonsu
+        this.tone(580, 'sawtooth', 0.22, 0.20, 880);
+        this.tone(580, 'sawtooth', 0.22, 0.20, 880, 0.24);
+        this.playNoise(0.75, 'lowpass', 1600, 180, 0.42, 0.10);
+        this.tone(1350, 'sine', 0.68, 0.16, 260, 0.12); // Alçalan dev füze ıslığı
+        this.speak('Mega Füze Ateşlendi!', 0.85, 1.08);
+    }
+    skillSlowMoMatrix() {
+        this.init();
+        // Zaman bükülmesi (Bass-Drop Warp) + kristal yankı + Komutan anonsu
+        this.tone(880, 'sine', 0.65, 0.26, 65);
+        this.tone(440, 'triangle', 0.65, 0.20, 42);
+        this.playNoise(0.50, 'bandpass', 2400, 140, 0.22);
+        this.speak('Ağır Çekim Aktif!', 0.78, 0.96);
+    }
+    skillDualOverdrive() {
+        this.init();
+        // Türbin hızlanma (Power-Up Riser) + elektro-şarj + Komutan anonsu
+        [260, 390, 520, 780, 1040].forEach((freq, idx) => {
+            this.tone(freq, 'sawtooth', 0.12, 0.18, freq * 1.25, idx * 0.055);
+        });
+        this.playNoise(0.35, 'highpass', 1500, 4500, 0.20);
+        this.speak('Çifte Taret Maksimum Güç!', 0.95, 1.12);
     }
     fanfare() {
         this.init();
         [523, 659, 784, 1046, 1318].forEach((n, i) => {
-            setTimeout(() => this.tone(n, 'triangle', 0.18, 0.15), i * 75);
+            this.tone(n, 'triangle', 0.18, 0.16, null, i * 0.075);
         });
     }
 }
@@ -2303,7 +2448,7 @@ function activateMegaNuke() {
     if (state.skills.nukeCd > 0 || state.activeNuke) return;
     state.skills.nukeCd = 18;
     state.recoil = 28;
-    sfx.shoot('ROCKET');
+    sfx.skillMegaNukeLaunch();
     showAnnouncement('🚀 BİZİM ROCET (MEGA NÜKLEER FÜZE) ATEŞLENDİ!');
 
     state.activeNuke = {
@@ -2322,7 +2467,7 @@ function activateMegaNuke() {
 function detonateMegaNuke(nx, ny) {
     state.screenShake = 34;
     state.screenFlash = 0.95;
-    sfx.explosion();
+    sfx.explosion(true);
     setTimeout(() => sfx.explosion(), 140);
 
     state.shockwaves.push(
@@ -2363,7 +2508,7 @@ function activateSlowMatrix() {
     if (state.skills.slowCd > 0) return;
     state.skills.slowCd = 16;
     state.skills.slowActive = 6.5;
-    sfx.fanfare();
+    sfx.skillSlowMoMatrix();
     showAnnouncement('⏳ MATRİX AĞIR ÇEKİM MODU AKTİF!');
 }
 
@@ -2374,7 +2519,7 @@ function activateDualOverdrive() {
     const w = getActiveWeapon();
     state.ammo = getWeaponMagSize(w);
     state.reloading = 0;
-    sfx.fanfare();
+    sfx.skillDualOverdrive();
     showAnnouncement('🔥 ÇİFTE TARET OVERDRIVE! (SINIRSIZ MERMİ & 2X NAMLU)');
 }
 
@@ -2790,8 +2935,10 @@ function damageTarget(t, indexInArray, dmg, isCrit, weapon) {
     }
 
     if (t.hp <= 0) {
+        sfx.explosion(false); // Hedef patlama sesi!
         state.targets.splice(indexInArray, 1);
         state.targetsDestroyed++;
+
         state.combo = Math.min(10, state.combo + 1);
         state.comboTimer = 4.5;
 
@@ -3311,85 +3458,306 @@ function drawActiveMegaNuke(nk) {
 
 
 function drawProjectile3D(p) {
-    const scale = Math.max(0.32, 1.15 - p.progress * 0.72);
-    const dx = p.targetX - p.startX;
-    const dy = p.targetY - p.startY;
-    const flightAngle = Math.atan2(dx, -dy);
+    // 3D Derinlik Perspektifi: Namludan büyük çıkar, hedefe yaklaştıkça perspektifle küçülür
+    const scale = Math.max(0.34, 1.25 - p.progress * 0.75);
+
+    // Merminin anlık teğet uçuş açısını hesapla (Parabolik eğriyi de hesaba katar)
+    const prevProg = Math.max(0, p.progress - 0.08);
+    const prevX = p.startX + (p.targetX - p.startX) * prevProg;
+    const prevY = p.startY + (p.targetY - p.startY) * prevProg - Math.sin(prevProg * Math.PI) * 32;
+    const vx = p.x - prevX;
+    const vy = p.y - prevY;
+    const flightAngle = Math.atan2(vx, -vy);
 
     ctx.save();
-    // 1. Parlayan Mermi İzi (Tracer Tail)
-    const tailProg = Math.max(0, p.progress - 0.14);
+
+    // 1. ÇİFT KATMANLI LAZER / HAVA İZİ (Dış Renkli Glow + İç Beyaz Çekirdek İz)
+    const tailProg = Math.max(0, p.progress - (p.weapon.style === 'SNIPER' ? 0.28 : 0.16));
     const tailX = p.startX + (p.targetX - p.startX) * tailProg;
     const tailY = p.startY + (p.targetY - p.startY) * tailProg - Math.sin(tailProg * Math.PI) * 32;
 
-    const tailGrad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
-    tailGrad.addColorStop(0, 'rgba(255,255,255,0)');
-    tailGrad.addColorStop(1, p.weapon.accent);
-    ctx.strokeStyle = tailGrad;
-    ctx.lineWidth = Math.max(2, 7 * scale);
+    const outerGrad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
+    outerGrad.addColorStop(0, 'rgba(255,255,255,0)');
+    outerGrad.addColorStop(0.5, p.weapon.colorPrimary);
+    outerGrad.addColorStop(1, p.weapon.accent);
+
+    ctx.strokeStyle = outerGrad;
+    ctx.lineWidth = Math.max(3, 10 * scale);
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(tailX, tailY);
     ctx.lineTo(p.x, p.y);
     ctx.stroke();
 
+    // İç parlak beyaz lazer çekirdeği
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.lineWidth = Math.max(1.2, 3.5 * scale);
+    ctx.beginPath();
+    ctx.moveTo((tailX + p.x) * 0.5, (tailY + p.y) * 0.5);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+
+    // 2. MERMİ GÖVDESİNİ KONUMLANDIR VE UÇUŞ AÇISINA DÖNDÜR
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
 
-    // 2. Mega Titan Füzeatar için "Bizim rocet" görseli
+    // A) MEGA TİTAN FÜZEATAR: "Bizim rocet" görseli + Arkasında canlı jet alevi!
     if (p.weapon.style === 'ROCKET') {
+        ctx.rotate(flightAngle);
+        // Roket arkası jet alevi konisi
+        const flameLen = 28 + Math.random() * 14;
+        const fg = ctx.createLinearGradient(0, 15, 0, 15 + flameLen);
+        fg.addColorStop(0, '#ffffff');
+        fg.addColorStop(0.4, '#facc15');
+        fg.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        ctx.fillStyle = fg;
+        ctx.beginPath();
+        ctx.moveTo(-8, 16);
+        ctx.lineTo(8, 16);
+        ctx.lineTo(0, 18 + flameLen);
+        ctx.closePath();
+        ctx.fill();
+
         const ourRocket = getSpriteDrawable('Bizim rocet');
         if (ourRocket) {
-            ctx.rotate(flightAngle * 0.45);
             const sw = ourRocket.width || ourRocket.naturalWidth || 50;
             const sh = ourRocket.height || ourRocket.naturalHeight || 140;
-            const dh = 78;
+            const dh = 84;
             const dw = dh * (sw / sh);
+            ctx.shadowColor = '#f97316';
+            ctx.shadowBlur = 16;
             ctx.drawImage(ourRocket, -dw / 2, -dh / 2, dw, dh);
             ctx.restore();
             return;
         }
     }
 
-    // 3. Silah Türüne Özel 3D Mermi (Köpük Dart, Vortex Disk, Rival Topu, Plazma)
-    ctx.rotate(flightAngle * 0.5);
+    // B) VORTEX PYRAGON DİSK ATAR: 3D Dönen Dişli Yeşil Vortex Diski
     if (p.weapon.style === 'DISC') {
-        ctx.fillStyle = '#10b981';
+        const spin = p.progress * 26;
+        ctx.shadowColor = '#a3e635';
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = '#059669';
         ctx.strokeStyle = '#a3e635';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.ellipse(0, 0, 16, 8, p.progress * 18, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, 20, 11, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-    } else if (p.weapon.style === 'SHOTGUN') {
-        ctx.fillStyle = '#facc15';
-        ctx.strokeStyle = '#ca8a04';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(0, 0, 9, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    } else if (p.weapon.style === 'TESLA' || p.weapon.style === 'PLASMA' || p.weapon.style === 'CRYO') {
+
+        // Dönen iç türbin kanatları
+        ctx.save();
+        ctx.scale(1, 0.55);
+        ctx.rotate(spin);
+        ctx.strokeStyle = '#ecfccb';
+        ctx.lineWidth = 2.5;
+        for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI) / 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * 16, Math.sin(a) * 16);
+            ctx.stroke();
+        }
+        ctx.restore();
+
         ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = p.weapon.colorPrimary;
-        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.ellipse(0, -1, 7, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+    }
+
+    // C) RIVAL POMPALI: 3D Küresel Gölgeli ve Çukurlu Sarı Rival Köpük Topu
+    if (p.weapon.style === 'SHOTGUN') {
+        const rGrad = ctx.createRadialGradient(-4, -4, 2, 0, 0, 12);
+        rGrad.addColorStop(0, '#fef9c3');
+        rGrad.addColorStop(0.5, '#facc15');
+        rGrad.addColorStop(1, '#b45309');
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = rGrad;
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(0, 0, 11, 0, Math.PI * 2);
         ctx.fill();
-    } else {
-        // 3D Mavi-Turuncu Nerf Köpük Dartı
-        ctx.fillStyle = p.weapon.colorSecondary;
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Rival topu üzerindeki karakteristik aerodinamik çukurlar
+        ctx.fillStyle = 'rgba(180, 83, 9, 0.55)';
+        [[-4, -3], [4, -2], [0, 4], [-3, 4], [4, 3]].forEach(([dx, dy]) => {
+            ctx.beginPath();
+            ctx.arc(dx, dy, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.restore();
+        return;
+    }
+
+    // D) SHOCKWAVE ARK-TESLA: Çevresinde Canlı Elektrik Şimşekleri Çakan Plazma Küresi
+    if (p.weapon.style === 'TESLA') {
+        ctx.shadowColor = '#22d3ee';
+        ctx.shadowBlur = 22;
+        ctx.fillStyle = '#06b6d4';
         ctx.beginPath();
-        ctx.roundRect(-5, -14, 10, 26, 4);
+        ctx.arc(0, 0, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, 0, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Küre etrafında çakan 3 rastgele mini yıldırım arkı
+        ctx.strokeStyle = '#a5f3fc';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 3; i++) {
+            const a = p.progress * 30 + (i * Math.PI * 2) / 3;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * 6, Math.sin(a) * 6);
+            ctx.lineTo(Math.cos(a + 0.3) * 15, Math.sin(a + 0.3) * 15);
+            ctx.lineTo(Math.cos(a - 0.2) * 21, Math.sin(a - 0.2) * 21);
+            ctx.stroke();
+        }
+        ctx.restore();
+        return;
+    }
+
+    // E) SUB-ZERO CRYO BUZ TOPU: Dönen 6 Köşeli Elmas Buz Kristali Mermisi
+    if (p.weapon.style === 'CRYO') {
+        ctx.rotate(p.progress * 18);
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = '#bae6fd';
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2;
+
+        for (let i = 0; i < 3; i++) {
+            ctx.save();
+            ctx.rotate((i * Math.PI) / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, -16);
+            ctx.lineTo(5, 0);
+            ctx.lineTo(0, 16);
+            ctx.lineTo(-5, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, 0, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+    }
+
+    // F) NERF ULTRA OMEGA PLAZMA: Çift Yörünge Halkalı Altın-Mor Süper Plazma Küresi
+    if (p.weapon.style === 'PLASMA') {
+        const pGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 16);
+        pGrad.addColorStop(0, '#ffffff');
+        pGrad.addColorStop(0.45, '#facc15');
+        pGrad.addColorStop(1, '#9333ea');
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 22;
+        ctx.fillStyle = pGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 2.2;
+        ctx.save();
+        ctx.rotate(p.progress * 22);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 20, 7, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        ctx.restore();
+        return;
+    }
+
+    // G) PHARAOH SNIPER & VULCAN MINIGUN: Aerodinamik Altın/Pirinç Zırh Delici Mermi + Süpersonik Koni
+    if (p.weapon.style === 'SNIPER' || p.weapon.style === 'GATLING') {
+        ctx.rotate(flightAngle);
+        const isSniper = p.weapon.style === 'SNIPER';
+
+        // Sniper için süpersonik Mach şok halkası
+        if (isSniper) {
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(-14, 6);
+            ctx.lineTo(0, -22);
+            ctx.lineTo(14, 6);
+            ctx.stroke();
+        }
+
+        const bGrad = ctx.createLinearGradient(-5, 0, 5, 0);
+        bGrad.addColorStop(0, '#ca8a04');
+        bGrad.addColorStop(0.5, '#fef08a');
+        bGrad.addColorStop(1, '#a16207');
+        ctx.fillStyle = bGrad;
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.8;
+
+        // Sivri aerodinamik mermi çekirdeği
+        ctx.beginPath();
+        ctx.moveTo(0, -22);
+        ctx.quadraticCurveTo(6, -10, 5, 12);
+        ctx.lineTo(-5, 12);
+        ctx.quadraticCurveTo(-6, -10, 0, -22);
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = p.weapon.colorPrimary;
-        ctx.beginPath();
-        ctx.roundRect(-5, -18, 10, 9, 4);
-        ctx.fill();
+
+        // Kırmızı/Mavi izli dip halka
+        ctx.fillStyle = isSniper ? '#38bdf8' : '#ef4444';
+        ctx.fillRect(-4, 4, 8, 5);
+        ctx.restore();
+        return;
     }
+
+    // H) ELITE STRIKER & HYPERFIRE ÇİFTE KASIRGA: Detaylı 3D Silindirik Nerf Köpük Dartı
+    ctx.rotate(flightAngle);
+    // Köpük gövde (3D silindirik ışık yansımasıyla)
+    const dGrad = ctx.createLinearGradient(-6, 0, 6, 0);
+    dGrad.addColorStop(0, '#1e40af');
+    dGrad.addColorStop(0.45, '#60a5fa');
+    dGrad.addColorStop(1, '#1d4ed8');
+    ctx.fillStyle = dGrad;
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-5.5, -10, 11, 24, 3);
+    ctx.fill();
+    ctx.stroke();
+
+    // Dart arkasındaki aerodinamik stabilize kanat çizgileri
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(0, 11);
+    ctx.stroke();
+
+    // İkonik Parlak Turuncu Kauçuk Nerf Dart Başlığı + Hava Deliği
+    const tipGrad = ctx.createLinearGradient(-5, -20, 5, -10);
+    tipGrad.addColorStop(0, '#fdba74');
+    tipGrad.addColorStop(0.5, '#f97316');
+    tipGrad.addColorStop(1, '#c2410c');
+    ctx.fillStyle = tipGrad;
+    ctx.beginPath();
+    ctx.roundRect(-5.5, -20, 11, 11, [6, 6, 2, 2]);
+    ctx.fill();
+    ctx.stroke();
+
+    // Dart ucundaki hava deliği
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.ellipse(2, -15, 1.5, 1, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.restore();
 }
