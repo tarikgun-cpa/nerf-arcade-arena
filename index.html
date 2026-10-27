@@ -199,7 +199,7 @@
             <span class="text-2xl">🎯</span>
             <div class="text-left">
                 <div class="text-[10px] font-black text-amber-300 tracking-widest uppercase leading-none">12 OPERASYON + 4 DEV BOSS ARA GEÇİŞ BÖLÜMÜ</div>
-                <div class="text-xs font-extrabold text-cyan-300 leading-tight mt-0.5" id="ui-stage-title">1. BÖLÜM: NEON ATARİ SALONU (DALGA 1/3)</div>
+                <div class="text-xs font-extrabold text-cyan-300 leading-tight mt-0.5" id="ui-stage-title">1. BÖLÜM: TAKTİK ASKERİ ÜS (DALGA 1/3)</div>
             </div>
         </div>
 
@@ -427,8 +427,8 @@
         <div class="bg-slate-900 border-4 border-cyan-400 rounded-3xl max-w-6xl w-full p-4 sm:p-6 shadow-[0_0_60px_rgba(34,211,238,0.45)] flex flex-col max-h-[92vh]">
             <div class="flex items-center justify-between border-b-2 border-slate-700 pb-3 mb-4">
                 <div>
-                    <h2 class="arcade-font text-xl sm:text-3xl font-black text-cyan-300">🗺️ 16 BÖLÜM & 4 DEV BOSS ARA GEÇİŞ OPERASYONU</h2>
-                    <p class="text-xs text-slate-300">Her 4 normal bölümden sonra giderek zorlaşan özel bir Dev Canavar (T-Rex Dinozor, Kızıl Ejderha, Ana Uzay Gemisi ve Dev Uzaylı Leviathan) ara geçiş bölümü seni bekliyor!</p>
+                    <h2 class="arcade-font text-xl sm:text-3xl font-black text-cyan-300">🗺️ 16 BÖLÜM & ÖZEL BOSS OPERASYONLARI</h2>
+                    <p class="text-xs text-slate-300">Her bölümde o temaya özel 4 Düşman + 1 Boss + 2 Özel Füze ve Dost Ambulans/Yardım Droneları (`Vurma_1`, `Vurma_2`) yer alır!</p>
                 </div>
                 <button id="close-stages" class="bg-red-600 hover:bg-red-500 text-white font-black w-9 h-9 rounded-xl border-2 border-red-300">✕</button>
             </div>
@@ -785,7 +785,7 @@
                 <span class="text-2xl sm:text-4xl">▶️</span>
                 <div class="text-left leading-none">
                     <div class="arcade-font text-xl sm:text-3xl font-black tracking-wider text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">PLAY / OYUNA BAŞLA</div>
-                    <div class="text-[10px] sm:text-xs font-black text-yellow-100 tracking-widest uppercase mt-0.5">16 BÖLÜM • 10 ULTRA SİLAH • 4 DEV BOSS</div>
+                    <div class="text-[10px] sm:text-xs font-black text-yellow-100 tracking-widest uppercase mt-0.5">16 BÖLÜM • 73 ÖZEL HEDEF GÖRSELİ • 10 ULTRA SİLAH</div>
                 </div>
             </button>
         </div>
@@ -793,7 +793,7 @@
         <!-- Bottom Feature Highlights Bar -->
         <div class="w-full max-w-4xl grid grid-cols-3 gap-2 text-center text-[10px] sm:text-xs font-extrabold text-slate-300 bg-slate-900/80 border border-slate-800 rounded-2xl p-2">
             <div>🍎 <span class="text-cyan-300">iPad & Apple Pencil</span> Tam Uyumlu</div>
-            <div>🦖 <span class="text-amber-300">4 Dev Ara Geçiş Boss'u</span> (Dinozor, Ejderha, Gemi, Leviathan)</div>
+            <div>🦖 <span class="text-amber-300">73 Özel Tasarım</span> Hedef, Boss & Füze Görseli</div>
             <div>🏅 <span class="text-lime-300">İlk 10 Şeref Kürsüsü</span> Canlı Bulut Kayıt</div>
         </div>
     </div>
@@ -815,7 +815,6 @@ class SoundSystem {
         if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume().catch(() => {});
         }
-        // iPadOS Safari silent buffer unlock on first user interaction
         if (this.ctx && !this.unlocked) {
             try {
                 const buffer = this.ctx.createBuffer(1, 1, 22050);
@@ -856,7 +855,6 @@ class SoundSystem {
         } else if (style === 'PLASMA') {
             this.tone(640, 'triangle', 0.15, 0.16, 180);
         } else {
-            // Foam dart pop
             this.tone(420, 'triangle', 0.08, 0.12, 160);
         }
     }
@@ -934,7 +932,7 @@ const WEAPONS = [
         unlockCost: 1250,
         upgradeCost: 380,
         specialText: '5\'li Sarı Rival Topu Saçması',
-        desc: 'Tek tetikte 5 adet yüksek hızlı sarı Rival topu fırlatır! Kurt adam ve zombi sürülerini biçer.'
+        desc: 'Tek tetikte 5 adet yüksek hızlı sarı Rival topu fırlatır! Sürüleri biçer.'
     },
     {
         id: 'dualuzi',
@@ -1024,7 +1022,7 @@ const WEAPONS = [
         unlockCost: 13000,
         upgradeCost: 1600,
         specialText: 'Kalkan Delici + 3x Kafa Vuruşu Kritiği',
-        desc: 'Lazer dürbünlü uzun namlu. Vampir, Kurt Adam ve UFO kalkanlarını tek atışta deler!'
+        desc: 'Lazer dürbünlü uzun namlu. Kalkanları tek atışta deler!'
     },
     {
         id: 'titan',
@@ -1046,8 +1044,8 @@ const WEAPONS = [
         maxLevel: 12,
         unlockCost: 19000,
         upgradeCost: 2200,
-        specialText: 'Geniş Patlama Çaplı Mega Islıklı Füze',
-        desc: 'Devasa Mega köpük roketleri fırlatır. Patlama çapındaki tüm düşmanları havaya uçurur!'
+        specialText: 'Geniş Patlama Çaplı Mega Islıklı Füze (Bizim rocet)',
+        desc: 'Devasa Mega roketleri (Bizim rocet) fırlatır. Patlama çapındaki tüm düşmanları havaya uçurur!'
     },
     {
         id: 'tesla',
@@ -1069,8 +1067,8 @@ const WEAPONS = [
         maxLevel: 12,
         unlockCost: 27000,
         upgradeCost: 3000,
-        specialText: '3 Hedefe Sıçrayan Elektrik Arkı (Hayalet & Robot Avcısı)',
-        desc: 'Yüksek voltajlı enerji dartları 3 düşman arasında yıldırım zinciri oluşturur. Hayaletleri görünmezken bile vurur!'
+        specialText: '3 Hedefe Sıçrayan Elektrik Arkı',
+        desc: 'Yüksek voltajlı enerji dartları 3 düşman arasında yıldırım zinciri oluşturur.'
     },
     {
         id: 'cryo',
@@ -1093,7 +1091,7 @@ const WEAPONS = [
         unlockCost: 38000,
         upgradeCost: 4200,
         specialText: 'Düşmanları Donduran Çifte Kriyo Kapsül',
-        desc: 'İsabet ettiği ateş iblislerini, kurt adamları ve helikopterleri buz kütlesine çevirerek %70 yavaşlatır!'
+        desc: 'İsabet ettiği düşmanları buz kütlesine çevirerek %70 yavaşlatır!'
     },
     {
         id: 'omega',
@@ -1121,9 +1119,6 @@ const WEAPONS = [
     }
 ];
 
-/**
- * Generates high-detail custom SVG vector illustration for each of the 10 Nerf Blasters
- */
 function generateWeaponSVG(w) {
     const p = w.colorPrimary;
     const s = w.colorSecondary;
@@ -1133,17 +1128,14 @@ function generateWeaponSVG(w) {
     switch (w.id) {
         case 'striker':
             specificParts = `
-                <!-- Tactical Scope & Long Barrel -->
                 <rect x="75" y="10" width="52" height="10" rx="4" fill="${s}" stroke="${a}" stroke-width="1.5"/>
                 <rect x="160" y="26" width="46" height="14" rx="3" fill="${s}"/>
                 <rect x="198" y="24" width="12" height="18" rx="2" fill="${a}"/>
-                <!-- Curved Banana Dart Mag -->
                 <path d="M105,54 L125,54 L132,88 L108,88 Z" fill="#f97316" stroke="#fff" stroke-width="1.5"/>
             `;
             break;
         case 'shotgun':
             specificParts = `
-                <!-- Heavy Pump Action & Triple Muzzle -->
                 <rect x="120" y="46" width="58" height="12" rx="4" fill="${a}" stroke="#000" stroke-width="1.5"/>
                 <rect x="165" y="22" width="40" height="24" rx="4" fill="${s}" stroke="${p}" stroke-width="2"/>
                 <circle cx="205" cy="27" r="4" fill="${a}"/>
@@ -1153,7 +1145,6 @@ function generateWeaponSVG(w) {
             break;
         case 'dualuzi':
             specificParts = `
-                <!-- Dual Rapid Barrels & Extended Drum -->
                 <rect x="160" y="20" width="44" height="9" rx="3" fill="${a}"/>
                 <rect x="160" y="34" width="44" height="9" rx="3" fill="${p}"/>
                 <circle cx="118" cy="68" r="18" fill="${s}" stroke="${a}" stroke-width="2.5"/>
@@ -1161,7 +1152,6 @@ function generateWeaponSVG(w) {
             break;
         case 'vortex':
             specificParts = `
-                <!-- Green Vortex Disc Drum & Wide Launcher -->
                 <circle cx="115" cy="58" r="20" fill="${p}" stroke="${a}" stroke-width="3"/>
                 <circle cx="115" cy="58" r="9" fill="${a}"/>
                 <rect x="158" y="24" width="46" height="18" rx="6" fill="${s}" stroke="${a}" stroke-width="2"/>
@@ -1169,7 +1159,6 @@ function generateWeaponSVG(w) {
             break;
         case 'gatling':
             specificParts = `
-                <!-- 6-Barrel Rotary Gatling Assembly -->
                 <rect x="150" y="18" width="58" height="30" rx="4" fill="${s}" stroke="${p}" stroke-width="2"/>
                 <line x1="152" y1="24" x2="206" y2="24" stroke="${a}" stroke-width="3"/>
                 <line x1="152" y1="33" x2="206" y2="33" stroke="${p}" stroke-width="3"/>
@@ -1179,7 +1168,6 @@ function generateWeaponSVG(w) {
             break;
         case 'sniper':
             specificParts = `
-                <!-- Long Precision Sniper Scope & Barrel -->
                 <rect x="65" y="6" width="76" height="11" rx="5" fill="${s}" stroke="${a}" stroke-width="2"/>
                 <line x1="80" y1="17" x2="80" y2="24" stroke="${p}" stroke-width="3"/>
                 <line x1="125" y1="17" x2="125" y2="24" stroke="${p}" stroke-width="3"/>
@@ -1188,14 +1176,12 @@ function generateWeaponSVG(w) {
             break;
         case 'titan':
             specificParts = `
-                <!-- Giant Mega Rocket Warhead protruding from Muzzle -->
                 <rect x="148" y="16" width="45" height="34" rx="6" fill="${s}" stroke="${a}" stroke-width="2"/>
                 <path d="M190,18 L218,33 L190,48 Z" fill="${p}" stroke="#fff" stroke-width="2"/>
             `;
             break;
         case 'tesla':
             specificParts = `
-                <!-- Electric Tesla Coils along Barrel -->
                 <ellipse cx="165" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
                 <ellipse cx="182" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
                 <ellipse cx="199" cy="33" rx="6" ry="16" fill="none" stroke="${a}" stroke-width="3"/>
@@ -1203,14 +1189,12 @@ function generateWeaponSVG(w) {
             break;
         case 'cryo':
             specificParts = `
-                <!-- Sub-Zero Cryo Canister & Twin Ice Nozzles -->
                 <rect x="96" y="54" width="34" height="26" rx="8" fill="${a}" stroke="${p}" stroke-width="2"/>
                 <rect x="160" y="22" width="46" height="22" rx="6" fill="${p}" stroke="#fff" stroke-width="2"/>
             `;
             break;
         default:
             specificParts = `
-                <!-- Omega Triple Gold Plasma Core -->
                 <circle cx="118" cy="36" r="14" fill="${a}" stroke="#fff" stroke-width="2"/>
                 <rect x="158" y="18" width="52" height="30" rx="8" fill="${p}" stroke="${a}" stroke-width="2.5"/>
             `;
@@ -1219,89 +1203,258 @@ function generateWeaponSVG(w) {
 
     return `
     <svg viewBox="0 0 225 95" class="w-full h-full drop-shadow">
-        <!-- Tactical Stock -->
         <path d="M12,26 L52,26 L52,54 L18,64 L12,48 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
-        <!-- Main Receiver Body -->
         <rect x="50" y="22" width="114" height="32" rx="8" fill="${p}" stroke="#ffffff" stroke-width="1.8"/>
-        <!-- Accent Stripe -->
         <rect x="62" y="32" width="84" height="8" rx="3" fill="${a}"/>
-        <!-- Ergonomic Handle Grip -->
         <path d="M68,52 L90,52 L82,86 L60,86 Z" fill="${s}" stroke="${p}" stroke-width="2"/>
-        <!-- Trigger Guard -->
         <path d="M88,52 L102,52 L100,66 L84,66 Z" fill="none" stroke="${a}" stroke-width="2"/>
         ${specificParts}
     </svg>`;
 }
 
-// --- 3. 16 CAMPAIGN STAGES (HER 4 NORMAL BÖLÜMDEN SONRA 1 DEV BOSS ARA GEÇİŞ BÖLÜMÜ!) ---
+// --- 3. SMART SPRITE PRELOADER & AUTO WHITE-BACKGROUND REMOVER (73 CUSTOM ASSETS) ---
+const SPRITE_CACHE = {};
+
+const ALL_SPRITE_BASENAMES = [
+    // Player Rocket & Penalty Friendly Targets
+    'Bizim rocet', 'Vurma_1', 'Vurma_2',
+    // 1. Asker (Military Base)
+    'Asker_1', 'Asker_2', 'Asker_3', 'Asker_4', 'Asker_Boss', 'Asker_Rocet_1', 'Asker_Rocet_2',
+    // 2. Okyanus (Submarine & Deep Sea)
+    'okyanus_1', 'okyanus_2', 'okyanus_3', 'okyanus_4', 'okyanus_Boss', 'okyanus_Rocet_1', 'okyanus_Rocet_2',
+    // 3. Korku (Haunted Graveyard)
+    'korku_1', 'korku_2', 'korku_3', 'korku_4', 'Korku_Boss', 'korku_Rocet_1', 'korku_Rocet_2',
+    // 4. Kurt adam (Werewolf Castle)
+    'Kurt adam_1', 'Kurt adam_2', 'Kurt adam_3', 'Kurt adam_4', 'Kurt adam_Boss', 'Kurt adam_Rocet_1', 'Kurt adam_Rocet_2',
+    // 5. Jura (Jurassic Volcano)
+    'jura_1', 'jura_2', 'jura_3', 'jura_4', 'jura_Boss', 'jura_Rocet_1', 'jura_Rocet_2',
+    // 6. Robot (Cyber Metropolis)
+    'Robot_1', 'Robot_2', 'Robot_3', 'Robot_4', 'Robot_Boss', 'Robot_Rocet_1', 'Robot_Rocet_2',
+    // 7. Zombi (Apocalypse City)
+    'Zombi_1', 'Zombi_2', 'Zombi_3', 'Zombi_4', 'Zombi_Boss', 'Zombi_Rocet_1', 'Zombi_Rocet_2',
+    // 8. Eyp (Ancient Egypt)
+    'Eyp_1', 'Eyp_2', 'Eyp_3', 'Eyp_4', 'Eyp_Boss', 'Eyp_Rocet_1', 'Eyp_Rocet_2',
+    // 9. Kutup (Arctic Cryo Base)
+    'kutup_1', 'kutup_2', 'kutup_3', 'kutup_4', 'kutup_Boss', 'kutup_Rocet_1', 'kutup_Rocet_2',
+    // 10. Uzay (Galactic Space)
+    'uzay_1', 'uzay_2', 'uzay_3', 'uzay_4', 'uzay_Boss', 'Uzay_Rocet_1', 'Uzay_Rocet_2'
+];
+
+/**
+ * Automatically removes solid white/near-white corner backgrounds from JPG/PNG sprites
+ * so every target, boss, and rocket looks like a clean transparent arcade cutout!
+ */
+function processWhiteBackgroundToTransparent(img) {
+    try {
+        const w = img.naturalWidth;
+        const h = img.naturalHeight;
+        if (!w || !h) return img;
+
+        const off = document.createElement('canvas');
+        off.width = w;
+        off.height = h;
+        const octx = off.getContext('2d');
+        octx.drawImage(img, 0, 0);
+
+        const imgData = octx.getImageData(0, 0, w, h);
+        const d = imgData.data;
+
+        // Check top-left & top-right corner pixels to see if image has an opaque white background
+        const c1Alpha = d[3];
+        const c1Bright = (d[0] + d[1] + d[2]) / 3;
+        if (c1Alpha < 200 || c1Bright < 235) {
+            // Already transparent PNG or dark background
+            return img;
+        }
+
+        // Flood-fill from borders to remove connected white/light-gray background without erasing white inside characters (like ambulance body)
+        const visited = new Uint8Array(w * h);
+        const queue = [];
+
+        const pushIfBg = (x, y) => {
+            if (x < 0 || x >= w || y < 0 || y >= h) return;
+            const idx = y * w + x;
+            if (visited[idx]) return;
+            const p = idx * 4;
+            const r = d[p], g = d[p + 1], b = d[p + 2];
+            if (r > 232 && g > 232 && b > 232) {
+                visited[idx] = 1;
+                queue.push(idx);
+            }
+        };
+
+        for (let x = 0; x < w; x++) {
+            pushIfBg(x, 0);
+            pushIfBg(x, h - 1);
+        }
+        for (let y = 0; y < h; y++) {
+            pushIfBg(0, y);
+            pushIfBg(w - 1, y);
+        }
+
+        while (queue.length > 0) {
+            const curr = queue.pop();
+            const p = curr * 4;
+            d[p + 3] = 0; // Make background transparent
+
+            const cx = curr % w;
+            const cy = (curr / w) | 0;
+            pushIfBg(cx + 1, cy);
+            pushIfBg(cx - 1, cy);
+            pushIfBg(cx, cy + 1);
+            pushIfBg(cx, cy - 1);
+        }
+
+        // Soften 1px edge halo
+        for (let y = 1; y < h - 1; y++) {
+            for (let x = 1; x < w - 1; x++) {
+                const idx = y * w + x;
+                if (!visited[idx]) {
+                    const p = idx * 4;
+                    if (d[p] > 220 && d[p + 1] > 220 && d[p + 2] > 220) {
+                        if (visited[idx - 1] || visited[idx + 1] || visited[idx - w] || visited[idx + w]) {
+                            d[p + 3] = 110;
+                        }
+                    }
+                }
+            }
+        }
+
+        octx.putImageData(imgData, 0, 0);
+        return off;
+    } catch (e) {
+        return img;
+    }
+}
+
+function loadSpriteWithFallback(baseName) {
+    if (SPRITE_CACHE[baseName]) return;
+    const entry = { drawable: null, loaded: false };
+    SPRITE_CACHE[baseName] = entry;
+
+    // Try .png first, then .jpg, then lowercase/uppercase variations automatically
+    const candidates = [
+        `${baseName}.png`,
+        `${baseName}.jpg`,
+        `${baseName}.webp`,
+        `${baseName.charAt(0).toLowerCase() + baseName.slice(1)}.png`,
+        `${baseName.charAt(0).toLowerCase() + baseName.slice(1)}.jpg`,
+        `${baseName.charAt(0).toUpperCase() + baseName.slice(1)}.png`,
+        `${baseName.charAt(0).toUpperCase() + baseName.slice(1)}.jpg`
+    ];
+
+    let attempt = 0;
+    const tryNext = () => {
+        if (attempt >= candidates.length) return;
+        const img = new Image();
+        img.onload = () => {
+            entry.drawable = processWhiteBackgroundToTransparent(img);
+            entry.loaded = true;
+        };
+        img.onerror = () => {
+            attempt++;
+            tryNext();
+        };
+        img.src = candidates[attempt];
+    };
+    tryNext();
+}
+
+function preloadAllCustomSprites() {
+    ALL_SPRITE_BASENAMES.forEach(loadSpriteWithFallback);
+}
+preloadAllCustomSprites();
+
+function getSpriteDrawable(baseName) {
+    if (!baseName) return null;
+    const entry = SPRITE_CACHE[baseName];
+    return entry && entry.loaded ? entry.drawable : null;
+}
+
+// --- 4. 16 CAMPAIGN STAGES MAPPED TO YOUR 10 THEMES, BOSSES & ROCKET SPRITES ---
 const STAGES = [
     // --- KÜME 1 (Normal 1, 2, 3, 4 -> Ara Geçiş Boss 1) ---
     {
         id: 1,
         name: '1. TAKTİK ASKERİ ÜS',
         theme: 'ARCADE',
+        spritePrefix: 'Asker',
+        bossSprite: 'Asker_Boss',
+        rocketSprites: ['Asker_Rocet_1', 'Asker_Rocet_2'],
         bgImage: 'Asker.jpg',
         duration: 85,
         goldMult: 1.0,
         clearBonus: 180,
-        bossName: 'ZIRHLI KOMUTA HELİKOPTERİ',
-        bossIcon: '🚁',
+        bossName: 'ZIRHLI KOMUTA BOMBARDIMAN UÇAĞI',
+        bossIcon: '✈️',
         bossHp: 2200,
-        desc: 'Taktik Askeri Üs savunması! Dronelar, Saldırı Helikopterleri ve Siber Robotlar!'
+        desc: 'Taktik Askeri Üs savunması! Asker_1..4 Helikopterler, İHA\'lar ve Asker_Boss!'
     },
     {
         id: 2,
-        name: '2. BATIK OKYANUS & KORSAN KOYU',
+        name: '2. BATIK OKYANUS & DENİZALTI KOYU',
         theme: 'PIRATE',
+        spritePrefix: 'okyanus',
+        bossSprite: 'okyanus_Boss',
+        rocketSprites: ['okyanus_Rocet_1', 'okyanus_Rocet_2'],
         bgImage: 'okyanus.jpg',
         duration: 85,
         goldMult: 1.2,
         clearBonus: 240,
-        bossName: 'DERİN DENİZ KRAKENİ',
+        bossName: 'ABİSAL DENİZALTI MEKA-KRAKEN',
         bossIcon: '🐙',
         bossHp: 3000,
-        desc: 'Batık denizaltılar ve okyanus tabanı! Hayalet Korsanlar, Büyücüler ve Dronelar!'
+        desc: 'Batık denizaltılar ve okyanus tabanı! okyanus_1..4 Mekanik Köpekbalıkları, Denizaltılar ve Torpidolar!'
     },
     {
         id: 3,
         name: '3. LANETLİ KORKU MEZARLIĞI',
         theme: 'VAMPIRE',
+        spritePrefix: 'korku',
+        bossSprite: 'Korku_Boss',
+        rocketSprites: ['korku_Rocet_1', 'korku_Rocet_2'],
         bgImage: 'korku.jpg',
         duration: 90,
         goldMult: 1.45,
         clearBonus: 320,
-        bossName: 'KONT DRAKULA',
-        bossIcon: '🧛',
+        bossName: 'KARANLIK KORKU EJDERİ',
+        bossIcon: '🦇',
         bossHp: 3900,
-        desc: 'Dolunay altında lanetli şato! Uçan Vampir Lordları, İskeletler ve Mistik Hayaletler!'
+        desc: 'Dolunay altında lanetli mezarlık! korku_1..4 Mistik Portallar, Yarasalar ve Korku_Boss!'
     },
     {
         id: 4,
-        name: '4. DOLUNAY KURT ADAM ORMANI',
+        name: '4. DOLUNAY KURT ADAM ŞATOSU',
         theme: 'WEREWOLF',
+        spritePrefix: 'Kurt adam',
+        bossSprite: 'Kurt adam_Boss',
+        rocketSprites: ['Kurt adam_Rocet_1', 'Kurt adam_Rocet_2'],
         bgImage: 'Kurt adam.jpg',
         duration: 90,
         goldMult: 1.7,
         clearBonus: 420,
-        bossName: 'ALFA FENRİR KURT ADAM',
+        bossName: 'KARANLIK DOLUNAY ANA GEMİSİ',
         bossIcon: '🐺',
         bossHp: 4900,
-        desc: 'Sisli mezarlık yolu! Hızlı koşan Vahşi Kurt Adam sürüleri, Zombiler ve Koruyucu Melekler!'
+        desc: 'Sisli mezarlık yolu! Kurt adam_1..4 Gece Yarasaları, Zırhlı Pençeler ve Kurt adam_Boss!'
     },
     {
         id: 5,
-        name: '⚠️ ARA BÖLÜM 1: DEV DİNOZOR VADİSİ',
+        name: '⚠️ ARA BÖLÜM 1: JURA VOLKAN VADİSİ',
         theme: 'BOSS_DINO',
+        spritePrefix: 'jura',
+        bossSprite: 'jura_Boss',
+        rocketSprites: ['jura_Rocet_1', 'jura_Rocet_2'],
         bgImage: 'jura.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_DINO',
         duration: 95,
         goldMult: 2.2,
         clearBonus: 950,
-        bossName: 'DEV SİBER T-REX DİNOZORU',
+        bossName: 'VOLKANİK KANATLI JURA CANAVARI',
         bossIcon: '🦖',
         bossHp: 8500,
-        desc: '🔥 1. ARA GEÇİŞ CANAVARI: Jura volkan vadisinde Zırhlı Dev T-Rex Dinozoru doğrudan sahnede başlar!'
+        desc: '🔥 1. ARA GEÇİŞ CANAVARI: Jura volkan vadisinde jura_Boss ve lav füzeleri (jura_Rocet_1/2) doğrudan sahnede başlar!'
     },
 
     // --- KÜME 2 (Normal 5, 6, 7, 8 -> Ara Geçiş Boss 2) ---
@@ -1309,58 +1462,73 @@ const STAGES = [
         id: 6,
         name: '5. YIKIK ROBOT METROPOLÜ',
         theme: 'ROBOT',
+        spritePrefix: 'Robot',
+        bossSprite: 'Robot_Boss',
+        rocketSprites: ['Robot_Rocet_1', 'Robot_Rocet_2'],
         bgImage: 'Robot.jpg',
         duration: 90,
         goldMult: 2.1,
         clearBonus: 580,
-        bossName: 'OMEGA TİTAN MEKA-ROBOT',
+        bossName: 'OMEGA TİTAN SAVAŞ JETİ (Robot_Boss)',
         bossIcon: '🤖',
         bossHp: 6400,
-        desc: 'Savaş sonrası robot harabeleri! Zırhlı Savaş Robotları, Örümcek Botlar ve Helikopterler!'
+        desc: 'Savaş sonrası robot harabeleri! Robot_1..4 Savaş Droneları ve Robot_Boss!'
     },
     {
         id: 7,
         name: '6. KIYAMET ZOMBİ ŞEHRİ',
         theme: 'ZOMBIE',
+        spritePrefix: 'Zombi',
+        bossSprite: 'Zombi_Boss',
+        rocketSprites: ['Zombi_Rocet_1', 'Zombi_Rocet_2'],
         bgImage: 'Zombi.jpg',
         duration: 95,
         goldMult: 2.4,
         clearBonus: 740,
-        bossName: 'DEV BİYO-ZOMBİ TİTAN',
+        bossName: 'ZOMBİ BİYO-HAVA KALESİ (Zombi_Boss)',
         bossIcon: '🧟',
         bossHp: 7800,
-        desc: 'Yanan gökdelenler ve terk edilmiş cadde! Kasklı Biyo-Zombiler ve Zırhlı Dev Zombiler!'
+        desc: 'Yanan gökdelenler! Zombi_1..4 Asitli Biyo-Dronelar, Zombi_Boss ve Zehirli Füzeler!'
     },
     {
         id: 8,
         name: '7. ANTİK MISIR PİRAMİTLERİ',
         theme: 'MUMMY',
+        spritePrefix: 'Eyp',
+        bossSprite: 'Eyp_Boss',
+        rocketSprites: ['Eyp_Rocet_1', 'Eyp_Rocet_2'],
         bgImage: 'Eyp.jpg',
         duration: 95,
         goldMult: 2.8,
         clearBonus: 920,
-        bossName: 'LANETLİ FİRAVUN ANUBİS',
+        bossName: 'FİRAVUN ANUBİS SAVAŞ GEMİSİ (Eyp_Boss)',
         bossIcon: '👑',
         bossHp: 9400,
-        desc: 'Sfenks ve Büyük Piramitler! Antik Mumya Muhafızları, Büyücüler ve Altın Hazine Droneları!'
+        desc: 'Sfenks ve Büyük Piramitler! Eyp_1..4 Altın Skarabeler, Kanatlı Ra Gözü ve Dikilitaş Füzeleri!'
     },
     {
         id: 9,
         name: '8. KUTUP KRİYO ARAŞTIRMA ÜSSÜ',
         theme: 'ROBOT',
+        spritePrefix: 'kutup',
+        bossSprite: 'kutup_Boss',
+        rocketSprites: ['kutup_Rocet_1', 'kutup_Rocet_2'],
         bgImage: 'Kutup.jpg',
         duration: 95,
         goldMult: 3.2,
         clearBonus: 1150,
-        bossName: 'BUZUL MEKA-KOLOS',
+        bossName: 'BUZUL MEKA-KOLOS (kutup_Boss)',
         bossIcon: '🥶',
         bossHp: 11200,
-        desc: 'Kuzey ışıkları altında buz üssü! Siber Ninjalar, Zırhlı Robotlar ve Görünmez Hayaletler!'
+        desc: 'Kuzey ışıkları altında buz üssü! kutup_1..4 Kriyo Dronelar ve Buz Füzeleri!'
     },
     {
         id: 10,
-        name: '⚠️ ARA BÖLÜM 2: VOLKANİK EJDERHA KRATERİ',
+        name: '⚠️ ARA BÖLÜM 2: VOLKANİK JURA KRATERİ',
         theme: 'BOSS_DRAGON',
+        spritePrefix: 'jura',
+        bossSprite: 'jura_Boss',
+        rocketSprites: ['jura_Rocet_1', 'jura_Rocet_2'],
         bgImage: 'jura.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_DRAGON',
@@ -1370,7 +1538,7 @@ const STAGES = [
         bossName: 'KADİM KIZIL MAGMA EJDERHASI',
         bossIcon: '🐉',
         bossHp: 16500,
-        desc: '🔥 2. ARA GEÇİŞ CANAVARI: Volkanik vadide Dev Kanatlı Kızıl Magma Ejderhası ateş küreleri yağdırır!'
+        desc: '🔥 2. ARA GEÇİŞ CANAVARI: Volkanik vadide Dev Kanatlı Magma Ejderhası lav roketleri yağdırır!'
     },
 
     // --- KÜME 3 (Normal 9, 10, 11, 12 -> Ara Geçiş Boss 3 & Final Boss 4) ---
@@ -1378,83 +1546,101 @@ const STAGES = [
         id: 11,
         name: '9. NEON GALAKTİK UZAY ÜSSÜ',
         theme: 'SPACE',
+        spritePrefix: 'uzay',
+        bossSprite: 'uzay_Boss',
+        rocketSprites: ['Uzay_Rocet_1', 'Uzay_Rocet_2'],
         bgImage: 'uzay.jpg',
         duration: 100,
         goldMult: 3.9,
         clearBonus: 1400,
-        bossName: 'UFO KOMUTA KAPTANI',
+        bossName: 'GALAKTİK KOMUTA GEMİSİ (uzay_Boss)',
         bossIcon: '🛸',
         bossHp: 13800,
-        desc: 'Işınlanan Gri Uzaylılar, Enerji Kalkanlı UFO Savaşçıları ve Uzay Droneları!'
+        desc: 'Galaktik Uzay Üssü! uzay_1..4 Yıldız Savaşçıları, UFO\'lar ve Plazma Roketleri!'
     },
     {
         id: 12,
         name: '10. CEHENNEM ZOMBİ KUŞATMASI',
         theme: 'INFERNO',
+        spritePrefix: 'Zombi',
+        bossSprite: 'Zombi_Boss',
+        rocketSprites: ['Zombi_Rocet_1', 'Zombi_Rocet_2'],
         bgImage: 'Zombi.jpg',
         duration: 100,
         goldMult: 4.4,
         clearBonus: 1700,
-        bossName: 'ATEŞ LORDU BALROG',
+        bossName: 'KIYAMET ZOMBİ DREADNOUGHT',
         bossIcon: '👹',
         bossHp: 16200,
-        desc: 'Yanan şehirde Volkanik Ateş İblisleri, Kızıl Yavru Ejderhalar ve Vampir Lordları!'
+        desc: 'Yanan şehirde ağır zırhlı Zombi_1..4 hava filosu ve biyo-roket yağmuru!'
     },
     {
         id: 13,
         name: '11. KUTUP FIRTINASI SAVUNMASI',
         theme: 'ROBOT',
+        spritePrefix: 'kutup',
+        bossSprite: 'kutup_Boss',
+        rocketSprites: ['kutup_Rocet_1', 'kutup_Rocet_2'],
         bgImage: 'Kutup.jpg',
         duration: 105,
         goldMult: 5.0,
         clearBonus: 2100,
-        bossName: ' KUTUP TİTAN MEKA',
+        bossName: 'KUTUP TİTAN MEKA (kutup_Boss)',
         bossIcon: '🤖',
         bossHp: 19000,
-        desc: 'Ağır Zırhlı Kalkanlı Robotlar, Saldırı Helikopterleri ve Elit UFO Filosu!'
+        desc: 'Ağır Zırhlı Kutup Filosu, Kriyo Jetler ve Dondurucu Füzeler!'
     },
     {
         id: 14,
         name: '12. KARANLIK ŞATO SON SAVAŞ',
         theme: 'FINAL',
+        spritePrefix: 'Kurt adam',
+        bossSprite: 'Korku_Boss',
+        rocketSprites: ['Kurt adam_Rocet_1', 'korku_Rocet_1'],
         bgImage: 'Kurt adam.jpg',
         duration: 105,
         goldMult: 5.6,
         clearBonus: 2500,
-        bossName: 'KARANLIK BOYUT BÜYÜCÜSÜ',
+        bossName: 'KARANLIK ŞATO EJDERİ (Korku_Boss)',
         bossIcon: '🧙‍♂️',
         bossHp: 22500,
-        desc: '12. Normal Bölüm! Vampirler, Kurt Adamlar, Robotlar ve Uzaylılar tam kadro saldırıyor!'
+        desc: '12. Normal Bölüm! Karanlık Şato ve Korku orduları tam kadro saldırıyor!'
     },
     {
         id: 15,
         name: '⚠️ ARA BÖLÜM 3: YÖRÜNGE ANA UZAY GEMİSİ',
         theme: 'BOSS_SPACESHIP',
+        spritePrefix: 'Robot',
+        bossSprite: 'Robot_Boss',
+        rocketSprites: ['Robot_Rocet_1', 'Robot_Rocet_2'],
         bgImage: 'uzay.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_SPACESHIP',
         duration: 110,
         goldMult: 6.5,
         clearBonus: 3600,
-        bossName: 'GALAKTİK ANA GEMİ DREADNOUGHT',
+        bossName: 'GALAKTİK DREADNOUGHT (Robot_Boss)',
         bossIcon: '🚀',
         bossHp: 32000,
-        desc: '🔥 3. ARA GEÇİŞ CANAVARI: 12 Normal Bölüm sonrası Devasa Zırhlı Uzay Gemisi yaylım ateşi açar!'
+        desc: '🔥 3. ARA GEÇİŞ CANAVARI: 12 Normal Bölüm sonrası Devasa Zırhlı Uzay Kruvazörü yaylım ateşi açar!'
     },
     {
         id: 16,
-        name: '👑 FİNAL BOSS: KOZMİK DEV UZAYLI YARATIK',
+        name: '👑 FİNAL BOSS: GALAKTİK UZAY İMPARATORU',
         theme: 'BOSS_ALIEN_BEAST',
+        spritePrefix: 'uzay',
+        bossSprite: 'uzay_Boss',
+        rocketSprites: ['Uzay_Rocet_1', 'Uzay_Rocet_2'],
         bgImage: 'uzay.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_ALIEN_BEAST',
         duration: 120,
         goldMult: 8.0,
         clearBonus: 5500,
-        bossName: 'KOZMİK DEV UZAYLI LEVİATHAN',
+        bossName: 'KOZMİK ANA GEMİ LEVİATHAN (uzay_Boss)',
         bossIcon: '👾',
         bossHp: 46000,
-        desc: '👑 OYUN SONU BÜYÜK CANAVARI: Çok gözlü, dev dokunaçlı ve enerji kalkanlı Galaktik Leviathan!'
+        desc: '👑 OYUN SONU BÜYÜK CANAVARI: Galaktik Uzay filosunun en güçlü Boss\'u!'
     }
 ];
 
@@ -1477,32 +1663,91 @@ const DIFFICULTIES = [
     { id: 'CHAOS', name: 'Kaos Modu (3.0x🪙)', speedMult: 1.42, hpMult: 1.75, rewardMult: 3.0 }
 ];
 
-// --- 4. 22+ RICH ANIMATED ENEMY / CHARACTER ARCHETYPES (INCLUDING VAMPIRE, WEREWOLF, ROBOT, ANGEL) ---
+// --- 5. THEME-BASED ENEMY SLOTS (USES YOUR 4 STAGE TARGETS + 2 PENALTY DRONES) ---
 const ENEMY_TYPES = {
-    BULLSEYE: { name: 'Neon Hedef Halkası', emoji: '🎯', hp: 38, score: 60, gold: 4, radius: 34, speed: 1.1 },
-    DRONE: { name: 'Taktik Savaş Drone\'u', emoji: '🛸', hp: 70, score: 110, gold: 7, radius: 34, speed: 1.5 },
-    HELICOPTER: { name: 'Zırhlı Saldırı Helikopteri', emoji: '🚁', hp: 175, score: 260, gold: 16, radius: 48, speed: 1.25, shootsHazard: true },
-    ZOMBIE: { name: 'Mutasyon Biyo-Zombi', emoji: '🧟', hp: 105, score: 140, gold: 9, radius: 38, speed: 0.85, ground: true, hasHeadshot: true },
-    ZOMBIE_BRUTE: { name: 'Zırhlı Siber-Zombi Dev', emoji: '🧟‍♂️', hp: 250, score: 310, gold: 20, radius: 48, speed: 0.6, ground: true, armored: true },
-    VAMPIRE: { name: 'Kızıl Vampir Lordu', emoji: '🧛', hp: 135, score: 220, gold: 15, radius: 38, speed: 1.65, teleports: true, hasHeadshot: true, shootsHazard: true },
-    WEREWOLF: { name: 'Vahşi Kurt Adam', emoji: '🐺', hp: 195, score: 245, gold: 17, radius: 44, speed: 1.75, ground: true, hasHeadshot: true },
-    MECH_ROBOT: { name: 'Zırhlı Savaş Robotu', emoji: '🤖', hp: 230, score: 280, gold: 19, radius: 45, speed: 0.95, ground: true, shielded: true, shootsHazard: true },
-    MUMMY: { name: 'Lanetli Antik Mumya', emoji: '🤕', hp: 160, score: 190, gold: 13, radius: 38, speed: 0.75, ground: true, summons: true },
-    FIRE_DEMON: { name: 'Volkanik Ateş İblisi', emoji: '👹', hp: 185, score: 260, gold: 18, radius: 42, speed: 1.4, shootsHazard: true, hasHeadshot: true },
-    DRAGON_WHELP: { name: 'Kızıl Yavru Ejderha', emoji: '🐉', hp: 210, score: 295, gold: 21, radius: 44, speed: 1.7, shootsHazard: true },
-    ALIEN_GREY: { name: 'Galaktik Gri Uzaylı', emoji: '👽', hp: 95, score: 160, gold: 11, radius: 34, speed: 1.3, teleports: true, hasHeadshot: true },
-    UFO_SAUCER: { name: 'Kalkanlı UFO Savaşçısı', emoji: '🛸', hp: 185, score: 290, gold: 18, radius: 46, speed: 1.4, shielded: true, shootsHazard: true },
-    GHOST: { name: 'Mistik Hayalet Ruh', emoji: '👻', hp: 95, score: 210, gold: 14, radius: 36, speed: 1.35, phases: true },
-    NECROMANCER: { name: 'Karanlık Mistik Büyücü', emoji: '🧙‍♂️', hp: 160, score: 280, gold: 17, radius: 40, speed: 1.0, summons: true },
-    CYBER_NINJA: { name: 'Siber Ninja Suikastçı', emoji: '🥷', hp: 90, score: 195, gold: 13, radius: 32, speed: 2.2, hasHeadshot: true },
-    SKELETON_PIRATE: { name: 'İskelet Korsan Kaptan', emoji: '💀', hp: 120, score: 175, gold: 11, radius: 38, speed: 0.95, ground: true },
-    PTERANODON: { name: 'Siber Dino-Pteranodon', emoji: '🦖', hp: 135, score: 210, gold: 13, radius: 42, speed: 1.85 },
-    SPIDER_BOT: { name: 'Kamikaze Örümcek Bot', emoji: '🕷️', hp: 75, score: 145, gold: 10, radius: 30, speed: 1.9, ground: true },
-    GOLDEN_DRONE: { name: 'ALTIN HAZİNE DRONE\'U', emoji: '👑', hp: 110, score: 500, gold: 48, radius: 36, speed: 2.3, isGolden: true },
-    FRIENDLY_HOSTAGE: { name: 'KORUYUCU MELEK', emoji: '👼', hp: 40, score: -250, gold: -25, radius: 38, speed: 0.95, isFriendly: true }
+    STAGE_UNIT_1: {
+        slotIndex: 1,
+        name: 'Hızlı Keşif Birimi',
+        emoji: '🚁',
+        hp: 85,
+        score: 120,
+        gold: 9,
+        radius: 46,
+        speed: 1.45,
+        hasHeadshot: true
+    },
+    STAGE_UNIT_2: {
+        slotIndex: 2,
+        name: 'Zırhlı Saldırı Birimi',
+        emoji: '🛸',
+        hp: 155,
+        score: 210,
+        gold: 15,
+        radius: 52,
+        speed: 1.25,
+        shootsHazard: true,
+        hasHeadshot: true
+    },
+    STAGE_UNIT_3: {
+        slotIndex: 3,
+        name: 'Ağır Avcı Kruvazörü',
+        emoji: '✈️',
+        hp: 215,
+        score: 275,
+        gold: 19,
+        radius: 56,
+        speed: 1.15,
+        shielded: true,
+        shootsHazard: true
+    },
+    STAGE_UNIT_4: {
+        slotIndex: 4,
+        name: 'Elit Taktik Drone / Portal',
+        emoji: '🤖',
+        hp: 130,
+        score: 195,
+        gold: 14,
+        radius: 48,
+        speed: 1.65,
+        teleports: false,
+        shootsHazard: true
+    },
+    GOLDEN_UNIT: {
+        slotIndex: 4,
+        name: 'ALTIN KOMUTA DRONE\'U',
+        emoji: '👑',
+        hp: 125,
+        score: 500,
+        gold: 48,
+        radius: 46,
+        speed: 2.1,
+        isGolden: true
+    },
+    PENALTY_VURMA_1: {
+        spriteName: 'Vurma_1',
+        name: 'SIHHİYE AMBULANS DRONE (VURMA!)',
+        emoji: '🚑',
+        hp: 40,
+        score: -250,
+        gold: -35,
+        radius: 46,
+        speed: 1.05,
+        isFriendly: true
+    },
+    PENALTY_VURMA_2: {
+        spriteName: 'Vurma_2',
+        name: 'YARDIM PAKETİ DRONE (VURMA!)',
+        emoji: '📦',
+        hp: 40,
+        score: -250,
+        gold: -35,
+        radius: 46,
+        speed: 1.15,
+        isFriendly: true
+    }
 };
 
-// --- 5. GAME STATE & ANDROID / IPAD TABLET TOUCH ENGINE ---
+// --- 6. GAME STATE & ANDROID / IPAD TABLET TOUCH ENGINE ---
 const canvas = document.getElementById('arenaCanvas');
 const ctx = canvas.getContext('2d');
 let W = 1280;
@@ -1511,7 +1756,7 @@ let H = 720;
 const state = {
     stageIndex: 0,
     diffIndex: 1,
-    wave: 1, // 1, 2, 3 (Boss in Wave 3)
+    wave: 1,
     timeLeft: 90,
 
     score: 0,
@@ -1520,18 +1765,15 @@ const state = {
     gold: 150,
     roundGold: 0,
 
-    // Performance Tracking for 3-Star Stage Mastery
     targetsDestroyed: 0,
     targetsEscaped: 0,
     shotsFired: 0,
     shotsHit: 0,
 
-    // Player Profile & Rank
     playerName: 'Kaptan1',
     xp: 0,
     level: 1,
 
-    // Active Weapon & Turret State
     weaponIndex: 0,
     ammo: 36,
     reloading: 0,
@@ -1542,7 +1784,6 @@ const state = {
     screenFlash: 0,
     damageVignette: 0,
 
-    // Special Abilities
     skills: {
         nukeCd: 0,
         slowCd: 0,
@@ -1551,11 +1792,9 @@ const state = {
         overdriveActive: 0
     },
 
-    // Active Mega Nuke Cinematic Sequence
     activeNuke: null,
     shockwaves: [],
 
-    // Pointer, iPad Safari & Apple Pencil Ergonomics
     input: {
         x: 640,
         y: 320,
@@ -1582,12 +1821,11 @@ const state = {
     spawnTimer: 0,
 
     missions: [
-        { id: 'm1', desc: 'Helikopter, Robot veya UFO Yok Et (0/12)', progress: 0, goal: 12, rewardGold: 450, done: false },
-        { id: 'm2', desc: 'Vampir, Kurt Adam veya Zombi Avla (0/25)', progress: 0, goal: 25, rewardGold: 600, done: false },
+        { id: 'm1', desc: 'Ağır Saldırı Hedeflerini Yok Et (0/15)', progress: 0, goal: 15, rewardGold: 450, done: false },
+        { id: 'm2', desc: 'Toplam 30 Bölüm Hedefi Avla (0/30)', progress: 0, goal: 30, rewardGold: 600, done: false },
         { id: 'm3', desc: 'Bölüm Sonu / Ara Geçiş Boss\'u Mağlup Et (0/2)', progress: 0, goal: 2, rewardGold: 900, done: false }
     ],
 
-    // İlk 10 (Top 10) Yüksek Skor Tablosu
     leaderboard: [
         { name: 'UltraKomutan', score: 48500, stage: '16. Bölüm', date: 'Efsane' },
         { name: 'SiberAvcı', score: 39200, stage: '15. Bölüm', date: 'Usta' },
@@ -1602,7 +1840,7 @@ const state = {
     ]
 };
 
-// --- 6. SAVE / LOAD PROGRESS ---
+// --- 7. SAVE / LOAD PROGRESS ---
 function saveGame() {
     try {
         const data = {
@@ -1647,7 +1885,6 @@ function loadGame() {
     } catch (e) {}
 }
 
-// --- 7. WEAPON STATS, UPGRADE COSTS & MASTERY CALCULATIONS ---
 function getActiveWeapon() {
     return WEAPONS[state.weaponIndex] || WEAPONS[0];
 }
@@ -1681,7 +1918,7 @@ function updateSuccessHUD() {
     if (bar) bar.style.width = `${pct}%`;
 }
 
-// --- 8. SPAWNING ENEMIES, HAZARDS & BOSSES ACROSS 16 STAGES (INCLUDING 4 GIANT BOSS INTERLUDES) ---
+// --- 8. SPAWNING STAGE-SPECIFIC TARGETS (4 PER STAGE + 1 BOSS + 2 ROCKETS + VURMA_1/2) ---
 function startStage(stageIdx) {
     state.stageIndex = stageIdx;
     const st = STAGES[stageIdx];
@@ -1705,7 +1942,6 @@ function startStage(stageIdx) {
     updateSuccessHUD();
 
     if (st.isBossInterlude) {
-        // Boss Interlude Stage starts IMMEDIATELY with the Colossal Creature!
         spawnStageBoss();
         for (let i = 0; i < 3; i++) spawnStageEnemy();
     } else {
@@ -1715,55 +1951,19 @@ function startStage(stageIdx) {
 }
 
 function spawnStageEnemy() {
-    const st = STAGES[state.stageIndex];
-    let pool = ['BULLSEYE', 'DRONE', 'ZOMBIE', 'VAMPIRE', 'MECH_ROBOT'];
+    // Pool uses the 4 custom target slots for the active stage + Vurma_1 & Vurma_2 penalty drones + Golden bonus
+    const pool = [
+        'STAGE_UNIT_1', 'STAGE_UNIT_1',
+        'STAGE_UNIT_2', 'STAGE_UNIT_2',
+        'STAGE_UNIT_3',
+        'STAGE_UNIT_4',
+        'PENALTY_VURMA_1',
+        'PENALTY_VURMA_2',
+        'GOLDEN_UNIT'
+    ];
 
-    switch (st.theme) {
-        case 'ARCADE':
-            pool = ['BULLSEYE', 'DRONE', 'MECH_ROBOT', 'ZOMBIE', 'CYBER_NINJA', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'PIRATE':
-            pool = ['GHOST', 'SKELETON_PIRATE', 'NECROMANCER', 'VAMPIRE', 'HELICOPTER', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'VAMPIRE':
-            pool = ['VAMPIRE', 'WEREWOLF', 'GHOST', 'NECROMANCER', 'SKELETON_PIRATE', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'WEREWOLF':
-            pool = ['WEREWOLF', 'VAMPIRE', 'ZOMBIE', 'PTERANODON', 'GHOST', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'BOSS_DINO':
-            pool = ['PTERANODON', 'SPIDER_BOT', 'ZOMBIE', 'GOLDEN_DRONE', 'FRIENDLY_HOSTAGE'];
-            break;
-        case 'ROBOT':
-            pool = ['MECH_ROBOT', 'SPIDER_BOT', 'CYBER_NINJA', 'DRONE', 'HELICOPTER', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'ZOMBIE':
-            pool = ['ZOMBIE', 'ZOMBIE_BRUTE', 'WEREWOLF', 'PTERANODON', 'SPIDER_BOT', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'MUMMY':
-            pool = ['MUMMY', 'NECROMANCER', 'SKELETON_PIRATE', 'GHOST', 'VAMPIRE', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'BOSS_DRAGON':
-            pool = ['DRAGON_WHELP', 'FIRE_DEMON', 'VAMPIRE', 'GOLDEN_DRONE', 'FRIENDLY_HOSTAGE'];
-            break;
-        case 'SPACE':
-        case 'BOSS_SPACESHIP':
-            pool = ['ALIEN_GREY', 'UFO_SAUCER', 'MECH_ROBOT', 'CYBER_NINJA', 'DRONE', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'INFERNO':
-            pool = ['FIRE_DEMON', 'DRAGON_WHELP', 'VAMPIRE', 'WEREWOLF', 'HELICOPTER', 'FRIENDLY_HOSTAGE', 'GOLDEN_DRONE'];
-            break;
-        case 'BOSS_ALIEN_BEAST':
-            pool = ['ALIEN_GREY', 'UFO_SAUCER', 'DRAGON_WHELP', 'MECH_ROBOT', 'GOLDEN_DRONE', 'FRIENDLY_HOSTAGE'];
-            break;
-        default:
-            pool = Object.keys(ENEMY_TYPES);
-            break;
-    }
-
-    // Wave 2 & 3 increase probability of elite monsters and robots
     if (state.wave >= 2) {
-        pool.push('VAMPIRE', 'WEREWOLF', 'MECH_ROBOT', 'HELICOPTER', 'DRAGON_WHELP', 'FIRE_DEMON');
+        pool.push('STAGE_UNIT_2', 'STAGE_UNIT_3', 'STAGE_UNIT_4');
     }
 
     const pickKey = pool[Math.floor(Math.random() * pool.length)];
@@ -1771,22 +1971,29 @@ function spawnStageEnemy() {
 }
 
 function createTargetEntity(typeKey, customX = null, customY = null) {
-    const proto = ENEMY_TYPES[typeKey] || ENEMY_TYPES.DRONE;
+    const proto = ENEMY_TYPES[typeKey] || ENEMY_TYPES.STAGE_UNIT_1;
+    const st = STAGES[state.stageIndex];
     const diff = DIFFICULTIES[state.diffIndex];
     const dir = Math.random() < 0.5 ? 1 : -1;
 
-    const minY = proto.ground ? H * 0.56 : H * 0.16;
-    const maxY = proto.ground ? H * 0.68 : H * 0.54;
+    // Resolve the exact custom sprite filename for this stage & target slot
+    let spriteName = proto.spriteName || null;
+    if (!spriteName && proto.slotIndex) {
+        spriteName = `${st.spritePrefix}_${proto.slotIndex}`;
+    }
+
+    const minY = H * 0.16;
+    const maxY = H * 0.62;
     const y = customY !== null ? customY : (minY + Math.random() * (maxY - minY));
     const x = customX !== null ? customX : (dir === 1 ? -65 : W + 65);
 
-    // Enemy HP scales smoothly with stage index (1 to 10) and difficulty
     const stageHpScale = 1 + state.stageIndex * 0.22;
     const maxHp = Math.round(proto.hp * diff.hpMult * stageHpScale);
 
     state.targets.push({
         typeKey,
         proto,
+        spriteName,
         x,
         y,
         baseY: y,
@@ -1802,7 +2009,7 @@ function createTargetEntity(typeKey, customX = null, customY = null) {
         ghostFade: 0,
         actionTimer: 2.2 + Math.random() * 2.5,
         lifeTime: 0,
-        maxLifeTime: proto.isFriendly ? 7.5 : 14.5
+        maxLifeTime: proto.isFriendly ? 8.0 : 14.5
     });
 }
 
@@ -1815,13 +2022,14 @@ function spawnStageBoss() {
     state.boss = {
         name: st.bossName,
         icon: st.bossIcon || '👹',
+        spriteName: st.bossSprite || `${st.spritePrefix}_Boss`,
         visualType: st.bossVisualType || 'STANDARD',
         interludeTier,
         x: W * 0.5,
-        y: H * 0.30,
+        y: H * 0.29,
         hp,
         maxHp: hp,
-        radius: st.isBossInterlude ? 105 : 84,
+        radius: st.isBossInterlude ? 115 : 95,
         phase: 0,
         hitFlash: 0,
         frozenTimer: 0,
@@ -1847,20 +2055,17 @@ function computeAimCoordinates() {
     let aimX = state.input.x;
     let aimY = state.input.y;
 
-    // 1. Finger Offset on iPad/Tablet (lifts crosshair 52px above fingertip so finger never blocks target,
-    //    automatically bypassed if using Apple Pencil for 1:1 light-gun precision!)
     if (state.input.isTouchActive && !state.input.isApplePencil && state.input.touchMode === 'OFFSET_MAGNET') {
         aimY = Math.max(55, aimY - 52);
     }
 
-    // 2. Magnetic Smart Aim-Assist for Touch, Apple Pencil & Joystick
     state.input.lockedTarget = null;
     if (state.input.isTouchActive || state.input.touchMode === 'DUAL_THUMB') {
-        const magnetRadius = state.input.isApplePencil ? 62 : 82; // Tuned for iPad screen density
+        const magnetRadius = state.input.isApplePencil ? 62 : 82;
         let bestDist = magnetRadius;
         let bestTarget = null;
 
-        // Priority 1: Incoming Enemy Missiles/Skulls
+        // Priority 1: Incoming Enemy Missiles
         state.enemyHazards.forEach(hz => {
             const d = Math.hypot(hz.x - aimX, hz.y - aimY);
             if (d < bestDist) {
@@ -1869,16 +2074,14 @@ function computeAimCoordinates() {
             }
         });
 
-        // Priority 2: Active Enemies (excluding Friendly Hostages!)
+        // Priority 2: Active Enemies (excluding Vurma_1 & Vurma_2 friendly targets!)
         if (!bestTarget) {
             state.targets.forEach(t => {
                 if (t.proto.isFriendly) return;
                 const d = Math.hypot(t.x - aimX, t.y - aimY);
                 if (d < bestDist) {
                     bestDist = d;
-                    // Aim slightly towards head if zombie/alien
-                    const headOffset = t.proto.hasHeadshot ? -t.proto.radius * 0.35 : 0;
-                    bestTarget = { x: t.x, y: t.y + headOffset };
+                    bestTarget = { x: t.x, y: t.y };
                 }
             });
         }
@@ -1886,13 +2089,12 @@ function computeAimCoordinates() {
         // Priority 3: Boss Weakpoint
         if (!bestTarget && state.boss) {
             const d = Math.hypot(state.boss.x - aimX, state.boss.y - aimY);
-            if (d < magnetRadius + 40) {
+            if (d < magnetRadius + 45) {
                 bestTarget = { x: state.boss.x, y: state.boss.y };
             }
         }
 
         if (bestTarget) {
-            // Smooth 55% magnetic pull toward target center
             aimX = aimX + (bestTarget.x - aimX) * 0.55;
             aimY = aimY + (bestTarget.y - aimY) * 0.55;
             state.input.lockedTarget = bestTarget;
@@ -1964,9 +2166,8 @@ function activateMegaNuke() {
     state.skills.nukeCd = 18;
     state.recoil = 28;
     sfx.shoot('ROCKET');
-    showAnnouncement('🚀 MEGA TİTAN NÜKLEER FÜZE ATEŞLENDİ!');
+    showAnnouncement('🚀 BİZİM ROCET (MEGA NÜKLEER FÜZE) ATEŞLENDİ!');
 
-    // Launch a giant 3D animated Mega Whistle Warhead from the turret to the center of the arena
     state.activeNuke = {
         startX: W * 0.5,
         startY: H - 65,
@@ -1986,26 +2187,22 @@ function detonateMegaNuke(nx, ny) {
     sfx.explosion();
     setTimeout(() => sfx.explosion(), 140);
 
-    // Multi-layered expanding shockwaves
     state.shockwaves.push(
         { x: nx, y: ny, r: 15, maxR: Math.max(W, H) * 0.85, color: '#facc15', width: 22, alpha: 1.0, speed: 1250 },
         { x: nx, y: ny, r: 5, maxR: Math.max(W, H) * 0.65, color: '#f97316', width: 36, alpha: 0.9, speed: 920 },
         { x: nx, y: ny, r: 10, maxR: Math.max(W, H) * 0.45, color: '#38bdf8', width: 14, alpha: 0.85, speed: 680 }
     );
 
-    // Massive fiery & foam dart shrapnel explosion
     spawnParticles(nx, ny, '#facc15', 45);
     spawnParticles(nx, ny, '#ef4444', 45);
     spawnParticles(nx, ny, '#38bdf8', 25);
 
-    // Destroy all incoming enemy projectiles with visual pops
     state.enemyHazards.forEach(hz => {
         spawnParticles(hz.x, hz.y, '#f97316', 12);
         addFloatingText('💥 İMHA!', hz.x, hz.y, '#facc15', 0.9);
     });
     state.enemyHazards = [];
 
-    // Deal massive nuclear damage to all non-friendly targets
     for (let i = state.targets.length - 1; i >= 0; i--) {
         const t = state.targets[i];
         if (!t.proto.isFriendly) {
@@ -2043,6 +2240,14 @@ function activateDualOverdrive() {
     showAnnouncement('🔥 ÇİFTE TARET OVERDRIVE! (SINIRSIZ MERMİ & 2X NAMLU)');
 }
 
+function pickStageRocketSprite() {
+    const st = STAGES[state.stageIndex];
+    if (st.rocketSprites && st.rocketSprites.length > 0) {
+        return st.rocketSprites[Math.floor(Math.random() * st.rocketSprites.length)];
+    }
+    return 'Asker_Rocet_1';
+}
+
 // --- 11. MAIN PHYSICS & WAVE UPDATE LOOP ---
 function updateArena(dt) {
     if (state.screenShake > 0) state.screenShake = Math.max(0, state.screenShake - 35 * dt);
@@ -2051,7 +2256,6 @@ function updateArena(dt) {
     if (state.recoil > 0) state.recoil = Math.max(0, state.recoil - 65 * dt);
     if (state.fireCooldown > 0) state.fireCooldown = Math.max(0, state.fireCooldown - dt);
 
-    // Update Active Mega Nuke Warhead Flight
     if (state.activeNuke) {
         const nk = state.activeNuke;
         nk.progress += dt / nk.duration;
@@ -2060,7 +2264,6 @@ function updateArena(dt) {
         nk.x = nk.startX + (nk.targetX - nk.startX) * ease + Math.sin(nk.progress * Math.PI * 5) * 14 * (1 - nk.progress);
         nk.y = nk.startY + (nk.targetY - nk.startY) * ease - Math.sin(nk.progress * Math.PI) * 95;
 
-        // Dense exhaust smoke & flame trail during flight
         spawnParticles(nk.x, nk.y + 22, '#f97316', 2);
         spawnParticles(nk.x + (Math.random() - 0.5) * 14, nk.y + 26, '#e2e8f0', 1);
 
@@ -2072,7 +2275,6 @@ function updateArena(dt) {
         }
     }
 
-    // Update Expanding Shockwave Rings
     for (let i = state.shockwaves.length - 1; i >= 0; i--) {
         const sw = state.shockwaves[i];
         sw.r += sw.speed * dt;
@@ -2089,7 +2291,6 @@ function updateArena(dt) {
         }
     }
 
-    // Ability timers
     if (state.skills.nukeCd > 0) state.skills.nukeCd = Math.max(0, state.skills.nukeCd - dt);
     if (state.skills.slowCd > 0) state.skills.slowCd = Math.max(0, state.skills.slowCd - dt);
     if (state.skills.slowActive > 0) state.skills.slowActive = Math.max(0, state.skills.slowActive - dt);
@@ -2097,18 +2298,15 @@ function updateArena(dt) {
     if (state.skills.overdriveActive > 0) state.skills.overdriveActive = Math.max(0, state.skills.overdriveActive - dt);
     updateAbilityButtons();
 
-    // Virtual Dual-Thumb Joystick Movement
     if (state.input.touchMode === 'DUAL_THUMB' && state.input.joyActive) {
         state.input.x = Math.max(40, Math.min(W - 40, state.input.x + state.input.joyDX * 520 * dt));
         state.input.y = Math.max(50, Math.min(H - 110, state.input.y + state.input.joyDY * 520 * dt));
     }
 
-    // Auto-Fire when holding mouse/touch
     if (state.input.isFiring) {
         fireBlaster();
     }
 
-    // Combo decay
     if (state.comboTimer > 0) {
         state.comboTimer -= dt;
         if (state.comboTimer <= 0) {
@@ -2117,7 +2315,6 @@ function updateArena(dt) {
         }
     }
 
-    // Stage Timer & Wave Progression
     const st = STAGES[state.stageIndex];
     state.timeLeft -= dt;
     document.getElementById('ui-timer').textContent = Math.max(0, Math.ceil(state.timeLeft)) + 's';
@@ -2126,7 +2323,7 @@ function updateArena(dt) {
         const elapsedRatio = 1 - (state.timeLeft / st.duration);
         if (state.wave === 1 && elapsedRatio >= 0.33) {
             state.wave = 2;
-            showAnnouncement('⚡ DALGA 2/3: KARANLIK & SİBER ORDULAR YOĞUNLAŞIYOR!');
+            showAnnouncement('⚡ DALGA 2/3: DÜŞMAN FİLOSU YOĞUNLAŞIYOR!');
             sfx.fanfare();
         } else if (state.wave === 2 && elapsedRatio >= 0.66) {
             state.wave = 3;
@@ -2142,7 +2339,6 @@ function updateArena(dt) {
         return;
     }
 
-    // Enemy Spawner
     const slowMult = state.skills.slowActive > 0 ? 0.32 : 1.0;
     state.spawnTimer -= dt;
     const maxOnScreen = st.isBossInterlude ? 4 : (state.wave === 1 ? 7 : (state.wave === 2 ? 9 : 8));
@@ -2151,7 +2347,6 @@ function updateArena(dt) {
         state.spawnTimer = st.isBossInterlude ? 2.2 : Math.max(0.65, 1.45 - state.wave * 0.2);
     }
 
-    // Update 3D Projectiles in Flight
     for (let i = state.projectiles.length - 1; i >= 0; i--) {
         const p = state.projectiles[i];
         p.progress += p.speed * dt;
@@ -2164,7 +2359,6 @@ function updateArena(dt) {
         }
     }
 
-    // Update Enemies
     for (let i = state.targets.length - 1; i >= 0; i--) {
         const t = state.targets[i];
         const freezeSlow = t.frozenTimer > 0 ? 0.3 : 1.0;
@@ -2174,41 +2368,17 @@ function updateArena(dt) {
         t.phase += 4.2 * dt * slowMult * freezeSlow;
         t.lifeTime += dt * slowMult;
         t.x += t.dir * t.speed * 68 * dt * slowMult * freezeSlow;
+        t.y = t.baseY + Math.sin(t.phase) * 14;
 
-        // Vertical bobbing for flying/floating targets
-        if (!t.proto.ground) {
-            t.y = t.baseY + Math.sin(t.phase) * 16;
-        } else {
-            // Zombie shambling bounce
-            t.y = t.baseY + Math.abs(Math.sin(t.phase * 1.2)) * 6;
-        }
-
-        // Special Enemy Behaviors
-        // 1. Alien Grey Teleport
-        if (t.proto.teleports) {
-            t.actionTimer -= dt * slowMult;
-            if (t.actionTimer <= 0) {
-                t.actionTimer = 2.8 + Math.random() * 1.5;
-                spawnParticles(t.x, t.y, '#38bdf8', 10);
-                t.x = 120 + Math.random() * (W - 240);
-                spawnParticles(t.x, t.y, '#a855f7', 10);
-            }
-        }
-        // 2. Phantom Ghost Phasing
-        if (t.proto.phases) {
-            t.ghostFade = (Math.sin(t.phase * 0.65) + 1) * 0.5; // 0 to 1
-        }
-        // 3. Helicopter / UFO / Necromancer Firing Warning Projectiles or Summoning
-        if (t.proto.shootsHazard || t.proto.summons) {
+        // Enemy fires stage-specific custom rocket (`*_Rocet_1` or `*_Rocet_2`)
+        if (t.proto.shootsHazard) {
             t.actionTimer -= dt * slowMult * freezeSlow;
             if (t.actionTimer <= 0 && t.x > 80 && t.x < W - 80) {
                 t.actionTimer = 3.8 + Math.random() * 2.2;
-                const isNecro = !!t.proto.summons;
-                const isUfo = t.typeKey === 'UFO_SAUCER';
                 const startX = t.x;
                 const startY = t.y + 12;
-                sfx.shoot(isNecro ? 'PLASMA' : 'ROCKET');
-                spawnParticles(startX, startY, isNecro ? '#a855f7' : '#f97316', 8);
+                sfx.shoot('ROCKET');
+                spawnParticles(startX, startY, '#f97316', 8);
 
                 state.enemyHazards.push({
                     startX,
@@ -2217,19 +2387,19 @@ function updateArena(dt) {
                     y: startY,
                     targetX: W * 0.5 + (Math.random() - 0.5) * (W * 0.35),
                     targetY: H * 0.76,
-                    r: 14,
-                    baseR: 14,
-                    maxR: 52,
-                    kind: isNecro ? 'SKULL' : (isUfo ? 'LASER_ORB' : 'MISSILE'),
+                    r: 18,
+                    baseR: 18,
+                    maxR: 56,
+                    spriteName: pickStageRocketSprite(),
+                    kind: 'MISSILE',
                     timer: 3.3,
                     maxTimer: 3.3,
-                    spin: Math.random() * Math.PI * 2,
+                    spin: 0,
                     wobbleSeed: Math.random() * 10
                 });
             }
         }
 
-        // Bounce or Escape off screen
         if ((t.dir === 1 && t.x > W + 75) || (t.dir === -1 && t.x < -75)) {
             if (t.lifeTime < t.maxLifeTime * 0.65) {
                 t.dir *= -1;
@@ -2243,7 +2413,6 @@ function updateArena(dt) {
         }
     }
 
-    // Update Boss (Progressively faster & more projectiles on higher Interlude Tiers!)
     if (state.boss) {
         const b = state.boss;
         const bSlow = (b.frozenTimer > 0 ? 0.35 : 1.0) * slowMult;
@@ -2253,21 +2422,19 @@ function updateArena(dt) {
         const speedScale = 1 + (b.interludeTier || 0) * 0.15;
         b.phase += 2.2 * dt * bSlow * speedScale;
         b.x = W * 0.5 + Math.sin(b.phase * 0.7) * (W * 0.30);
-        b.y = H * 0.29 + Math.cos(b.phase * 1.1) * 38;
+        b.y = H * 0.28 + Math.cos(b.phase * 1.1) * 34;
 
         b.attackTimer -= dt * bSlow;
         if (b.attackTimer <= 0) {
-            // Higher boss tiers attack faster and launch more projectiles
             const tier = b.interludeTier || 0;
             b.attackTimer = Math.max(1.55, 2.85 - tier * 0.28);
             sfx.shoot('PLASMA');
 
             const offsets = tier >= 3 ? [-85, -28, 28, 85] : (tier >= 1 ? [-65, 0, 65] : [-55, 55]);
-            const hazardKind = b.visualType === 'GIANT_DRAGON' ? 'SKULL' : (b.visualType === 'GIANT_SPACESHIP' ? 'MISSILE' : 'BOSS_ORB');
-
-            offsets.forEach(ox => {
+            offsets.forEach((ox, idx) => {
                 const sx = b.x + ox;
                 const sy = b.y + 24;
+                const stRockets = STAGES[state.stageIndex].rocketSprites || ['Asker_Rocet_1', 'Asker_Rocet_2'];
                 spawnParticles(sx, sy, '#ef4444', 10);
                 state.enemyHazards.push({
                     startX: sx,
@@ -2276,10 +2443,11 @@ function updateArena(dt) {
                     y: sy,
                     targetX: W * 0.5 + ox * 2.0,
                     targetY: H * 0.78,
-                    r: 16,
-                    baseR: 16,
-                    maxR: 56,
-                    kind: hazardKind,
+                    r: 20,
+                    baseR: 20,
+                    maxR: 60,
+                    spriteName: stRockets[idx % stRockets.length],
+                    kind: 'MISSILE',
                     timer: Math.max(2.3, 3.2 - tier * 0.15),
                     maxTimer: Math.max(2.3, 3.2 - tier * 0.15),
                     spin: 0,
@@ -2289,7 +2457,6 @@ function updateArena(dt) {
         }
     }
 
-    // Update Incoming Enemy Hazards (3D perspective flight toward player screen!)
     for (let i = state.enemyHazards.length - 1; i >= 0; i--) {
         const hz = state.enemyHazards[i];
         hz.timer -= dt * slowMult;
@@ -2297,12 +2464,11 @@ function updateArena(dt) {
 
         const maxT = hz.maxTimer || 3.2;
         const progress = Math.max(0, Math.min(1, 1 - (hz.timer / maxT)));
-        // Perspective acceleration: starts slow at enemy, rushes fast toward screen at the end
         const persp = Math.pow(progress, 1.55);
 
         if (hz.startX !== undefined) {
-            const spiralX = Math.sin(progress * Math.PI * 4 + hz.wobbleSeed) * 26 * (1 - progress);
-            const arcY = -Math.sin(progress * Math.PI) * 42;
+            const spiralX = Math.sin(progress * Math.PI * 4 + hz.wobbleSeed) * 20 * (1 - progress);
+            const arcY = -Math.sin(progress * Math.PI) * 38;
             hz.x = hz.startX + (hz.targetX - hz.startX) * persp + spiralX;
             hz.y = hz.startY + (hz.targetY - hz.startY) * persp + arcY;
             hz.r = hz.baseR + (hz.maxR - hz.baseR) * persp;
@@ -2310,16 +2476,14 @@ function updateArena(dt) {
             hz.r += 5.5 * dt;
         }
 
-        // Emit propellant trail particles while flying toward player
         if (Math.random() < 0.55) {
-            const trailColor = hz.kind === 'SKULL' ? '#a855f7' : (hz.kind === 'LASER_ORB' ? '#38bdf8' : '#f97316');
             state.particles.push({
-                x: hz.x + (Math.random() - 0.5) * hz.r * 0.5,
-                y: hz.y - hz.r * 0.35,
+                x: hz.x + (Math.random() - 0.5) * hz.r * 0.4,
+                y: hz.y - hz.r * 0.4,
                 vx: (Math.random() - 0.5) * 1.2,
                 vy: -1.2 - Math.random() * 1.5,
-                r: Math.max(2, hz.r * 0.16),
-                color: trailColor,
+                r: Math.max(2, hz.r * 0.15),
+                color: '#f97316',
                 life: 0.24
             });
         }
@@ -2328,7 +2492,7 @@ function updateArena(dt) {
             state.enemyHazards.splice(i, 1);
             state.screenShake = 22;
             state.damageVignette = 1.0;
-            state.targetsEscaped++; // Hurts success rate if not shot down!
+            state.targetsEscaped++;
             state.combo = 1;
             sfx.penalty();
             sfx.explosion();
@@ -2336,13 +2500,12 @@ function updateArena(dt) {
             state.shockwaves.push({
                 x: hz.x, y: hz.y, r: 10, maxR: 190, color: '#ef4444', width: 12, alpha: 1.0, speed: 650
             });
-            addFloatingText('💥 DÜŞMAN ATIŞI İSABET ETTİ! (HAVADA VUR!)', hz.x, hz.y - 20, '#ef4444', 1.5);
+            addFloatingText('💥 DÜŞMAN FÜZESİ İSABET ETTİ! (HAVADA VUR!)', hz.x, hz.y - 20, '#ef4444', 1.5);
             updateSuccessHUD();
             updateHUD();
         }
     }
 
-    // Update Particles & Lightning Arcs
     for (let i = state.particles.length - 1; i >= 0; i--) {
         const pt = state.particles[i];
         pt.x += pt.vx * 60 * dt;
@@ -2368,10 +2531,9 @@ function resolveProjectileImpact(p) {
     const w = p.weapon;
     let hitAnything = false;
 
-    // 1. Check Incoming Enemy Hazards first (Missiles / Skulls)
     for (let i = state.enemyHazards.length - 1; i >= 0; i--) {
         const hz = state.enemyHazards[i];
-        if (Math.hypot(p.targetX - hz.x, p.targetY - hz.y) <= hz.r + 24) {
+        if (Math.hypot(p.targetX - hz.x, p.targetY - hz.y) <= hz.r + 26) {
             state.enemyHazards.splice(i, 1);
             hitAnything = true;
             state.shotsHit++;
@@ -2383,22 +2545,19 @@ function resolveProjectileImpact(p) {
         }
     }
 
-    // 2. Check Area Splash or Direct Hit on Enemies
     for (let i = state.targets.length - 1; i >= 0; i--) {
         const t = state.targets[i];
         const dist = Math.hypot(p.targetX - t.x, p.targetY - t.y);
-        const hitRad = t.proto.radius + 16;
+        const hitRad = t.proto.radius + 18;
 
         if (dist <= hitRad || (w.splashRadius && dist <= w.splashRadius)) {
             hitAnything = true;
-            // Check Headshot / Critical Zone (upper part of Zombie/Alien or Bullseye center)
             const isHeadshot = (t.proto.hasHeadshot && p.targetY < t.y - t.proto.radius * 0.15) || dist < t.proto.radius * 0.35;
             const critMult = isHeadshot ? (w.style === 'SNIPER' ? 3.0 : 1.65) : 1.0;
             const splashFalloff = (w.splashRadius && dist > hitRad) ? 0.65 : 1.0;
 
             damageTarget(t, i, Math.round(p.damage * critMult * splashFalloff), isHeadshot, w);
 
-            // Vortex Disc Ricochet to nearest target!
             if (w.ricochet && state.targets.length > 0) {
                 const nextT = state.targets.find(other => other !== t && !other.proto.isFriendly);
                 if (nextT) {
@@ -2408,7 +2567,6 @@ function resolveProjectileImpact(p) {
                 }
             }
 
-            // Tesla / Omega Chain Lightning!
             if (w.chainCount) {
                 let chained = 0;
                 for (let j = state.targets.length - 1; j >= 0 && chained < w.chainCount; j--) {
@@ -2425,13 +2583,12 @@ function resolveProjectileImpact(p) {
         }
     }
 
-    // 3. Check Boss Impact
     if (state.boss) {
         const b = state.boss;
         const distB = Math.hypot(p.targetX - b.x, p.targetY - b.y);
-        if (distB <= b.radius + (w.splashRadius || 18)) {
+        if (distB <= b.radius + (w.splashRadius || 20)) {
             hitAnything = true;
-            const isWeakSpot = distB < 32;
+            const isWeakSpot = distB < 38;
             const dmg = Math.round(p.damage * (isWeakSpot ? 1.8 : 1.0));
             b.hp -= dmg;
             b.hitFlash = 1.0;
@@ -2456,7 +2613,7 @@ function resolveProjectileImpact(p) {
 }
 
 function damageTarget(t, indexInArray, dmg, isCrit, weapon) {
-    // Guardian Angel / Friendly Target Penalty!
+    // Vurma_1 / Vurma_2 Friendly Penalty!
     if (t.proto.isFriendly) {
         state.targets.splice(indexInArray, 1);
         state.score = Math.max(0, state.score - 250);
@@ -2466,21 +2623,14 @@ function damageTarget(t, indexInArray, dmg, isCrit, weapon) {
         state.targetsEscaped += 2;
         sfx.penalty();
         spawnParticles(t.x, t.y, '#fde047', 16);
-        addFloatingText(`👼 KORUYUCU MELEK VURULDU! (-${goldPenalty} 🪙)`, t.x, t.y, '#ef4444', 1.5);
+        addFloatingText(`🚑 DOST HEDEF VURULDU! (-${goldPenalty} 🪙)`, t.x, t.y, '#ef4444', 1.5);
         updateSuccessHUD();
         updateHUD();
         return;
     }
 
-    // Ghost Phasing Check (only Tesla & Plasma hit ghosts while faded > 0.72)
-    if (t.proto.phases && t.ghostFade > 0.72 && weapon.style !== 'TESLA' && weapon.style !== 'PLASMA') {
-        addFloatingText('👻 HAYALET GÖRÜNMEZ!', t.x, t.y - 15, '#cbd5e1', 0.8);
-        return;
-    }
-
     if (weapon.freeze) t.frozenTimer = 3.5;
 
-    // Shield Check (Sniper pierces shields directly!)
     if (t.shield > 0 && !weapon.pierce) {
         t.shield -= dmg;
         t.hitFlash = 1.0;
@@ -2498,7 +2648,7 @@ function damageTarget(t, indexInArray, dmg, isCrit, weapon) {
     spawnParticles(t.x, t.y, isCrit ? '#facc15' : weapon.accent, 8);
 
     if (isCrit) {
-        addFloatingText(`💥 KRİTİK KAFA VURUŞU! -${dmg}`, t.x, t.y - 24, '#facc15', 0.95);
+        addFloatingText(`💥 KRİTİK VURUŞ! -${dmg}`, t.x, t.y - 24, '#facc15', 0.95);
     }
 
     if (t.hp <= 0) {
@@ -2517,9 +2667,8 @@ function damageTarget(t, indexInArray, dmg, isCrit, weapon) {
         state.roundGold += gld;
         addPlayerXP(12);
 
-        // Mission Progress
-        if (t.typeKey === 'HELICOPTER' || t.typeKey === 'UFO_SAUCER' || t.typeKey === 'MECH_ROBOT') progressMission('m1', 1);
-        if (t.typeKey === 'ZOMBIE' || t.typeKey === 'ZOMBIE_BRUTE' || t.typeKey === 'VAMPIRE' || t.typeKey === 'WEREWOLF') progressMission('m2', 1);
+        if (t.typeKey === 'STAGE_UNIT_2' || t.typeKey === 'STAGE_UNIT_3') progressMission('m1', 1);
+        progressMission('m2', 1);
 
         spawnParticles(t.x, t.y, '#facc15', 15);
         addFloatingText(`+${gld} 🪙`, t.x, t.y, '#facc15', 1.15);
@@ -2563,7 +2712,6 @@ function openStageSummaryModal(bossKilled = false) {
     const diff = DIFFICULTIES[state.diffIndex];
     const st = STAGES[state.stageIndex];
 
-    // Calculate accuracy mastery bonus gold
     const masteryBonus = pct >= 85 ? Math.round(st.clearBonus * 0.5 * diff.rewardMult) : (pct >= 70 ? Math.round(st.clearBonus * 0.25 * diff.rewardMult) : 0);
     if (masteryBonus > 0) {
         state.gold += masteryBonus;
@@ -2578,7 +2726,6 @@ function openStageSummaryModal(bossKilled = false) {
     document.getElementById('sum-score-val').textContent = state.score.toLocaleString('tr-TR');
     document.getElementById('sum-gold').textContent = `+${state.roundGold} 🪙`;
 
-    // Pre-fill player name for Top 10 Leaderboard registration
     const nameInput = document.getElementById('input-leaderboard-name');
     if (nameInput) nameInput.value = state.playerName || 'Kaptan1';
     document.getElementById('sum-save-feedback').classList.add('hidden');
@@ -2597,31 +2744,25 @@ function openStageSummaryModal(bossKilled = false) {
     saveGame();
 }
 
-// --- 13. HIGH-DETAIL 2D/3D CANVAS RENDERER (10 THEMES, 22+ CHARACTERS & GUARDIAN ANGEL) ---
+// --- 13. HIGH-DETAIL CANVAS RENDERER WITH YOUR 73 CUSTOM SPRITES ---
 function renderArena() {
     ctx.save();
-    // 0. Clear previous frame completely so trails never smear!
     ctx.clearRect(0, 0, W, H);
 
     if (state.screenShake > 0) {
         ctx.translate((Math.random() - 0.5) * state.screenShake, (Math.random() - 0.5) * state.screenShake);
     }
 
-    // 1. Draw Thematic Stage Background & Perspective Neon Grid
     drawStageEnvironment();
 
-    // 2. Draw Stage Boss if active
     if (state.boss) {
         drawStageBoss(state.boss);
     }
 
-    // 3. Draw All Active Enemy & Guardian Angel Characters
     state.targets.forEach(t => drawEnemyCharacter(t));
 
-    // 4. Draw Incoming Enemy Hazards (Missiles / Skulls / Laser Orbs)
     state.enemyHazards.forEach(hz => drawEnemyHazard(hz));
 
-    // 5b. Draw Active 3D Mega Nuke Warhead & Expanding Shockwaves
     if (state.activeNuke) {
         drawActiveMegaNuke(state.activeNuke);
     }
@@ -2638,7 +2779,6 @@ function renderArena() {
         ctx.restore();
     });
 
-    // 6. Draw Chain Lightning Arcs
     state.lightningBolts.forEach(lb => {
         ctx.save();
         ctx.strokeStyle = lb.color;
@@ -2653,10 +2793,8 @@ function renderArena() {
         ctx.restore();
     });
 
-    // 7. Draw 3D Perspective Projectiles
     state.projectiles.forEach(p => drawProjectile3D(p));
 
-    // 8. Draw Particles
     state.particles.forEach(pt => {
         ctx.fillStyle = pt.color;
         ctx.beginPath();
@@ -2664,13 +2802,9 @@ function renderArena() {
         ctx.fill();
     });
 
-    // 9. Draw Morphing 3D Bottom Nerf Blaster Turret (Changes model per weapon!)
     drawMorphing3DTurret();
-
-    // 10. Draw Smart Crosshair & Tablet Magnetic Lock Indicator
     drawSmartCrosshair();
 
-    // 10b. Draw Screen-Wide Nuclear Flash & Cracked Glass / Red Damage Vignette
     if (state.screenFlash > 0) {
         ctx.save();
         const rad = ctx.createRadialGradient(W * 0.5, H * 0.36, 20, W * 0.5, H * 0.36, Math.max(W, H) * 0.75);
@@ -2691,7 +2825,6 @@ function renderArena() {
         ctx.restore();
     }
 
-    // 11. Floating Texts
     state.floatingTexts.forEach(ft => {
         ctx.save();
         ctx.font = '900 17px "Fredoka", sans-serif';
@@ -2713,11 +2846,10 @@ function drawStageEnvironment() {
     const hasCustomImage = bgImg && bgImg.complete && bgImg.naturalWidth > 0;
 
     if (hasCustomImage) {
-        // Draw user's custom stage artwork with subtle 3D parallax & object-fit: cover
         ctx.save();
         const imgW = bgImg.naturalWidth;
         const imgH = bgImg.naturalHeight;
-        const scale = Math.max(W / imgW, H / imgH) * 1.03; // 3% overscan for parallax movement
+        const scale = Math.max(W / imgW, H / imgH) * 1.03;
         const drawW = imgW * scale;
         const drawH = imgH * scale;
 
@@ -2728,7 +2860,6 @@ function drawStageEnvironment() {
 
         ctx.drawImage(bgImg, offsetX, offsetY, drawW, drawH);
 
-        // Subtle atmospheric vignette so glowing neon targets & crosshairs pop clearly
         const vig = ctx.createLinearGradient(0, 0, 0, H);
         vig.addColorStop(0, 'rgba(2, 6, 23, 0.25)');
         vig.addColorStop(0.5, 'rgba(2, 6, 23, 0.05)');
@@ -2736,7 +2867,6 @@ function drawStageEnvironment() {
         ctx.fillStyle = vig;
         ctx.fillRect(0, 0, W, H);
 
-        // Matrix Slow-Mo cyan tint overlay when W skill is active
         if (state.skills.slowActive > 0) {
             ctx.fillStyle = 'rgba(6, 182, 212, 0.18)';
             ctx.fillRect(0, 0, W, H);
@@ -2745,528 +2875,94 @@ function drawStageEnvironment() {
         return;
     }
 
-    // Fallback Procedural Gradient + Grid if image file is not yet in folder
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-
-    switch (st.theme) {
-        case 'ARCADE':
-            grad.addColorStop(0, '#090d16');
-            grad.addColorStop(0.6, '#1e1b4b');
-            grad.addColorStop(1, '#31102f');
-            break;
-        case 'PIRATE':
-            grad.addColorStop(0, '#022c22');
-            grad.addColorStop(0.6, '#0f172a');
-            grad.addColorStop(1, '#1e293b');
-            break;
-        case 'VAMPIRE':
-            grad.addColorStop(0, '#2a0410');
-            grad.addColorStop(0.6, '#4c0519');
-            grad.addColorStop(1, '#0f172a');
-            break;
-        case 'WEREWOLF':
-            grad.addColorStop(0, '#091526');
-            grad.addColorStop(0.6, '#1e293b');
-            grad.addColorStop(1, '#064e3b');
-            break;
-        case 'ROBOT':
-            grad.addColorStop(0, '#0f172a');
-            grad.addColorStop(0.6, '#1e3a8a');
-            grad.addColorStop(1, '#090d16');
-            break;
-        case 'ZOMBIE':
-            grad.addColorStop(0, '#052e16');
-            grad.addColorStop(0.6, '#14532d');
-            grad.addColorStop(1, '#1e293b');
-            break;
-        case 'MUMMY':
-            grad.addColorStop(0, '#451a03');
-            grad.addColorStop(0.6, '#78350f');
-            grad.addColorStop(1, '#1c1917');
-            break;
-        case 'SPACE':
-            grad.addColorStop(0, '#020617');
-            grad.addColorStop(0.6, '#0f172a');
-            grad.addColorStop(1, '#1e1b4b');
-            break;
-        case 'INFERNO':
-            grad.addColorStop(0, '#450a0a');
-            grad.addColorStop(0.6, '#991b1b');
-            grad.addColorStop(1, '#18181b');
-            break;
-        default:
-            grad.addColorStop(0, '#2e1065');
-            grad.addColorStop(0.6, '#4c0519');
-            grad.addColorStop(1, '#090d16');
-            break;
-    }
-
+    grad.addColorStop(0, '#090d16');
+    grad.addColorStop(0.6, '#1e1b4b');
+    grad.addColorStop(1, '#31102f');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
-
-    // Thematic Moon / Sun / Portal in Sky
-    ctx.save();
-    if (st.theme === 'VAMPIRE' || st.theme === 'WEREWOLF') {
-        ctx.fillStyle = st.theme === 'VAMPIRE' ? 'rgba(225, 29, 72, 0.35)' : 'rgba(254, 240, 138, 0.28)';
-        ctx.shadowColor = st.theme === 'VAMPIRE' ? '#f43f5e' : '#fef08a';
-        ctx.shadowBlur = 40;
-        ctx.beginPath();
-        ctx.arc(W * 0.82, H * 0.22, 54, 0, Math.PI * 2);
-        ctx.fill();
-    } else if (st.theme === 'MUMMY') {
-        // Distant Pyramid Silhouettes
-        ctx.fillStyle = 'rgba(120, 53, 15, 0.35)';
-        ctx.beginPath();
-        ctx.moveTo(W * 0.15, H * 0.64); ctx.lineTo(W * 0.28, H * 0.34); ctx.lineTo(W * 0.41, H * 0.64);
-        ctx.moveTo(W * 0.60, H * 0.64); ctx.lineTo(W * 0.74, H * 0.30); ctx.lineTo(W * 0.88, H * 0.64);
-        ctx.fill();
-    }
-    ctx.restore();
-
-    // Perspective Neon Grid Floor
-    const horizonY = H * 0.64;
-    ctx.strokeStyle = state.skills.slowActive > 0 ? 'rgba(56, 189, 248, 0.35)' : 'rgba(249, 115, 22, 0.22)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(0, horizonY);
-    ctx.lineTo(W, horizonY);
-    for (let i = -8; i <= 8; i++) {
-        ctx.moveTo(W * 0.5 + i * 55, horizonY);
-        ctx.lineTo(W * 0.5 + i * 220, H);
-    }
-    for (let y = horizonY + 25; y < H; y += 38) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(W, y);
-    }
-    ctx.stroke();
 }
 
 /**
- * Renders 22+ Multi-Part Animated Enemy Characters (Vampire, Werewolf, Robot, Guardian Angel, etc.)
+ * Draws each enemy target or penalty drone (`Vurma_1`, `Vurma_2`, `Asker_1..4`, etc.)
+ * using the custom image asset with automatic aspect-ratio scaling and hit/freeze glow.
  */
 function drawEnemyCharacter(t) {
     const r = t.proto.radius;
+    const sprite = getSpriteDrawable(t.spriteName);
+
     ctx.save();
     ctx.translate(t.x, t.y);
 
-    // Ghost Phasing Transparency
-    if (t.proto.phases) {
-        ctx.globalAlpha = Math.max(0.22, 1 - t.ghostFade * 0.72);
-    }
-
-    // Hit Flash or Cryo Freeze Tint
     if (t.hitFlash > 0) {
         ctx.shadowColor = '#ffffff';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 22;
     } else if (t.frozenTimer > 0) {
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 18;
     } else if (t.proto.isGolden) {
         ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 22;
+    } else if (t.proto.isFriendly) {
+        ctx.shadowColor = '#4ade80';
+        ctx.shadowBlur = 16;
     }
 
-    switch (t.typeKey) {
-        case 'VAMPIRE': {
-            // Animated Flapping Bat Wings & Crimson Dracula Cloak
-            const wingFlap = Math.sin(t.phase * 3.5) * 14;
-            ctx.fillStyle = '#4c0519';
-            ctx.strokeStyle = '#e11d48';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(0, -6);
-            ctx.lineTo(-38, -18 + wingFlap);
-            ctx.lineTo(-26, 12);
-            ctx.lineTo(0, 6);
-            ctx.lineTo(26, 12);
-            ctx.lineTo(38, -18 + wingFlap);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+    if (sprite) {
+        // Gentle banking/hover tilt
+        const tilt = Math.sin(t.phase * 1.5) * 0.06;
+        ctx.save();
+        ctx.rotate(tilt);
 
-            // Vampire Medallion & Cape Collar
-            ctx.fillStyle = '#0f172a';
-            ctx.beginPath();
-            ctx.roundRect(-15, -4, 30, 28, 6);
-            ctx.fill();
-            ctx.fillStyle = '#facc15';
-            ctx.beginPath();
-            ctx.arc(0, 6, 4.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Pale Vampire Head & Fangs
-            ctx.fillStyle = '#e2e8f0';
-            ctx.strokeStyle = '#dc2626';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, -16, 15, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.font = '24px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🧛', 0, -14);
-            break;
+        // Preserve aspect ratio within target diameter
+        const sw = sprite.width || sprite.naturalWidth || 100;
+        const sh = sprite.height || sprite.naturalHeight || 100;
+        const maxDim = r * 2.35;
+        const aspect = sw / sh;
+        let dw = maxDim;
+        let dh = maxDim;
+        if (aspect > 1) {
+            dh = maxDim / aspect;
+        } else {
+            dw = maxDim * aspect;
         }
-        case 'WEREWOLF': {
-            // Muscular Lycanthrope Body & Claws
-            const slash = Math.sin(t.phase * 3) * 8;
-            ctx.fillStyle = '#451a03';
-            ctx.strokeStyle = '#d97706';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.roundRect(-22, -6, 44, 34, 10);
-            ctx.fill();
-            ctx.stroke();
 
-            // Sharp Silver Claws
-            ctx.strokeStyle = '#f8fafc';
-            ctx.lineWidth = 2.5;
-            [-28, 28].forEach(cx => {
-                ctx.beginPath();
-                ctx.moveTo(cx, -4 + slash);
-                ctx.lineTo(cx + (cx < 0 ? -8 : 8), 8 + slash);
-                ctx.stroke();
-            });
-
-            // Glowing Full-Moon Aura & Wolf Head
-            ctx.fillStyle = '#78350f';
-            ctx.beginPath();
-            ctx.arc(0, -18, 18, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.font = '28px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🐺', 0, -17);
-            break;
-        }
-        case 'MECH_ROBOT': {
-            // Heavy Armored Cyber Mech-Robot
-            ctx.fillStyle = '#1e293b';
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2.5;
-            // Shoulder Missile Pods
-            ctx.fillRect(-30, -14, 12, 22);
-            ctx.fillRect(18, -14, 12, 22);
-            // Chest Core
-            ctx.beginPath();
-            ctx.roundRect(-20, -8, 40, 34, 6);
-            ctx.fill();
-            ctx.stroke();
-
-            // Glowing Plasma Reactor on Chest
-            ctx.fillStyle = '#06b6d4';
-            ctx.beginPath();
-            ctx.arc(0, 8, 8, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.font = '28px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🤖', 0, -18);
-            break;
-        }
-        case 'MUMMY':
-        case 'FIRE_DEMON':
-        case 'DRAGON_WHELP': {
-            const isDragon = t.typeKey === 'DRAGON_WHELP';
-            const isDemon = t.typeKey === 'FIRE_DEMON';
-            // Fiery or Ancient Aura Disc
-            ctx.fillStyle = isDragon || isDemon ? 'rgba(220, 38, 38, 0.35)' : 'rgba(217, 119, 6, 0.35)';
-            ctx.strokeStyle = isDragon || isDemon ? '#f97316' : '#facc15';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(0, 0, r * 0.85, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.font = '34px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(t.proto.emoji, 0, 2);
-            break;
-        }
-        case 'FRIENDLY_HOSTAGE': {
-            // PURE VISUAL GUARDIAN ANGEL / CHERUB (No "VURMA!" text - Golden Halo, Flapping White Wings & Heart)
-            const wingBeat = Math.sin(t.phase * 4) * 10;
-
-            // Soft Heavenly Golden-Cyan Aura
-            const aura = ctx.createRadialGradient(0, 0, 6, 0, 0, 38);
-            aura.addColorStop(0, 'rgba(254, 240, 138, 0.55)');
-            aura.addColorStop(1, 'rgba(56, 189, 248, 0)');
-            ctx.fillStyle = aura;
-            ctx.beginPath();
-            ctx.arc(0, 0, 38, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Left & Right Feathered Angel Wings
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#bae6fd';
-            ctx.lineWidth = 2;
-            // Left Wing
-            ctx.beginPath();
-            ctx.moveTo(-10, 0);
-            ctx.quadraticCurveTo(-36, -18 + wingBeat, -32, 8 + wingBeat * 0.5);
-            ctx.quadraticCurveTo(-22, 18, -10, 8);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            // Right Wing
-            ctx.beginPath();
-            ctx.moveTo(10, 0);
-            ctx.quadraticCurveTo(36, -18 + wingBeat, 32, 8 + wingBeat * 0.5);
-            ctx.quadraticCurveTo(22, 18, 10, 8);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // Glowing Golden Halo Ring Above Head
+        // Golden unit aura ring
+        if (t.proto.isGolden) {
             ctx.strokeStyle = '#facc15';
-            ctx.lineWidth = 3.5;
-            ctx.shadowColor = '#facc15';
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.ellipse(0, -24, 15, 5, 0, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            // Angel Visual Figure & Peace Heart Icon
-            ctx.font = '30px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('👼', 0, -2);
-            ctx.font = '14px sans-serif';
-            ctx.fillText('💚', 0, 18);
-            break;
-        }
-        case 'HELICOPTER': {
-            ctx.save();
-            ctx.scale(t.dir, 1);
-            // Spinning Top Rotor Blades
-            const rotorW = Math.sin(t.phase * 5) * 52;
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(-rotorW, -26);
-            ctx.lineTo(rotorW, -26);
-            ctx.stroke();
-            // Tail Boom & Tail Rotor
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 7;
-            ctx.beginPath();
-            ctx.moveTo(-15, 0);
-            ctx.lineTo(-48, -6);
-            ctx.stroke();
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath();
-            ctx.arc(-48, -6, 8, 0, Math.PI * 2);
-            ctx.fill();
-            // Armored Apache Fuselage
-            ctx.fillStyle = '#1e293b';
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.ellipse(4, 0, 32, 18, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            // Glowing Cyber Cockpit Glass
-            ctx.fillStyle = '#38bdf8';
-            ctx.beginPath();
-            ctx.ellipse(16, -3, 14, 9, 0.2, 0, Math.PI * 2);
-            ctx.fill();
-            // Side Rocket Pod
-            ctx.fillStyle = '#dc2626';
-            ctx.fillRect(-6, 10, 22, 7);
-            ctx.restore();
-            break;
-        }
-        case 'DRONE':
-        case 'GOLDEN_DRONE':
-        case 'CYBER_NINJA': {
-            const isGold = t.typeKey === 'GOLDEN_DRONE';
-            const isNinja = t.typeKey === 'CYBER_NINJA';
-            // Twin Rotor Arms
-            ctx.strokeStyle = isGold ? '#facc15' : '#64748b';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(-28, -12);
-            ctx.lineTo(28, -12);
-            ctx.stroke();
-            // Spinning Propellers
-            ctx.fillStyle = '#38bdf8';
-            const propW = 10 + Math.abs(Math.sin(t.phase * 6)) * 12;
-            ctx.fillRect(-28 - propW / 2, -16, propW, 4);
-            ctx.fillRect(28 - propW / 2, -16, propW, 4);
-            // Core Pod
-            ctx.fillStyle = isGold ? '#eab308' : (isNinja ? '#31102f' : '#0f172a');
-            ctx.strokeStyle = isGold ? '#fef08a' : (isNinja ? '#ec4899' : '#38bdf8');
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.arc(0, 4, 18, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            // Glowing Red/Cyan Scanner Eye
-            ctx.fillStyle = isGold ? '#fff' : '#ef4444';
-            ctx.beginPath();
-            ctx.arc(0, 4, 7, 0, Math.PI * 2);
-            ctx.fill();
-            break;
-        }
-        case 'ZOMBIE':
-        case 'ZOMBIE_BRUTE': {
-            const isBrute = t.typeKey === 'ZOMBIE_BRUTE';
-            const sc = isBrute ? 1.25 : 1.0;
-            ctx.save();
-            ctx.scale(sc, sc);
-            // Torso / Cyber Armor
-            ctx.fillStyle = isBrute ? '#334155' : '#3f6212';
-            ctx.strokeStyle = isBrute ? '#f97316' : '#84cc16';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(-18, -4, 36, 32, 6);
-            ctx.fill();
-            ctx.stroke();
-            // Outstretched Zombie Arms
-            const armWave = Math.sin(t.phase * 1.5) * 6;
-            ctx.fillStyle = '#65a30d';
-            ctx.fillRect(-28, -2 + armWave, 12, 8);
-            ctx.fillRect(16, -2 - armWave, 12, 8);
-            // Mutated Green Zombie Head (Headshot Weakzone!)
-            ctx.fillStyle = '#84cc16';
-            ctx.strokeStyle = '#1a2e05';
-            ctx.beginPath();
-            ctx.arc(0, -18, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            // Glowing Toxic Red/Yellow Eyes
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath();
-            ctx.arc(-6, -20, 3.5, 0, Math.PI * 2);
-            ctx.arc(6, -20, 3.5, 0, Math.PI * 2);
-            ctx.fill();
-            // Brute Helmet
-            if (isBrute) {
-                ctx.fillStyle = '#475569';
-                ctx.beginPath();
-                ctx.arc(0, -22, 17, Math.PI, 0);
-                ctx.fill();
-            }
-            ctx.restore();
-            break;
-        }
-        case 'ALIEN_GREY': {
-            // Sci-Fi Suit
-            ctx.fillStyle = '#4c1d95';
-            ctx.strokeStyle = '#a855f7';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(-14, 2, 28, 24, 6);
-            ctx.fill();
-            ctx.stroke();
-            // Big Pulsing Grey Alien Cranium
-            ctx.fillStyle = '#94a3b8';
-            ctx.strokeStyle = '#38bdf8';
-            ctx.beginPath();
-            ctx.ellipse(0, -14, 20, 16, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            // Slanted Black Alien Eyes
-            ctx.fillStyle = '#020617';
-            ctx.beginPath();
-            ctx.ellipse(-7, -13, 6, 3.5, 0.35, 0, Math.PI * 2);
-            ctx.ellipse(7, -13, 6, 3.5, -0.35, 0, Math.PI * 2);
-            ctx.fill();
-            break;
-        }
-        case 'UFO_SAUCER': {
-            // Abduction Glow Cone underneath
-            ctx.fillStyle = 'rgba(163, 230, 53, 0.22)';
-            ctx.beginPath();
-            ctx.moveTo(-16, 8);
-            ctx.lineTo(16, 8);
-            ctx.lineTo(28, 38);
-            ctx.lineTo(-28, 38);
-            ctx.closePath();
-            ctx.fill();
-            // Glass Dome with Alien Pilot
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
-            ctx.beginPath();
-            ctx.arc(0, -4, 18, Math.PI, 0);
-            ctx.fill();
-            // Metallic Flying Saucer Disc
-            ctx.fillStyle = '#334155';
-            ctx.strokeStyle = '#a3e635';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.ellipse(0, 2, 38, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            // Rotating Neon Lights
-            for (let i = -2; i <= 2; i++) {
-                ctx.fillStyle = (Math.floor(t.phase * 3) + i) % 2 === 0 ? '#facc15' : '#ec4899';
-                ctx.beginPath();
-                ctx.arc(i * 12, 2, 3.5, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            break;
-        }
-        case 'GHOST':
-        case 'NECROMANCER': {
-            const isNecro = t.typeKey === 'NECROMANCER';
-            // Floating Spectral Cloak with wavy tail
-            ctx.fillStyle = isNecro ? 'rgba(88, 28, 135, 0.9)' : 'rgba(186, 230, 253, 0.82)';
-            ctx.strokeStyle = isNecro ? '#facc15' : '#38bdf8';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.arc(0, -10, 20, Math.PI, 0);
-            ctx.lineTo(20, 18);
-            ctx.quadraticCurveTo(10, 10 + Math.sin(t.phase * 2) * 8, 0, 20);
-            ctx.quadraticCurveTo(-10, 10 - Math.sin(t.phase * 2) * 8, -20, 18);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            // Glowing Mystical Eyes
-            ctx.fillStyle = isNecro ? '#facc15' : '#0284c7';
-            ctx.beginPath();
-            ctx.arc(-7, -10, 4, 0, Math.PI * 2);
-            ctx.arc(7, -10, 4, 0, Math.PI * 2);
-            ctx.fill();
-            // Rotating Arcane Rune Ring for Necromancer
-            if (isNecro) {
-                ctx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
-                ctx.setLineDash([5, 5]);
-                ctx.beginPath();
-                ctx.arc(0, -4, 30, t.phase, t.phase + Math.PI * 2);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-            break;
-        }
-        default: {
-            // Thematic Character Badge with Emoji (Skeleton Pirate, Pteranodon, Spider Bot, Bullseye)
-            ctx.fillStyle = '#dc2626';
-            ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.arc(0, 0, r, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
             ctx.stroke();
-            ctx.fillStyle = '#facc15';
-            ctx.beginPath();
-            ctx.arc(0, 0, r * 0.52, 0, Math.PI * 2);
-            ctx.fill();
-
-            if (t.proto.emoji) {
-                ctx.font = '24px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(t.proto.emoji, 0, 2);
-            }
-            break;
         }
+
+        // Friendly Vurma_1 / Vurma_2 green safety ring
+        if (t.proto.isFriendly) {
+            ctx.strokeStyle = 'rgba(74, 222, 128, 0.85)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.drawImage(sprite, -dw / 2, -dh / 2, dw, dh);
+        ctx.restore();
+    } else {
+        // Fallback badge if image file is still loading
+        ctx.fillStyle = t.proto.isFriendly ? '#16a34a' : '#dc2626';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = '28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(t.proto.emoji || '🎯', 0, 2);
     }
 
     // Energy Shield Bubble if active
@@ -3282,7 +2978,7 @@ function drawEnemyCharacter(t) {
 
     // Health Bar above damaged or heavy enemies
     if (!t.proto.isFriendly && (t.hp < t.maxHp || t.maxHp >= 100)) {
-        const bw = 46;
+        const bw = 52;
         ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
         ctx.fillRect(-bw / 2, -r - 16, bw, 6);
         ctx.fillStyle = t.shield > 0 ? '#38bdf8' : '#22c55e';
@@ -3293,171 +2989,48 @@ function drawEnemyCharacter(t) {
     ctx.restore();
 }
 
+/**
+ * Draws the Stage Boss using your custom `*_Boss` image (`Asker_Boss`, `okyanus_Boss`, `jura_Boss`, etc.)
+ */
 function drawStageBoss(b) {
+    const sprite = getSpriteDrawable(b.spriteName);
+
     ctx.save();
     ctx.translate(b.x, b.y);
     if (b.hitFlash > 0) {
-        ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 28;
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 32;
+    } else {
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 22;
     }
 
-    const vType = b.visualType || 'STANDARD';
-
-    if (vType === 'GIANT_DINO') {
-        // 1. COLOSSAL CYBER T-REX DINOSAUR BOSS
-        const jawSnap = Math.abs(Math.sin(b.phase * 3)) * 14;
-        // Armored Dino Tail & Spines
-        ctx.fillStyle = '#15803d';
-        ctx.strokeStyle = '#a3e635';
-        ctx.lineWidth = 3;
-        for (let i = -3; i <= 3; i++) {
-            ctx.beginPath();
-            ctx.moveTo(i * 18, -b.radius + 10);
-            ctx.lineTo(i * 22, -b.radius - 22);
-            ctx.lineTo(i * 18 + 12, -b.radius + 10);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        }
-        // Massive Cyber-Dino Head & Torso
-        ctx.fillStyle = '#14532d';
-        ctx.strokeStyle = '#84cc16';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, b.radius * 1.05, b.radius * 0.78, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Mechanical Cyber Jaw & Razor Teeth
-        ctx.fillStyle = '#334155';
-        ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(-62, 18 + jawSnap * 0.4, 124, 34, 10);
-        ctx.fill();
-        ctx.stroke();
-
-        // Glowing Laser Dino Eyes
-        ctx.fillStyle = '#ef4444';
-        ctx.beginPath();
-        ctx.arc(-34, -22, 10, 0, Math.PI * 2);
-        ctx.arc(34, -22, 10, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    else if (vType === 'GIANT_DRAGON') {
-        // 2. COLOSSAL CRIMSON MAGMA DRAGON BOSS
-        const wingBeat = Math.sin(b.phase * 3.2) * 32;
-        ctx.fillStyle = '#7f1d1d';
-        ctx.strokeStyle = '#f97316';
-        ctx.lineWidth = 4;
-
-        // Giant Bat-Like Dragon Wings (Left & Right)
-        [-1, 1].forEach(side => {
-            ctx.beginPath();
-            ctx.moveTo(side * 30, 0);
-            ctx.lineTo(side * 165, -55 + wingBeat);
-            ctx.lineTo(side * 145, 35 + wingBeat * 0.5);
-            ctx.lineTo(side * 85, 25);
-            ctx.lineTo(side * 35, 35);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        });
-
-        // Dragon Scaled Body & Golden Horns
-        ctx.fillStyle = '#991b1b';
-        ctx.strokeStyle = '#facc15';
-        ctx.beginPath();
-        ctx.arc(0, 0, b.radius * 0.88, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Horns
-        ctx.fillStyle = '#fde047';
-        [-38, 38].forEach(hx => {
-            ctx.beginPath();
-            ctx.moveTo(hx, -55);
-            ctx.lineTo(hx * 1.45, -108);
-            ctx.lineTo(hx * 0.6, -65);
-            ctx.closePath();
-            ctx.fill();
-        });
-    }
-    else if (vType === 'GIANT_SPACESHIP') {
-        // 3. GALACTIC DREADNOUGHT MOTHERSHIP BOSS
-        // Tractor Beam / Engine Thruster Glow
-        const glowGrad = ctx.createRadialGradient(0, 0, 20, 0, 0, b.radius * 1.45);
-        glowGrad.addColorStop(0, 'rgba(56, 189, 248, 0.55)');
-        glowGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-        ctx.fillStyle = glowGrad;
-        ctx.beginPath();
-        ctx.arc(0, 0, b.radius * 1.45, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Wide Armored Star-Cruiser Hull
-        ctx.fillStyle = '#1e293b';
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.ellipse(0, 6, b.radius * 1.45, b.radius * 0.55, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Upper Command Bridge Dome
-        ctx.fillStyle = '#0284c7';
-        ctx.strokeStyle = '#e0f2fe';
-        ctx.beginPath();
-        ctx.arc(0, -8, b.radius * 0.62, Math.PI, 0);
-        ctx.fill();
-        ctx.stroke();
-
-        // Rotating Neon Weapon Pods along Hull
-        for (let i = -3; i <= 3; i++) {
-            ctx.fillStyle = (Math.floor(b.phase * 4) + i) % 2 === 0 ? '#facc15' : '#ef4444';
-            ctx.beginPath();
-            ctx.arc(i * 36, 10, 7, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-    else if (vType === 'GIANT_ALIEN_BEAST') {
-        // 4. COSMIC LEVIATHAN ALIEN MONSTER (FINAL BOSS)
-        // 8 Writhing Bio-Plasma Tentacles
-        for (let i = 0; i < 8; i++) {
-            const ang = b.phase * 0.8 + (i * Math.PI) / 4;
-            const wave = Math.sin(b.phase * 3 + i) * 24;
-            ctx.strokeStyle = i % 2 === 0 ? '#a855f7' : '#22d3ee';
-            ctx.lineWidth = 10;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(Math.cos(ang) * 40, Math.sin(ang) * 40);
-            ctx.quadraticCurveTo(
-                Math.cos(ang) * 95 + wave,
-                Math.sin(ang) * 95 - wave,
-                Math.cos(ang + 0.35) * (b.radius + 46),
-                Math.sin(ang + 0.35) * (b.radius + 46)
-            );
-            ctx.stroke();
+    if (sprite) {
+        const sw = sprite.width || sprite.naturalWidth || 200;
+        const sh = sprite.height || sprite.naturalHeight || 120;
+        const maxDim = b.radius * 2.85;
+        const aspect = sw / sh;
+        let dw = maxDim;
+        let dh = maxDim;
+        if (aspect > 1) {
+            dh = maxDim / aspect;
+        } else {
+            dw = maxDim * aspect;
         }
 
-        // Outer Bio-Carapace
-        ctx.fillStyle = '#3b0764';
-        ctx.strokeStyle = '#f0abfc';
-        ctx.lineWidth = 4.5;
-        ctx.beginPath();
-        ctx.arc(0, 0, b.radius * 0.95, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        const hoverTilt = Math.sin(b.phase * 1.4) * 0.05;
+        ctx.save();
+        ctx.rotate(hoverTilt);
+        ctx.drawImage(sprite, -dw / 2, -dh / 2, dw, dh);
+        ctx.restore();
 
-        // Multiple Glowing Alien Eyes around Carapace
-        for (let e = -2; e <= 2; e++) {
-            ctx.fillStyle = '#a3e635';
-            ctx.beginPath();
-            ctx.arc(e * 26, -36 - Math.abs(e) * 4, 7, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-    else {
-        // Standard Stage Boss Frame
+        // Subtle glowing weakpoint reticle in center of Boss
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 24 + Math.sin(b.phase * 4) * 4, 0, Math.PI * 2);
+        ctx.stroke();
+    } else {
         ctx.fillStyle = '#7f1d1d';
         ctx.strokeStyle = '#facc15';
         ctx.lineWidth = 4;
@@ -3466,44 +3039,29 @@ function drawStageBoss(b) {
         ctx.fill();
         ctx.stroke();
 
-        for (let i = 0; i < 6; i++) {
-            const ang = b.phase + (i * Math.PI) / 3;
-            ctx.strokeStyle = '#f97316';
-            ctx.lineWidth = 7;
-            ctx.beginPath();
-            ctx.moveTo(Math.cos(ang) * 45, Math.sin(ang) * 45);
-            ctx.lineTo(Math.cos(ang + 0.3) * (b.radius + 24), Math.sin(ang + 0.3) * (b.radius + 24));
-            ctx.stroke();
-        }
+        ctx.font = '42px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.icon || '👹', 0, 2);
     }
-
-    // Pulsing Weakpoint Core with Boss Icon
-    ctx.fillStyle = '#38bdf8';
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(0, 0, 34 + Math.sin(b.phase * 4) * 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.font = b.interludeTier ? '42px sans-serif' : '32px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(b.icon || '👹', 0, 2);
 
     ctx.restore();
 }
 
+/**
+ * Draws incoming enemy missiles using your custom stage rocket sprites (`Asker_Rocet_1/2`, `Zombi_Rocet_1/2`, etc.)
+ */
 function drawEnemyHazard(hz) {
     const maxT = hz.maxTimer || 3.2;
     const progress = Math.max(0, Math.min(1, 1 - (hz.timer / maxT)));
     const urgency = progress > 0.68;
+    const sprite = getSpriteDrawable(hz.spriteName);
 
     ctx.save();
     ctx.translate(hz.x, hz.y);
 
-    // 1. Outer Contracting Target-Lock & Countdown Ring
-    const ringRadius = hz.r * (1.28 + (1 - progress) * 0.75);
+    // Contracting Target-Lock & Countdown Ring
+    const ringRadius = hz.r * (1.25 + (1 - progress) * 0.65);
     ctx.strokeStyle = urgency ? '#ef4444' : '#facc15';
     ctx.lineWidth = urgency ? 3.5 : 2.5;
     ctx.setLineDash([8, 6]);
@@ -3512,119 +3070,37 @@ function drawEnemyHazard(hz) {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Progress Arc showing remaining time before impact
     ctx.strokeStyle = urgency ? '#fca5a5' : '#38bdf8';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.arc(0, 0, hz.r + 7, -Math.PI / 2, -Math.PI / 2 + (1 - progress) * Math.PI * 2);
+    ctx.arc(0, 0, hz.r + 6, -Math.PI / 2, -Math.PI / 2 + (1 - progress) * Math.PI * 2);
     ctx.stroke();
 
-    // 2. Render Specific 3D Projectile Type
-    if (hz.kind === 'MISSILE') {
-        // 3D Incoming Helicopter / Drone Homing Missile
+    if (sprite) {
+        const sw = sprite.width || sprite.naturalWidth || 80;
+        const sh = sprite.height || sprite.naturalHeight || 80;
+        const maxDim = hz.r * 2.35;
+        const aspect = sw / sh;
+        let dw = maxDim;
+        let dh = maxDim;
+        if (aspect > 1) {
+            dh = maxDim / aspect;
+        } else {
+            dw = maxDim * aspect;
+        }
+
         ctx.save();
-        ctx.rotate(Math.sin(hz.spin * 0.5) * 0.18);
-
-        // Outer Jet Flame Halo
-        const flameR = hz.r * (1.05 + Math.sin(hz.spin * 3) * 0.14);
-        const fGrad = ctx.createRadialGradient(0, 0, hz.r * 0.2, 0, 0, flameR);
-        fGrad.addColorStop(0, '#ffffff');
-        fGrad.addColorStop(0.5, '#f97316');
-        fGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
-        ctx.fillStyle = fGrad;
-        ctx.beginPath();
-        ctx.arc(0, 0, flameR, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4 Stabilizer Fins (X-Configuration)
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = Math.max(3, hz.r * 0.2);
-        for (let i = 0; i < 4; i++) {
-            const a = hz.spin * 0.4 + (i * Math.PI) / 2;
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(Math.cos(a) * hz.r * 1.18, Math.sin(a) * hz.r * 1.18);
-            ctx.stroke();
-        }
-
-        // Armored Cylindrical Missile Fuselage (Foreshortened toward player)
-        ctx.fillStyle = '#1e293b';
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(0, 0, hz.r * 0.78, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // Glowing Red Warhead Nose Cone pointing directly at player
-        ctx.fillStyle = urgency && Math.floor(hz.spin * 2) % 2 === 0 ? '#ffffff' : '#ef4444';
-        ctx.shadowColor = '#ef4444';
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(0, 0, hz.r * 0.42, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.rotate(Math.sin(hz.spin * 0.5) * 0.14);
+        ctx.drawImage(sprite, -dw / 2, -dh / 2, dw, dh);
         ctx.restore();
-    }
-    else if (hz.kind === 'SKULL') {
-        // Necromancer Cursed Spectral Skull Fireball
-        const auraGrad = ctx.createRadialGradient(0, 0, hz.r * 0.2, 0, 0, hz.r * 1.35);
-        auraGrad.addColorStop(0, '#f0abfc');
-        auraGrad.addColorStop(0.5, '#9333ea');
-        auraGrad.addColorStop(1, 'rgba(88, 28, 135, 0)');
-        ctx.fillStyle = auraGrad;
+    } else {
+        ctx.fillStyle = '#ef4444';
         ctx.beginPath();
-        ctx.arc(0, -hz.r * 0.15, hz.r * 1.35, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Skull Cranium & Jaw
-        ctx.fillStyle = '#f8fafc';
-        ctx.strokeStyle = '#a855f7';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(0, -hz.r * 0.1, hz.r * 0.65, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillRect(-hz.r * 0.32, hz.r * 0.3, hz.r * 0.64, hz.r * 0.32);
-
-        // Glowing Purple/Yellow Eye Sockets
-        ctx.fillStyle = urgency ? '#ef4444' : '#facc15';
-        ctx.beginPath();
-        ctx.arc(-hz.r * 0.24, -hz.r * 0.12, hz.r * 0.17, 0, Math.PI * 2);
-        ctx.arc(hz.r * 0.24, -hz.r * 0.12, hz.r * 0.17, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    else {
-        // UFO Laser Orb & Boss Plasma Sphere with Electric Arcs
-        const isBoss = hz.kind === 'BOSS_ORB';
-        const coreColor = isBoss ? '#ef4444' : '#06b6d4';
-        const rimColor = isBoss ? '#facc15' : '#67e8f9';
-
-        ctx.fillStyle = coreColor;
-        ctx.shadowColor = rimColor;
-        ctx.shadowBlur = 18;
-        ctx.beginPath();
-        ctx.arc(0, 0, hz.r * 0.78, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Rotating Plasma Rings
-        ctx.strokeStyle = rimColor;
-        ctx.lineWidth = 2.5;
-        for (let i = 0; i < 2; i++) {
-            ctx.save();
-            ctx.rotate(hz.spin * (i === 0 ? 1 : -1) + i);
-            ctx.beginPath();
-            ctx.ellipse(0, 0, hz.r * 0.95, hz.r * 0.38, 0, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(0, 0, hz.r * 0.32, 0, Math.PI * 2);
+        ctx.arc(0, 0, hz.r * 0.7, 0, Math.PI * 2);
         ctx.fill();
     }
 
-    // 3. Clear "VUR!" & Countdown Warning Tag
+    // Clear "VUR!" & Countdown Warning Tag
     ctx.shadowBlur = 0;
     ctx.fillStyle = urgency ? '#ef4444' : '#020617';
     ctx.strokeStyle = '#ffffff';
@@ -3641,14 +3117,18 @@ function drawEnemyHazard(hz) {
     ctx.restore();
 }
 
+/**
+ * Draws our Mega Nuke Rocket (`Q`) using your custom `Bizim rocet` image!
+ */
 function drawActiveMegaNuke(nk) {
-    const scale = Math.max(0.42, 1.55 - nk.progress * 0.85);
+    const scale = Math.max(0.45, 1.55 - nk.progress * 0.85);
     const dx = nk.targetX - nk.startX;
     const dy = nk.targetY - nk.startY;
     const angle = Math.atan2(dx, -dy) * 0.35;
+    const ourRocketSprite = getSpriteDrawable('Bizim rocet');
 
     ctx.save();
-    // Draw Pulsing Nuclear Target Reticle at Destination
+    // Pulsing Nuclear Target Reticle at Destination
     ctx.save();
     ctx.translate(nk.targetX, nk.targetY);
     ctx.rotate(nk.spin * 0.5);
@@ -3662,73 +3142,55 @@ function drawActiveMegaNuke(nk) {
     ctx.setLineDash([]);
     ctx.restore();
 
-    // Draw Giant 3D Nerf Mega Titan Whistle Rocket in Flight
     ctx.translate(nk.x, nk.y);
     ctx.scale(scale, scale);
     ctx.rotate(angle);
 
-    // Thruster Afterburner Plume
-    const plumeLen = 45 + Math.sin(nk.spin * 4) * 16;
-    const pGrad = ctx.createLinearGradient(0, 20, 0, 20 + plumeLen);
-    pGrad.addColorStop(0, '#ffffff');
-    pGrad.addColorStop(0.4, '#facc15');
-    pGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
-    ctx.fillStyle = pGrad;
-    ctx.beginPath();
-    ctx.moveTo(-16, 22);
-    ctx.lineTo(16, 22);
-    ctx.lineTo(0, 24 + plumeLen);
-    ctx.closePath();
-    ctx.fill();
-
-    // Rear Black Tactical Stabilizer Fins
-    ctx.fillStyle = '#0f172a';
-    ctx.strokeStyle = '#facc15';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(-18, 4); ctx.lineTo(-36, 28); ctx.lineTo(-16, 24); ctx.closePath();
-    ctx.moveTo(18, 4);  ctx.lineTo(36, 28);  ctx.lineTo(16, 24);  ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Crimson Mega Foam Body with Hazard Stripes
-    ctx.fillStyle = '#dc2626';
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.roundRect(-18, -32, 36, 56, 12);
-    ctx.fill();
-    ctx.stroke();
-
-    // Yellow & Black Nuclear Band
-    ctx.fillStyle = '#facc15';
-    ctx.fillRect(-17, -8, 34, 12);
-    ctx.fillStyle = '#020617';
-    ctx.font = '900 10px Fredoka';
-    ctx.textAlign = 'center';
-    ctx.fillText('☢️ MEGA', 0, 1);
-
-    // Orange Whistle Tip Cone
-    ctx.fillStyle = '#f97316';
-    ctx.beginPath();
-    ctx.arc(0, -32, 18, Math.PI, 0);
-    ctx.fill();
-    ctx.stroke();
-
-    // Iconic Nerf Whistle Hole on Tip
-    ctx.fillStyle = '#020617';
-    ctx.beginPath();
-    ctx.ellipse(6, -38, 4, 2.5, -0.3, 0, Math.PI * 2);
-    ctx.fill();
+    if (ourRocketSprite) {
+        const sw = ourRocketSprite.width || ourRocketSprite.naturalWidth || 60;
+        const sh = ourRocketSprite.height || ourRocketSprite.naturalHeight || 160;
+        const dh = 135;
+        const dw = dh * (sw / sh);
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 20;
+        ctx.drawImage(ourRocketSprite, -dw / 2, -dh / 2, dw, dh);
+    } else {
+        ctx.fillStyle = '#dc2626';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(-18, -32, 36, 56, 12);
+        ctx.fill();
+        ctx.stroke();
+    }
 
     ctx.restore();
 }
 
+/**
+ * Draws player projectiles (uses `Bizim rocet` when firing the Mega Titan Rocket Launcher!)
+ */
 function drawProjectile3D(p) {
     const scale = Math.max(0.28, 1 - p.progress * 0.68);
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
+
+    if (p.weapon.style === 'ROCKET') {
+        const ourRocket = getSpriteDrawable('Bizim rocet');
+        if (ourRocket) {
+            const dx = p.targetX - p.startX;
+            const dy = p.targetY - p.startY;
+            ctx.rotate(Math.atan2(dx, -dy) * 0.45);
+            const sw = ourRocket.width || ourRocket.naturalWidth || 50;
+            const sh = ourRocket.height || ourRocket.naturalHeight || 140;
+            const dh = 76;
+            const dw = dh * (sw / sh);
+            ctx.drawImage(ourRocket, -dw / 2, -dh / 2, dw, dh);
+            ctx.restore();
+            return;
+        }
+    }
 
     ctx.fillStyle = p.weapon.accent;
     ctx.shadowColor = p.weapon.colorPrimary;
@@ -3744,10 +3206,6 @@ function drawProjectile3D(p) {
     ctx.restore();
 }
 
-/**
- * Renders the 3D Arcade Blaster Turret at the bottom center of the screen,
- * morphing its barrel geometry and colors to match the equipped weapon!
- */
 function drawMorphing3DTurret() {
     const w = getActiveWeapon();
     const aim = computeAimCoordinates();
@@ -3763,9 +3221,7 @@ function drawMorphing3DTurret() {
     ctx.rotate(angle);
     ctx.translate(0, state.recoil);
 
-    // 1. Weapon-Specific Barrel Assembly
     if (w.style === 'GATLING') {
-        // 6 Spinning Vulcan Gatling Barrels
         ctx.fillStyle = w.colorSecondary;
         ctx.strokeStyle = w.colorPrimary;
         ctx.lineWidth = 3;
@@ -3777,7 +3233,6 @@ function drawMorphing3DTurret() {
             ctx.fillRect(bx - 3, -158, 6, 68);
         }
     } else if (w.style === 'DUAL' || w.style === 'CRYO') {
-        // Twin Side-by-Side Rapid Barrels
         [-22, 22].forEach(ox => {
             ctx.fillStyle = w.colorSecondary;
             ctx.strokeStyle = w.accent;
@@ -3788,7 +3243,6 @@ function drawMorphing3DTurret() {
             ctx.stroke();
         });
     } else if (w.style === 'SNIPER') {
-        // Extra Long Precision Barrel + Laser Sight
         ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
         ctx.lineWidth = 2;
         ctx.setLineDash([8, 6]);
@@ -3804,7 +3258,6 @@ function drawMorphing3DTurret() {
         ctx.fillRect(-12, -172, 24, 85);
         ctx.strokeRect(-12, -172, 24, 85);
     } else if (w.style === 'TESLA') {
-        // Tesla Coil Rings around Barrel
         ctx.fillStyle = w.colorSecondary;
         ctx.fillRect(-20, -148, 40, 60);
         for (let ry = -140; ry <= -100; ry += 16) {
@@ -3815,7 +3268,6 @@ function drawMorphing3DTurret() {
             ctx.stroke();
         }
     } else {
-        // Heavy Iconic Arcade Turret Barrel (Striker / Shotgun / Titan / Omega)
         ctx.fillStyle = w.colorSecondary;
         ctx.strokeStyle = w.accent;
         ctx.lineWidth = 3;
@@ -3825,7 +3277,6 @@ function drawMorphing3DTurret() {
         ctx.stroke();
     }
 
-    // 2. Main Sculpted Red/Custom Nerf Blaster Body (Matches Arcade Cabinet Photo!)
     const bodyGrad = ctx.createLinearGradient(-48, -100, 48, 0);
     bodyGrad.addColorStop(0, w.colorPrimary);
     bodyGrad.addColorStop(0.5, w.colorPrimary);
@@ -3843,7 +3294,6 @@ function drawMorphing3DTurret() {
     ctx.fill();
     ctx.stroke();
 
-    // Digital Ammo Counter Screen on Back of Turret
     ctx.fillStyle = '#020617';
     ctx.strokeStyle = '#38bdf8';
     ctx.lineWidth = 2;
@@ -3857,7 +3307,6 @@ function drawMorphing3DTurret() {
     ctx.textAlign = 'center';
     ctx.fillText(state.reloading > 0 ? 'DOLUM' : state.ammo, 0, -50);
 
-    // Twin Black & Red Arcade Handles on Left & Right
     [-46, 46].forEach(hx => {
         ctx.fillStyle = '#0f172a';
         ctx.strokeStyle = '#ef4444';
@@ -3878,14 +3327,12 @@ function drawSmartCrosshair() {
     ctx.save();
     ctx.translate(aim.x, aim.y);
 
-    // Outer Rotating Reticle
     ctx.strokeStyle = state.input.lockedTarget ? '#a3e635' : w.accent;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(0, 0, state.input.lockedTarget ? 26 : 22, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Crosshair Ticks
     ctx.beginPath();
     ctx.moveTo(-30, 0); ctx.lineTo(-12, 0);
     ctx.moveTo(12, 0);  ctx.lineTo(30, 0);
@@ -3893,7 +3340,6 @@ function drawSmartCrosshair() {
     ctx.moveTo(0, 12);  ctx.lineTo(0, 30);
     ctx.stroke();
 
-    // Center Dot
     ctx.fillStyle = '#ef4444';
     ctx.beginPath();
     ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
@@ -3922,13 +3368,11 @@ function updateHUD() {
     const startDiffLbl = document.getElementById('lbl-start-diff');
     if (startDiffLbl) startDiffLbl.textContent = DIFFICULTIES[state.diffIndex].name;
 
-    // Active Weapon SVG Card on HUD
     const svgBox = document.getElementById('hud-weapon-svg');
     if (svgBox) svgBox.innerHTML = generateWeaponSVG(w);
     document.getElementById('hud-weapon-name').textContent = w.shortName;
     document.getElementById('hud-weapon-stats').textContent = `Hasar: ${getWeaponDamage(w)} | Sv.${w.level}/${w.maxLevel}`;
 
-    // Check if any upgrade/unlock is affordable
     const canBuy = WEAPONS.some(wp => (!wp.unlocked && state.gold >= wp.unlockCost) || (wp.unlocked && wp.level < wp.maxLevel && state.gold >= getWeaponUpgradeCost(wp)));
     document.getElementById('arsenal-badge').classList.toggle('hidden', !canBuy);
 }
@@ -4123,7 +3567,7 @@ function openStagesModal() {
                 <div class="w-full h-24 rounded-xl overflow-hidden mb-2 border border-slate-700/80 relative bg-slate-900">
                     <img src="${st.bgImage}" alt="${st.name}" class="w-full h-full object-cover" onerror="this.parentElement.classList.add('hidden')" />
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
-                    <span class="absolute bottom-1 left-2 text-[9px] font-black text-white/90 drop-shadow">${st.bgImage}</span>
+                    <span class="absolute bottom-1 left-2 text-[9px] font-black text-white/90 drop-shadow">${st.spritePrefix}_1..4 & ${st.bossSprite}</span>
                 </div>` : ''}
                 <div class="flex justify-between items-center gap-1 mb-1">
                     <span class="arcade-font text-xs sm:text-sm font-black ${isInterlude ? 'text-amber-300' : 'text-cyan-300'}">${st.name}</span>
@@ -4149,7 +3593,6 @@ function openStagesModal() {
     document.getElementById('modal-stages').classList.remove('hidden');
 }
 
-// --- TOP 10 LEADERBOARD (İLK 10 PUAN TABLOSU) FUNCTIONS ---
 function recordScoreToLeaderboard(rawName) {
     const cleanName = (rawName || state.playerName || 'Kaptan1').trim().slice(0, 16) || 'Kaptan1';
     state.playerName = cleanName;
@@ -4158,7 +3601,6 @@ function recordScoreToLeaderboard(rawName) {
     const currentStageName = STAGES[state.stageIndex] ? STAGES[state.stageIndex].name.split(':')[0] : '1. Bölüm';
     const nowStr = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' });
 
-    // Check if same player already has an entry; update if higher or insert new
     const existingIdx = state.leaderboard.findIndex(e => e.name.toLowerCase() === cleanName.toLowerCase());
     if (existingIdx !== -1) {
         if (state.score >= state.leaderboard[existingIdx].score) {
@@ -4223,7 +3665,6 @@ function openLeaderboardModal() {
     document.getElementById('modal-leaderboard').classList.remove('hidden');
 }
 
-// --- 15. HELPERS: PARTICLES, FLOATING TEXTS, XP & MISSIONS ---
 function spawnParticles(x, y, color, count = 10) {
     for (let i = 0; i < count; i++) {
         const ang = Math.random() * Math.PI * 2;
@@ -4425,7 +3866,7 @@ function updateAbilityButtons() {
     }
 }
 
-// --- 16. EVENT LISTENERS (MOUSE, IPAD SAFARI MULTI-TOUCH, APPLE PENCIL, JOYSTICK & KEYBOARD) ---
+// --- 16. EVENT LISTENERS ---
 function setupInputAndEvents() {
     const resize = () => {
         const wrap = document.getElementById('stage-wrapper');
@@ -4438,16 +3879,13 @@ function setupInputAndEvents() {
     window.addEventListener('orientationchange', () => setTimeout(resize, 180));
     resize();
 
-    // Prevent iPadOS Safari pinch-to-zoom, double-tap zoom & context menu
     window.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
     document.addEventListener('gesturechange', e => e.preventDefault(), { passive: false });
 
-    // Unlock iPadOS WebAudio on any first touch/pointer down anywhere
     window.addEventListener('touchstart', () => sfx.init(), { passive: true, once: true });
     window.addEventListener('pointerdown', () => sfx.init(), { passive: true, once: true });
 
-    // Apple Pencil & Pointer Type Detection on Canvas
     canvas.addEventListener('pointerdown', e => {
         if (e.pointerType === 'pen') {
             state.input.isApplePencil = true;
@@ -4459,7 +3897,6 @@ function setupInputAndEvents() {
         }
     });
 
-    // Mouse Input
     canvas.addEventListener('mousemove', e => {
         const rect = canvas.getBoundingClientRect();
         state.input.isTouchActive = false;
@@ -4476,7 +3913,6 @@ function setupInputAndEvents() {
     });
     window.addEventListener('mouseup', () => { state.input.isFiring = false; });
 
-    // Mouse Wheel Quick Weapon Switch
     window.addEventListener('wheel', e => {
         const unlockedIndices = WEAPONS.map((w, i) => w.unlocked ? i : -1).filter(i => i !== -1);
         if (unlockedIndices.length <= 1) return;
@@ -4488,12 +3924,10 @@ function setupInputAndEvents() {
         updateHUD();
     });
 
-    // Direct Touch & Drag on Arena Canvas (iPad & Android Tablet Precision + Two-Finger Tactical Gesture)
     canvas.addEventListener('touchstart', e => {
         e.preventDefault();
         sfx.init();
 
-        // Two-Finger Tactical iPad Gesture: Instant Reload or Mega Rocket!
         if (e.touches.length >= 2 && state.input.touchMode !== 'DUAL_THUMB') {
             if (state.input.twoFingerGesture === 'NUKE' && state.skills.nukeCd <= 0) {
                 activateMegaNuke();
@@ -4508,7 +3942,6 @@ function setupInputAndEvents() {
         const rect = canvas.getBoundingClientRect();
         const t = e.changedTouches[0];
         state.input.isTouchActive = true;
-        // Detect Apple Pencil via TouchType if supported by iPad Safari
         if (t.touchType === 'stylus') {
             state.input.isApplePencil = true;
             applyTouchModeUI();
@@ -4535,7 +3968,6 @@ function setupInputAndEvents() {
         if (e.touches.length === 0) state.input.isFiring = false;
     }, { passive: false });
 
-    // Virtual Dual-Thumb Joystick & Fire Pad for Two-Handed Tablet Grip
     const joyZone = document.getElementById('tablet-joystick-zone');
     const joyKnob = document.getElementById('tablet-joystick-knob');
     const updateJoy = (touch) => {
@@ -4585,7 +4017,6 @@ function setupInputAndEvents() {
         state.input.isFiring = false;
     }, { passive: false });
 
-    // Tablet Mode Quick Toggle Button
     document.getElementById('btn-tablet-mode').addEventListener('click', () => {
         const modes = ['OFFSET_MAGNET', 'DIRECT_MAGNET', 'DUAL_THUMB'];
         const next = modes[(modes.indexOf(state.input.touchMode) + 1) % modes.length];
@@ -4594,10 +4025,8 @@ function setupInputAndEvents() {
         saveGame();
     });
 
-    // Dedicated iPad Fullscreen & Safari Cinema Mode Toggle
     document.getElementById('btn-fullscreen').addEventListener('click', toggleiPadFullscreen);
 
-    // Start Screen Controls ("PLAY / OYUNA BAŞLA", Difficulty, Fullscreen & Main Menu Return)
     const startNameInput = document.getElementById('start-player-name');
     if (startNameInput) {
         startNameInput.value = state.playerName || 'Kaptan1';
@@ -4627,13 +4056,11 @@ function setupInputAndEvents() {
         document.getElementById('modal-start-screen').classList.remove('hidden');
     });
 
-    // iPad Guide & Gesture Settings Quick Button
     document.getElementById('btn-ipad-guide').addEventListener('click', () => {
         renderProfileAndMissionsModal();
         document.getElementById('modal-profile').classList.remove('hidden');
     });
 
-    // Two-Finger Gesture Option Buttons inside iPad Modal
     document.getElementById('btn-gesture-reload').addEventListener('click', () => {
         state.input.twoFingerGesture = 'RELOAD';
         renderProfileAndMissionsModal();
@@ -4645,7 +4072,6 @@ function setupInputAndEvents() {
         saveGame();
     });
 
-    // Buttons & Keyboard Shortcuts
     document.getElementById('btn-skill-nuke').addEventListener('click', activateMegaNuke);
     document.getElementById('btn-skill-slow').addEventListener('click', activateSlowMatrix);
     document.getElementById('btn-skill-overdrive').addEventListener('click', activateDualOverdrive);
@@ -4672,7 +4098,6 @@ function setupInputAndEvents() {
     document.getElementById('btn-stages').addEventListener('click', openStagesModal);
     document.getElementById('close-stages').addEventListener('click', () => document.getElementById('modal-stages').classList.add('hidden'));
 
-    // Top 10 Leaderboard Events
     document.getElementById('btn-leaderboard').addEventListener('click', openLeaderboardModal);
     document.getElementById('close-leaderboard').addEventListener('click', () => document.getElementById('modal-leaderboard').classList.add('hidden'));
     document.getElementById('btn-lb-direct-save').addEventListener('click', () => {
@@ -4785,9 +4210,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// ---------------------------------------------------------------------------
-// KENDİ FIREBASE PROJENİZ İÇİN YAPILANDIRMA (GitHub / Firebase Hosting İçin)
-// ---------------------------------------------------------------------------
 const CUSTOM_FIREBASE_CONFIG = {
     apiKey: "AIzaSyC4qH834aLPEbHRZ70eh82ziNbAnAuNrvU",
     authDomain: "nerf-arcade-arena.firebaseapp.com",
@@ -4831,7 +4253,6 @@ async function initFirebaseCloud() {
         auth = getAuth(app);
         db = getFirestore(app);
 
-        // RULE 3: Authenticate FIRST before any Firestore query
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
             await signInWithCustomToken(auth, __initial_auth_token);
         } else {
@@ -4957,7 +4378,6 @@ async function pushScoreToCloudLeaderboard(cleanName) {
     }
 }
 
-// Wrap existing saveGame and recordScoreToLeaderboard so every save syncs to Firebase Cloud
 const originalSaveGame = window.saveGame;
 window.saveGame = function () {
     if (typeof originalSaveGame === 'function') originalSaveGame();
