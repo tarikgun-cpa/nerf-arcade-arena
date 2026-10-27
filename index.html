@@ -1238,56 +1238,61 @@ const STAGES = [
     // --- KÜME 1 (Normal 1, 2, 3, 4 -> Ara Geçiş Boss 1) ---
     {
         id: 1,
-        name: '1. NEON ATARİ SALONU',
+        name: '1. TAKTİK ASKERİ ÜS',
         theme: 'ARCADE',
+        bgImage: 'Asker.jpg',
         duration: 85,
         goldMult: 1.0,
         clearBonus: 180,
-        bossName: 'SİBER KRAKEN NÖBETÇİSİ',
-        bossIcon: '🐙',
+        bossName: 'ZIRHLI KOMUTA HELİKOPTERİ',
+        bossIcon: '🚁',
         bossHp: 2200,
-        desc: 'Klasik Nerf hedefleri, Taktik Dronelar ve Siber Robotlar!'
+        desc: 'Taktik Askeri Üs savunması! Dronelar, Saldırı Helikopterleri ve Siber Robotlar!'
     },
     {
         id: 2,
-        name: '2. LANETLİ KORSAN KOYU',
+        name: '2. BATIK OKYANUS & KORSAN KOYU',
         theme: 'PIRATE',
+        bgImage: 'okyanus.jpg',
         duration: 85,
         goldMult: 1.2,
         clearBonus: 240,
-        bossName: 'HAYALET KAPTAN KARASAKAL',
-        bossIcon: '🏴‍☠️',
+        bossName: 'DERİN DENİZ KRAKENİ',
+        bossIcon: '🐙',
         bossHp: 3000,
-        desc: 'Mistik Hayaletler, İskelet Korsanlar, Karanlık Büyücüler ve Saldırı Helikopterleri!'
+        desc: 'Batık denizaltılar ve okyanus tabanı! Hayalet Korsanlar, Büyücüler ve Dronelar!'
     },
     {
         id: 3,
-        name: '3. KIZIL VAMPİR ŞATOSU',
+        name: '3. LANETLİ KORKU MEZARLIĞI',
         theme: 'VAMPIRE',
+        bgImage: 'korku.jpg',
         duration: 90,
         goldMult: 1.45,
         clearBonus: 320,
         bossName: 'KONT DRAKULA',
         bossIcon: '🧛',
         bossHp: 3900,
-        desc: 'Uçan Vampir Lordları, Gece Kurt Adamları ve Mistik Hayaletler!'
+        desc: 'Dolunay altında lanetli şato! Uçan Vampir Lordları, İskeletler ve Mistik Hayaletler!'
     },
     {
         id: 4,
         name: '4. DOLUNAY KURT ADAM ORMANI',
         theme: 'WEREWOLF',
+        bgImage: 'Kurt adam.jpg',
         duration: 90,
         goldMult: 1.7,
         clearBonus: 420,
         bossName: 'ALFA FENRİR KURT ADAM',
         bossIcon: '🐺',
         bossHp: 4900,
-        desc: 'Hızlı koşan Vahşi Kurt Adam sürüleri, Zombiler ve Koruyucu Melekler!'
+        desc: 'Sisli mezarlık yolu! Hızlı koşan Vahşi Kurt Adam sürüleri, Zombiler ve Koruyucu Melekler!'
     },
     {
         id: 5,
         name: '⚠️ ARA BÖLÜM 1: DEV DİNOZOR VADİSİ',
         theme: 'BOSS_DINO',
+        bgImage: 'jura.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_DINO',
         duration: 95,
@@ -1296,62 +1301,67 @@ const STAGES = [
         bossName: 'DEV SİBER T-REX DİNOZORU',
         bossIcon: '🦖',
         bossHp: 8500,
-        desc: '🔥 1. ARA GEÇİŞ CANAVARI: Zırhlı Dev T-Rex Dinozoru doğrudan sahnede başlar! Ağzından plazma kayaları fırlatır.'
+        desc: '🔥 1. ARA GEÇİŞ CANAVARI: Jura volkan vadisinde Zırhlı Dev T-Rex Dinozoru doğrudan sahnede başlar!'
     },
 
     // --- KÜME 2 (Normal 5, 6, 7, 8 -> Ara Geçiş Boss 2) ---
     {
         id: 6,
-        name: '5. SİBER ROBOT FABRİKASI',
+        name: '5. YIKIK ROBOT METROPOLÜ',
         theme: 'ROBOT',
+        bgImage: 'Robot.jpg',
         duration: 90,
         goldMult: 2.1,
         clearBonus: 580,
         bossName: 'OMEGA TİTAN MEKA-ROBOT',
         bossIcon: '🤖',
         bossHp: 6400,
-        desc: 'Zırhlı Savaş Robotları, Kamikaze Örümcek Botlar ve Apache Helikopterler!'
+        desc: 'Savaş sonrası robot harabeleri! Zırhlı Savaş Robotları, Örümcek Botlar ve Helikopterler!'
     },
     {
         id: 7,
-        name: '6. MUTASYON ZOMBİ LABORATUVARI',
+        name: '6. KIYAMET ZOMBİ ŞEHRİ',
         theme: 'ZOMBIE',
+        bgImage: 'Zombi.jpg',
         duration: 95,
         goldMult: 2.4,
         clearBonus: 740,
         bossName: 'DEV BİYO-ZOMBİ TİTAN',
         bossIcon: '🧟',
         bossHp: 7800,
-        desc: 'Kasklı Biyo-Zombiler, Zırhlı Dev Zombiler ve Kanatlı Dino-Pteranodonlar!'
+        desc: 'Yanan gökdelenler ve terk edilmiş cadde! Kasklı Biyo-Zombiler ve Zırhlı Dev Zombiler!'
     },
     {
         id: 8,
-        name: '7. ANTİK MISIR PİRAMİDİ',
+        name: '7. ANTİK MISIR PİRAMİTLERİ',
         theme: 'MUMMY',
+        bgImage: 'Eyp.jpg',
         duration: 95,
         goldMult: 2.8,
         clearBonus: 920,
         bossName: 'LANETLİ FİRAVUN ANUBİS',
         bossIcon: '👑',
         bossHp: 9400,
-        desc: 'Antik Mumya Muhafızları, Karanlık Büyücüler ve Altın Hazine Droneları!'
+        desc: 'Sfenks ve Büyük Piramitler! Antik Mumya Muhafızları, Büyücüler ve Altın Hazine Droneları!'
     },
     {
         id: 9,
-        name: '8. SİBER NİNJA TAPINAĞI',
-        theme: 'ARCADE',
+        name: '8. KUTUP KRİYO ARAŞTIRMA ÜSSÜ',
+        theme: 'ROBOT',
+        bgImage: 'Kutup.jpg',
         duration: 95,
         goldMult: 3.2,
         clearBonus: 1150,
-        bossName: 'SHOGUN MEKA-SAMURAY',
-        bossIcon: '🥷',
+        bossName: 'BUZUL MEKA-KOLOS',
+        bossIcon: '🥶',
         bossHp: 11200,
-        desc: 'Ultra hızlı Siber Ninjalar, Zırhlı Robotlar ve Görünmez Hayalet Suikastçılar!'
+        desc: 'Kuzey ışıkları altında buz üssü! Siber Ninjalar, Zırhlı Robotlar ve Görünmez Hayaletler!'
     },
     {
         id: 10,
         name: '⚠️ ARA BÖLÜM 2: VOLKANİK EJDERHA KRATERİ',
         theme: 'BOSS_DRAGON',
+        bgImage: 'jura.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_DRAGON',
         duration: 100,
@@ -1360,50 +1370,54 @@ const STAGES = [
         bossName: 'KADİM KIZIL MAGMA EJDERHASI',
         bossIcon: '🐉',
         bossHp: 16500,
-        desc: '🔥 2. ARA GEÇİŞ CANAVARI: Dev Kanatlı Kızıl Magma Ejderhası! Gökyüzünden üçlü ateş küreleri yağdırır.'
+        desc: '🔥 2. ARA GEÇİŞ CANAVARI: Volkanik vadide Dev Kanatlı Kızıl Magma Ejderhası ateş küreleri yağdırır!'
     },
 
     // --- KÜME 3 (Normal 9, 10, 11, 12 -> Ara Geçiş Boss 3 & Final Boss 4) ---
     {
         id: 11,
-        name: '9. GALAKTİK UFO İSTİLASI',
+        name: '9. NEON GALAKTİK UZAY ÜSSÜ',
         theme: 'SPACE',
+        bgImage: 'uzay.jpg',
         duration: 100,
         goldMult: 3.9,
         clearBonus: 1400,
-        bossName: 'UFO KOMUTA Kaptanı',
+        bossName: 'UFO KOMUTA KAPTANI',
         bossIcon: '🛸',
         bossHp: 13800,
         desc: 'Işınlanan Gri Uzaylılar, Enerji Kalkanlı UFO Savaşçıları ve Uzay Droneları!'
     },
     {
         id: 12,
-        name: '10. CEHENNEM ATEŞ İBLİSİ KALESİ',
+        name: '10. CEHENNEM ZOMBİ KUŞATMASI',
         theme: 'INFERNO',
+        bgImage: 'Zombi.jpg',
         duration: 100,
         goldMult: 4.4,
         clearBonus: 1700,
         bossName: 'ATEŞ LORDU BALROG',
         bossIcon: '👹',
         bossHp: 16200,
-        desc: 'Volkanik Ateş İblisleri, Kızıl Yavru Ejderhalar ve Vampir Lordları!'
+        desc: 'Yanan şehirde Volkanik Ateş İblisleri, Kızıl Yavru Ejderhalar ve Vampir Lordları!'
     },
     {
         id: 13,
-        name: '11. KUTUP KRİYO ÜSSÜ',
+        name: '11. KUTUP FIRTINASI SAVUNMASI',
         theme: 'ROBOT',
+        bgImage: 'Kutup.jpg',
         duration: 105,
         goldMult: 5.0,
         clearBonus: 2100,
-        bossName: 'BUZUL MEKA-KOLOS',
-        bossIcon: '🥶',
+        bossName: ' KUTUP TİTAN MEKA',
+        bossIcon: '🤖',
         bossHp: 19000,
         desc: 'Ağır Zırhlı Kalkanlı Robotlar, Saldırı Helikopterleri ve Elit UFO Filosu!'
     },
     {
         id: 14,
-        name: '12. KARANLIK BOYUT PORTALI',
+        name: '12. KARANLIK ŞATO SON SAVAŞ',
         theme: 'FINAL',
+        bgImage: 'Kurt adam.jpg',
         duration: 105,
         goldMult: 5.6,
         clearBonus: 2500,
@@ -1416,6 +1430,7 @@ const STAGES = [
         id: 15,
         name: '⚠️ ARA BÖLÜM 3: YÖRÜNGE ANA UZAY GEMİSİ',
         theme: 'BOSS_SPACESHIP',
+        bgImage: 'uzay.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_SPACESHIP',
         duration: 110,
@@ -1424,12 +1439,13 @@ const STAGES = [
         bossName: 'GALAKTİK ANA GEMİ DREADNOUGHT',
         bossIcon: '🚀',
         bossHp: 32000,
-        desc: '🔥 3. ARA GEÇİŞ CANAVARI: 12 Normal Bölüm sonrası Devasa Zırhlı Uzay Gemisi! Plazma taretleriyle yaylım ateşi açar.'
+        desc: '🔥 3. ARA GEÇİŞ CANAVARI: 12 Normal Bölüm sonrası Devasa Zırhlı Uzay Gemisi yaylım ateşi açar!'
     },
     {
         id: 16,
         name: '👑 FİNAL BOSS: KOZMİK DEV UZAYLI YARATIK',
         theme: 'BOSS_ALIEN_BEAST',
+        bgImage: 'uzay.jpg',
         isBossInterlude: true,
         bossVisualType: 'GIANT_ALIEN_BEAST',
         duration: 120,
@@ -1438,9 +1454,21 @@ const STAGES = [
         bossName: 'KOZMİK DEV UZAYLI LEVİATHAN',
         bossIcon: '👾',
         bossHp: 46000,
-        desc: '👑 OYUN SONU BÜYÜK CANAVARI: Çok gözlü, dev dokunaçlı ve enerji kalkanlı Galaktik Leviathan! En büyük Altın ve Skor ödülü.'
+        desc: '👑 OYUN SONU BÜYÜK CANAVARI: Çok gözlü, dev dokunaçlı ve enerji kalkanlı Galaktik Leviathan!'
     }
 ];
+
+// --- PRELOAD CUSTOM STAGE BACKGROUND IMAGES ---
+const STAGE_BG_CACHE = {};
+function preloadStageBackgrounds() {
+    const uniqueFiles = [...new Set(STAGES.map(s => s.bgImage).filter(Boolean))];
+    uniqueFiles.forEach(fileName => {
+        const img = new Image();
+        img.src = fileName;
+        STAGE_BG_CACHE[fileName] = img;
+    });
+}
+preloadStageBackgrounds();
 
 const DIFFICULTIES = [
     { id: 'ROOKIE', name: 'Çaylak (0.8x🪙)', speedMult: 0.78, hpMult: 0.8, rewardMult: 0.8 },
@@ -2681,6 +2709,43 @@ function renderArena() {
 
 function drawStageEnvironment() {
     const st = STAGES[state.stageIndex];
+    const bgImg = st.bgImage ? STAGE_BG_CACHE[st.bgImage] : null;
+    const hasCustomImage = bgImg && bgImg.complete && bgImg.naturalWidth > 0;
+
+    if (hasCustomImage) {
+        // Draw user's custom stage artwork with subtle 3D parallax & object-fit: cover
+        ctx.save();
+        const imgW = bgImg.naturalWidth;
+        const imgH = bgImg.naturalHeight;
+        const scale = Math.max(W / imgW, H / imgH) * 1.03; // 3% overscan for parallax movement
+        const drawW = imgW * scale;
+        const drawH = imgH * scale;
+
+        const normAimX = (state.input.x / Math.max(1, W)) - 0.5;
+        const normAimY = (state.input.y / Math.max(1, H)) - 0.5;
+        const offsetX = (W - drawW) * 0.5 - normAimX * 16;
+        const offsetY = (H - drawH) * 0.5 - normAimY * 10;
+
+        ctx.drawImage(bgImg, offsetX, offsetY, drawW, drawH);
+
+        // Subtle atmospheric vignette so glowing neon targets & crosshairs pop clearly
+        const vig = ctx.createLinearGradient(0, 0, 0, H);
+        vig.addColorStop(0, 'rgba(2, 6, 23, 0.25)');
+        vig.addColorStop(0.5, 'rgba(2, 6, 23, 0.05)');
+        vig.addColorStop(1, 'rgba(2, 6, 23, 0.45)');
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, W, H);
+
+        // Matrix Slow-Mo cyan tint overlay when W skill is active
+        if (state.skills.slowActive > 0) {
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.18)';
+            ctx.fillRect(0, 0, W, H);
+        }
+        ctx.restore();
+        return;
+    }
+
+    // Fallback Procedural Gradient + Grid if image file is not yet in folder
     const grad = ctx.createLinearGradient(0, 0, 0, H);
 
     switch (st.theme) {
@@ -4045,7 +4110,7 @@ function openStagesModal() {
         const isCurrent = idx === state.stageIndex;
         const isInterlude = !!st.isBossInterlude;
         const card = document.createElement('div');
-        card.className = `rounded-2xl p-3 border-2 flex flex-col justify-between ${
+        card.className = `rounded-2xl p-3 border-2 flex flex-col justify-between relative overflow-hidden ${
             isCurrent
                 ? 'bg-indigo-950/95 border-lime-400 shadow-[0_0_20px_rgba(163,230,53,0.4)]'
                 : isInterlude
@@ -4054,6 +4119,12 @@ function openStagesModal() {
         }`;
         card.innerHTML = `
             <div>
+                ${st.bgImage ? `
+                <div class="w-full h-24 rounded-xl overflow-hidden mb-2 border border-slate-700/80 relative bg-slate-900">
+                    <img src="${st.bgImage}" alt="${st.name}" class="w-full h-full object-cover" onerror="this.parentElement.classList.add('hidden')" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                    <span class="absolute bottom-1 left-2 text-[9px] font-black text-white/90 drop-shadow">${st.bgImage}</span>
+                </div>` : ''}
                 <div class="flex justify-between items-center gap-1 mb-1">
                     <span class="arcade-font text-xs sm:text-sm font-black ${isInterlude ? 'text-amber-300' : 'text-cyan-300'}">${st.name}</span>
                     <span class="text-[9px] font-black bg-amber-950 border border-amber-500 px-1.5 py-0.5 rounded text-amber-300 shrink-0">🪙 ${st.goldMult}x</span>
