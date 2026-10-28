@@ -945,6 +945,9 @@ class SoundSystem {
         this.init();
         this.tone(300, 'sawtooth', 0.18, 0.22, 160);
         this.tone(180, 'sawtooth', 0.28, 0.24, 85, 0.14);
+        this.playNoise(0.75, 'lowpass', 1800, 180, 0.44, 0.08);
+        this.tone(1400, 'sine', 0.65, 0.16, 240, 0.10);
+        this.speak('Eyvah! Yanlış Hedef', 0.68, 1.02);
     }
 
     // --- CESUR VE OTORİTER KOMUTAN SAVAŞ EMİRLERİ (Q, W, E) ---
@@ -954,7 +957,7 @@ class SoundSystem {
         this.tone(620, 'sawtooth', 0.18, 0.22, 960, 0.20);
         this.playNoise(0.75, 'lowpass', 1800, 180, 0.44, 0.08);
         this.tone(1400, 'sine', 0.65, 0.16, 240, 0.10);
-        this.speak('Mega füze yolda! EGE nin Demir Yumruğu gibi', 0.68, 1.02);
+        this.speak('Mega füze yolda! Komutan EGE tek attı', 0.68, 1.02);
     }
 
     skillSlowMoMatrix() {
@@ -962,7 +965,7 @@ class SoundSystem {
         this.tone(880, 'sine', 0.65, 0.26, 65);
         this.tone(440, 'triangle', 0.65, 0.20, 42);
         this.playNoise(0.50, 'bandpass', 2400, 140, 0.22);
-        this.speak('Ağır çekim devrede! Tek bir düşman bile kaçmasın!', 0.70, 1.02);
+        this.speak('Kitle Kontrol devrede! Av Başladı!', 0.70, 1.02);
     }
 
     skillDualOverdrive() {
